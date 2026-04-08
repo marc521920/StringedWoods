@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class MainCharacterMovement : MonoBehaviour
 {
@@ -6,12 +7,19 @@ public class MainCharacterMovement : MonoBehaviour
     public float jumpSpeed = 18.0f;
     public float gravity = 20.0f;
     public float rotationSpeed = 15.0f;
+    public float derrape = 10f;
+    private float anguloDeGiro = 0f;
 
     //salto cargado
-    float CargaSalto = 1f;
-    float velocidadCarga = 20f; 
     private bool salto = true;
     private bool soltadoBotonSalto = true;
+
+    // Dash
+    [Header("Dash Settings")]
+    public float velocidadDash = 30f;
+    public float tiempoDash = 0.2f; // Cuánto dura el impulso en segundos
+    private bool isDashing = false; // Para saber si estamos en medio de un dash
+    private bool dashInCooldown = false; // Para evitar que el jugador pueda dashar de nuevo inmediatamente
     
     // Usaremos esta variable solo para la caída y el salto
     public float velocidadY = 0.0f; 
@@ -25,6 +33,7 @@ public class MainCharacterMovement : MonoBehaviour
 
     void Update() 
     {
+       if (isDashing) return;
         Debug.Log(velocidadY);
         // Calculamos el movimiento horizontal SIEMPRE (para poder movernos en el aire)
         Vector3 moveDirection = new Vector3(-Input.GetAxis("Horizontal"), 0, -Input.GetAxis("Vertical"));
@@ -33,8 +42,15 @@ public class MainCharacterMovement : MonoBehaviour
         if (moveDirection != Vector3.zero)
         {
             Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
+            //float anguloDeGiro = Quaternion.Angle(transform.rotation, targetRotation);
+            
+
+        
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+
+            
         }
+       
 
         // Aplicamos la velocidad al movimiento horizontal
         moveDirection *= speed;
@@ -80,15 +96,51 @@ public class MainCharacterMovement : MonoBehaviour
             }
 
         }
-
+        
+        if (Input.GetKeyDown(KeyCode.Q) && !dashInCooldown) 
+        {
+            StartCoroutine(Dash()); // Iniciamos el dash
+        }
         // Unimos el movimiento vertical (Y) con el horizontal (X, Z)
         moveDirection.y = velocidadY;
         
         // Movemos al personaje
         controller.Move(moveDirection * Time.deltaTime);
     }
-    void MovementCharacter()
+    IEnumerator Dash()
     {
+         
+    //  Empezamos el dash
+        isDashing = true;
+
+    // la velocidad Y a 0 para que no caiga mientras dashea en el aire
+        velocidadY = 0f; 
+
+        float startTime = Time.time; // Guardamos el momento exacto en el que empieza
+
+    // Mientras no haya pasado el tiempoDash, nos movemos
+        while (Time.time < startTime + tiempoDash)
+        {
+        // Movemos al personaje hacia donde mira
+            controller.Move(transform.forward * velocidadDash * Time.deltaTime);
         
+        // Esperamos al siguiente frame para continuar el bucle
+        yield return null; 
+        }
+
+        // 3. Terminamos el dash y devolvemos el control al jugador
+        isDashing = false;
+        dashInCooldown = true; // Activamos el cooldown para evitar dashes consecutivos
+    StartCoroutine(CooldownDash()); // Iniciamos la rutina de cooldown
+    }
+    IEnumerator CooldownDash()
+    {
+      yield return new WaitForSeconds(1f); // Esperamos 2 segundos antes de permitir otro dash
+      dashInCooldown = false; // Desactivamos el cooldown
+    }
+    void Atack()
+    {
+
+        // Aquí iría la lógica de ataque, por ejemplo, detectar enemigos cercanos y aplicar daño
     }
 }
