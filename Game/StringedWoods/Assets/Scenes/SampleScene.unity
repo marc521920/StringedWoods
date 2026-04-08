@@ -152,8 +152,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CharacterController
   speed: 6
-  jumpSpeed: 8
+  jumpSpeed: 10
   gravity: 20
+  rotationSpeed: 15
+  velocidadY: 0
 --- !u!143 &13369346
 CharacterController:
   m_ObjectHideFlags: 0
