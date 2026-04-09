@@ -18,9 +18,16 @@ public class MainCharacterMovement : MonoBehaviour
     [Header("Dash Settings")]
     public float velocidadDash = 30f;
     public float tiempoDash = 0.2f; // Cuánto dura el impulso en segundos
-    private bool isDashing = false; // Para saber si estamos en medio de un dash
-    private bool dashInCooldown = false; // Para evitar que el jugador pueda dashar de nuevo inmediatamente
-    
+    private bool isDashing = false; // Para saber si estamos en un dash
+    private bool dashInCooldown = false; // Para evitar que el jugador pueda dashear inmediatamente
+
+    // Ataque
+    [Header("Attack Settings")]
+    public float attackRange = 2f; // Rango del ataque
+    public float attackDamage = 10f; // Daño del ataque
+    public GameObject attackArea; // Un objeto vacío que representa el área de ataque, con un collider para detectar enemigos
+    public float maxHeightAttack = 5f;
+    private bool isAttacking = false; // Para saber si estamos en medio de un ataque
     // Usaremos esta variable solo para la caída y el salto
     public float velocidadY = 0.0f; 
 
@@ -34,7 +41,7 @@ public class MainCharacterMovement : MonoBehaviour
     void Update() 
     {
        if (isDashing) return;
-        Debug.Log(velocidadY);
+        //Debug.Log(velocidadY);
         // Calculamos el movimiento horizontal SIEMPRE (para poder movernos en el aire)
         Vector3 moveDirection = new Vector3(-Input.GetAxis("Horizontal"), 0, -Input.GetAxis("Vertical"));
         
@@ -97,7 +104,7 @@ public class MainCharacterMovement : MonoBehaviour
 
         }
         
-        if (Input.GetKeyDown(KeyCode.Q) && !dashInCooldown) 
+        if (Input.GetKeyDown(KeyCode.Q) && !dashInCooldown && !isAttacking) 
         {
             StartCoroutine(Dash()); // Iniciamos el dash
         }
@@ -106,7 +113,23 @@ public class MainCharacterMovement : MonoBehaviour
         
         // Movemos al personaje
         controller.Move(moveDirection * Time.deltaTime);
+
+        // Ataque
+            if (Input.GetMouseButtonDown(0)) // Si se presiona el botón izquierdo del mouse
+            {
+                Ray ray = new Ray(transform.position, Vector3.down); // Lanzamos un rayo hacia adelante para detectar enemigos
+                RaycastHit hit;
+                Debug.DrawRay(transform.position, Vector3.down * maxHeightAttack, Color.red, 1f); // Dibuja el rayo en la escena para depuración
+                if (Physics.Raycast(ray, out hit, maxHeightAttack)) // Si el rayo golpea algo dentro del rango de ataque
+                {
+                    StartCoroutine(Atack()); // Iniciamos la rutina de ataque
+                }
+            }
     }
+
+
+
+    // Rutina de dash
     IEnumerator Dash()
     {
          
@@ -133,14 +156,33 @@ public class MainCharacterMovement : MonoBehaviour
         dashInCooldown = true; // Activamos el cooldown para evitar dashes consecutivos
     StartCoroutine(CooldownDash()); // Iniciamos la rutina de cooldown
     }
+
+
+
+    // Rutina de cooldown para el dash
     IEnumerator CooldownDash()
     {
       yield return new WaitForSeconds(1f); // Esperamos 2 segundos antes de permitir otro dash
       dashInCooldown = false; // Desactivamos el cooldown
     }
-    void Atack()
-    {
 
+
+
+    // Rutina de ataque
+    IEnumerator Atack()
+    {
+            isAttacking = true; // Marcamos que estamos atacando
+            attackArea.SetActive(true); // Activamos el área de ataque
+            velocidadY = velocidadY/2f; // Detenemos el movimiento vertical durante el ataque
+            // Aquí podrías reproducir una animación de ataque, por ejemplo:
+            // animator.SetTrigger("Attack");
+
+            // Esperamos un momento para simular el tiempo de ataque
+            yield return new WaitForSeconds(0.2f); // Ajusta este valor según la duración de tu animación
+            
+            attackArea.SetActive(false); // Desactivamos el área de ataque después de un momento
+            isAttacking = false; // Terminamos el ataque
+            
         // Aquí iría la lógica de ataque, por ejemplo, detectar enemigos cercanos y aplicar daño
     }
 }
