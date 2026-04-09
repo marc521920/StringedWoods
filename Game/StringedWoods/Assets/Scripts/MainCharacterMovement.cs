@@ -8,7 +8,6 @@ public class MainCharacterMovement : MonoBehaviour
     public float gravity = 20.0f;
     public float rotationSpeed = 15.0f;
     public float derrape = 10f;
-    private float anguloDeGiro = 0f;
 
     //salto cargado
     private bool salto = true;
@@ -20,6 +19,7 @@ public class MainCharacterMovement : MonoBehaviour
     public float tiempoDash = 0.2f; // Cuánto dura el impulso en segundos
     private bool isDashing = false; // Para saber si estamos en un dash
     private bool dashInCooldown = false; // Para evitar que el jugador pueda dashear inmediatamente
+    public float cooldownDash = 1f; // Tiempo de espera entre dashes
 
     // Ataque
     [Header("Attack Settings")]
@@ -28,6 +28,7 @@ public class MainCharacterMovement : MonoBehaviour
     public GameObject attackArea; // Un objeto vacío que representa el área de ataque, con un collider para detectar enemigos
     public float maxHeightAttack = 5f;
     private bool isAttacking = false; // Para saber si estamos en medio de un ataque
+    public float fuerzaGolpe = 5f; // Fuerza del golpe que se aplicará al enemigo
     // Usaremos esta variable solo para la caída y el salto
     public float velocidadY = 0.0f; 
 
@@ -36,6 +37,21 @@ public class MainCharacterMovement : MonoBehaviour
     void Start()
     {
         controller = GetComponent<CharacterController>();
+        attackArea.SetActive(false); // Aseguramos que el área de ataque esté desactivada al inicio
+        float speed = PlayerPrefs.GetFloat("velocidadDeMovimiento", 6.0f);
+    
+    
+    
+        float tiempoDash = PlayerPrefs.GetFloat("tiempoDeDash", 0.2f); // Cuánto dura el impulso en segundos
+    
+        float cooldownDash = PlayerPrefs.GetFloat("cooldownDeDash", 1f); // Tiempo de espera entre dashes
+
+    
+        float attackRange = PlayerPrefs.GetFloat("rangoDeAtaque", 2f); // Rango del ataque
+        float attackDamage = PlayerPrefs.GetFloat("dañoAlAtacar", 10f); // Daño del ataque
+    
+        float fuerzaGolpe = PlayerPrefs.GetFloat("fuerzaDeEmpuje", 5f); // Fuerza del golpe que se aplicará al enemigo
+    
     }
 
     void Update() 
@@ -162,7 +178,7 @@ public class MainCharacterMovement : MonoBehaviour
     // Rutina de cooldown para el dash
     IEnumerator CooldownDash()
     {
-      yield return new WaitForSeconds(1f); // Esperamos 2 segundos antes de permitir otro dash
+      yield return new WaitForSeconds(cooldownDash); // Esperamos el tiempo de cooldown antes de permitir otro dash
       dashInCooldown = false; // Desactivamos el cooldown
     }
 
