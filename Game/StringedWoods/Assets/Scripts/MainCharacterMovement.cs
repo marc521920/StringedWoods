@@ -29,6 +29,8 @@ public class MainCharacterMovement : MonoBehaviour
     public float maxHeightAttack = 5f;
     private bool isAttacking = false; // Para saber si estamos en medio de un ataque
     public float fuerzaGolpe = 5f; // Fuerza del golpe que se aplicará al enemigo
+    private bool canAttack = true; // Para controlar el tiempo entre ataques
+    public float cooldownAttack = 0.5f; // Tiempo de espera entre ataques
     // Usaremos esta variable solo para la caída y el salto
     public float velocidadY = 0.0f; 
 
@@ -49,6 +51,7 @@ public class MainCharacterMovement : MonoBehaviour
     
         float attackRange = PlayerPrefs.GetFloat("rangoDeAtaque", 2f); // Rango del ataque
         float attackDamage = PlayerPrefs.GetFloat("dañoAlAtacar", 10f); // Daño del ataque
+        float cooldownAttack = PlayerPrefs.GetFloat("velocidadDeAtaque", 0.5f); // Tiempo de espera entre ataques
     
         float fuerzaGolpe = PlayerPrefs.GetFloat("fuerzaDeEmpuje", 5f); // Fuerza del golpe que se aplicará al enemigo
     
@@ -198,7 +201,13 @@ public class MainCharacterMovement : MonoBehaviour
             
             attackArea.SetActive(false); // Desactivamos el área de ataque después de un momento
             isAttacking = false; // Terminamos el ataque
+            canAttack = false; // Desactivamos la posibilidad de atacar inmediatamente después
             
         // Aquí iría la lógica de ataque, por ejemplo, detectar enemigos cercanos y aplicar daño
+    }
+    IEnumerator cooldownAtack()
+    {
+        yield return new WaitForSeconds(0.5f); // Tiempo de espera entre ataques, ajusta según tu animación
+        canAttack = true; // Permitimos atacar de nuevo
     }
 }

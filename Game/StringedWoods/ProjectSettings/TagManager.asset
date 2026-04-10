@@ -5,6 +5,10 @@ TagManager:
   serializedVersion: 3
   tags:
   - Ataque
+  - limitXRight
+  - limitXLeft
+  - limitZForward
+  - limitZBackward
   layers:
   - Default
   - TransparentFX
