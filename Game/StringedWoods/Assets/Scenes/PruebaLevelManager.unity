@@ -370,8 +370,9 @@ MonoBehaviour:
   numeroDeSalasNormalesmMin: 10
   numeroDeSalasNormalesmMax: 15
   porbabilidadSalasEspeciales: 0
-  espacioEntreSalas: 20
-  posicionSala: 0
+  espacioEntreSalasZ: 4
+  espacioEntreSalasX: 0
+  posicionSala: {x: 0, y: 0, z: 0}
   listaDeMapas:
   - {fileID: 8771749402582411558, guid: 9181fe77472d2d54daa4c166f304e8ec, type: 3}
   listaDeMapasEspeciales: []

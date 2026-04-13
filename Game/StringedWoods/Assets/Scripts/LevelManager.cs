@@ -8,8 +8,9 @@ public class LevelManager : MonoBehaviour
 
     public int porbabilidadSalasEspeciales;
 
-    public float espacioEntreSalas;
-    public float posicionSala;
+    public float espacioEntreSalasZ;
+    public float espacioEntreSalasX;
+    public Vector3 posicionSala;
 
     //GameObjects Mapas
     public GameObject[] listaDeMapas;
@@ -18,7 +19,7 @@ public class LevelManager : MonoBehaviour
     void Start()
     {
         numeroDeSalasNormales = Random.Range(numeroDeSalasNormalesmMin,numeroDeSalasNormalesmMax);
-        posicionSala = transform.position.z;
+        posicionSala = transform.position;
         GenerarMapa();
         
     }
@@ -34,13 +35,12 @@ public class LevelManager : MonoBehaviour
         {
             int indiceAleatorio = Random.Range(0, listaDeMapas.Length);
             // 1. Instanciamos y guardamos la copia en la variable "nuevoEnemigo"
-            GameObject nuevoMapa = Instantiate(listaDeMapas[indiceAleatorio], new Vector3 (transform.position.x,transform.position.y,posicionSala) , Quaternion.identity);
+            GameObject nuevoMapa = Instantiate(listaDeMapas[indiceAleatorio], posicionSala , Quaternion.identity);
 
             nuevoMapa.name = "Level 1";
-            posicionSala = posicionSala + espacioEntreSalas;
-    
-            
+            posicionSala.z = posicionSala.z + espacioEntreSalasZ;
         }
+        posicionSala.x = posicionSala.x + espacioEntreSalasX;
         
 
     }
