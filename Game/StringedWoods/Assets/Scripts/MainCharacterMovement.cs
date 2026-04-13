@@ -141,7 +141,22 @@ public class MainCharacterMovement : MonoBehaviour
                 Debug.DrawRay(transform.position, Vector3.down * maxHeightAttack, Color.red, 1f); // Dibuja el rayo en la escena para depuración
                 if (Physics.Raycast(ray, out hit, maxHeightAttack)) // Si el rayo golpea algo dentro del rango de ataque
                 {
+                    velocidadY = velocidadY/2f;
                     StartCoroutine(Atack()); // Iniciamos la rutina de ataque
+                    
+                }
+                else
+                {
+                    if (velocidadY >= -20)
+                    {
+                        velocidadY = -10f*2f;
+                    }
+                    
+                    else if (velocidadY < -20)
+                    {
+                        velocidadY = velocidadY*2f;
+                    }
+
                 }
             }
     }
