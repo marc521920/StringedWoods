@@ -84,6 +84,7 @@ public class LevelManager : MonoBehaviour
                 else if ((probabilidadSalasNormales + probabilidadSalasEspeciales) > valorAleatorio )
                 {
                     Debug.Log(valorAleatorio);
+                    
                     int indiceAleatorio = Random.Range(0, listaDeMapas.Length);
                     // 1. Instanciamos y guardamos la copia en la variable "nuevoEnemigo"
                     GameObject nuevoMapa = Instantiate(listaDeMapas[indiceAleatorio], posicionSala , Quaternion.identity);
