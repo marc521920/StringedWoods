@@ -163,7 +163,7 @@ MonoBehaviour:
   attackArea: {fileID: 250650953}
   maxHeightAttack: 2.5
   fuerzaGolpe: 5
-  cooldownAttack: 0.5
+  cooldownAttackNumber: 0.5
   velocidadY: 0
 --- !u!143 &13369346
 CharacterController:

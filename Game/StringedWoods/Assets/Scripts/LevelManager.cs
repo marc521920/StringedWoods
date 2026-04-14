@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class LevelManager : MonoBehaviour
 {
@@ -6,18 +7,23 @@ public class LevelManager : MonoBehaviour
     public int numeroDeSalasNormalesmMin;
     public int numeroDeSalasNormalesmMax;
 
-    public int porbabilidadSalasEspeciales;
+    public int probabilidadSalasEspeciales;
+    public int probabilidadSalasNormales; 
 
     public float espacioEntreSalasZ;
     public float espacioEntreSalasX;
     public Vector3 posicionSala;
+    public Vector3 posicionTienda;
 
     //GameObjects Mapas
     public GameObject[] listaDeMapas;
-    public GameObject[] listaDeMapasEspeciales;
+    public List<GameObject> listaDeMapasEspecialesOriginales;
+    public List<GameObject> listaDeMapasEspecialesDisponibles;
+    public GameObject[] listaDeTiendas;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        listaDeMapasEspecialesDisponibles = new List<GameObject>(listaDeMapasEspecialesOriginales);
         numeroDeSalasNormales = Random.Range(numeroDeSalasNormalesmMin,numeroDeSalasNormalesmMax);
         posicionSala = transform.position;
         GenerarMapa();
@@ -31,17 +37,98 @@ public class LevelManager : MonoBehaviour
     }
     void GenerarMapa()
     {
+        int valorPosicionTienda = Random.Range(1, listaDeMapas.Length + 1);
+        int valorLineaTienda = Random.Range(1, 3);
+        posicionTienda = transform.position;
+        posicionTienda.z = posicionTienda.z + (valorPosicionTienda * espacioEntreSalasZ);
+        if (valorLineaTienda == 1)
+        {
+            posicionTienda.x = posicionTienda.x - espacioEntreSalasX;
+        }
+        else if (valorLineaTienda == 2)
+        {
+            posicionTienda.x = posicionTienda.x + espacioEntreSalasX;
+        }
         for (int i = 0; i < numeroDeSalasNormales; i++)
         {
             int indiceAleatorio = Random.Range(0, listaDeMapas.Length);
             // 1. Instanciamos y guardamos la copia en la variable "nuevoEnemigo"
             GameObject nuevoMapa = Instantiate(listaDeMapas[indiceAleatorio], posicionSala , Quaternion.identity);
 
-            nuevoMapa.name = "Level 1";
+            nuevoMapa.name = "Level, " + i;
             posicionSala.z = posicionSala.z + espacioEntreSalasZ;
         }
+        posicionSala = transform.position;
         posicionSala.x = posicionSala.x + espacioEntreSalasX;
-        
+
+        for (int i = 0; i < numeroDeSalasNormales; i++)
+        {
+            if (posicionSala == posicionTienda)
+            {
+                int indiceAleatorioTiendas = Random.Range(0, listaDeTiendas.Length);
+                GameObject nuevaTienda = Instantiate(listaDeTiendas[indiceAleatorioTiendas], posicionTienda, Quaternion.identity);
+                nuevaTienda.name = "Tienda";
+            }
+            else
+            {
+
+                int valorAleatorio = Random.Range(0, 100);
+                if (valorAleatorio < probabilidadSalasEspeciales)
+                {
+                    int indiceAleatorioEspecial = Random.Range(0, listaDeMapasEspecialesDisponibles.Count);
+                    GameObject nuevoMapaEspecial = Instantiate(listaDeMapasEspecialesDisponibles[indiceAleatorioEspecial], posicionSala, Quaternion.identity);
+                    nuevoMapaEspecial.name = "Level, " + (i + numeroDeSalasNormales) + " Especial";
+                    listaDeMapasEspecialesDisponibles.RemoveAt(indiceAleatorioEspecial);
+                }
+                
+                else if ((probabilidadSalasNormales + probabilidadSalasEspeciales) > valorAleatorio )
+                {
+                    Debug.Log(valorAleatorio);
+                    int indiceAleatorio = Random.Range(0, listaDeMapas.Length);
+                    // 1. Instanciamos y guardamos la copia en la variable "nuevoEnemigo"
+                    GameObject nuevoMapa = Instantiate(listaDeMapas[indiceAleatorio], posicionSala , Quaternion.identity);
+                    nuevoMapa.name = "Level," + (i + numeroDeSalasNormales);
+                }
+            }
+
+            
+            posicionSala.z = posicionSala.z + espacioEntreSalasZ;
+        }
+        posicionSala = transform.position;
+        posicionSala.x = posicionSala.x - espacioEntreSalasX;
+
+        for (int i = 0; i < numeroDeSalasNormales; i++)
+        {
+            if (posicionSala == posicionTienda)
+            {
+                int indiceAleatorioTiendas = Random.Range(0, listaDeTiendas.Length);
+                GameObject nuevaTienda = Instantiate(listaDeTiendas[indiceAleatorioTiendas], posicionTienda, Quaternion.identity);
+                nuevaTienda.name = "Tienda";
+            }
+            else
+            {
+
+                float valorAleatorio = Random.Range(0f, 100f);
+                if (valorAleatorio < probabilidadSalasEspeciales && listaDeMapasEspecialesDisponibles.Count > 0)
+                {
+                    int indiceAleatorioEspecial = Random.Range(0, listaDeMapasEspecialesDisponibles.Count);
+                    GameObject nuevoMapaEspecial = Instantiate(listaDeMapasEspecialesDisponibles[indiceAleatorioEspecial], posicionSala, Quaternion.identity);
+                    nuevoMapaEspecial.name = "Level, " + (i + (numeroDeSalasNormales * 2)) + " Especial";
+                    listaDeMapasEspecialesDisponibles.RemoveAt(indiceAleatorioEspecial);
+                }
+                
+                else if ((probabilidadSalasNormales + probabilidadSalasEspeciales) > valorAleatorio )
+                {
+                    int indiceAleatorio = Random.Range(0, listaDeMapas.Length);
+                    // 1. Instanciamos y guardamos la copia en la variable "nuevoEnemigo"
+                    GameObject nuevoMapa = Instantiate(listaDeMapas[indiceAleatorio], posicionSala , Quaternion.identity);
+                    nuevoMapa.name = "Level," + (i + (numeroDeSalasNormales * 2));
+                }
+            }
+
+            
+            posicionSala.z = posicionSala.z + espacioEntreSalasZ;
+        }
 
     }
 }

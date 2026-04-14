@@ -55,14 +55,14 @@ Material:
     - _Edg: 1.39
     - _Emission: 24.08
     - _Metalic: 0.8
-    - _Opacity: 0.94
-    - _Power: 8.5
+    - _Opacity: 0.9
+    - _Power: 1.96
     - _QueueControl: 0
     - _QueueOffset: 0
     - _Smoothness: 50.98
     - _Texture: 0
     m_Colors:
-    - _Color: {r: 0.9339623, g: 0.9339623, b: 0.9339623, a: 0}
+    - _Color: {r: 1, g: 1, b: 1, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
 --- !u!114 &6656787299696832730

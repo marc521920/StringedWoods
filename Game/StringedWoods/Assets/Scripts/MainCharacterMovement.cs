@@ -30,7 +30,7 @@ public class MainCharacterMovement : MonoBehaviour
     private bool isAttacking = false; // Para saber si estamos en medio de un ataque
     public float fuerzaGolpe = 5f; // Fuerza del golpe que se aplicará al enemigo
     private bool canAttack = true; // Para controlar el tiempo entre ataques
-    public float cooldownAttack = 0.5f; // Tiempo de espera entre ataques
+    public float cooldownAttackNumber = 0.5f; // Tiempo de espera entre ataques
     // Usaremos esta variable solo para la caída y el salto
     public float velocidadY = 0.0f; 
 
@@ -54,7 +54,7 @@ public class MainCharacterMovement : MonoBehaviour
         float cooldownAttack = PlayerPrefs.GetFloat("velocidadDeAtaque", 0.5f); // Tiempo de espera entre ataques
     
         float fuerzaGolpe = PlayerPrefs.GetFloat("fuerzaDeEmpuje", 5f); // Fuerza del golpe que se aplicará al enemigo
-    
+        canAttack = true; // Permitimos atacar al inicio del juego
     }
 
     void Update() 
@@ -139,7 +139,7 @@ public class MainCharacterMovement : MonoBehaviour
                 Ray ray = new Ray(transform.position, Vector3.down); // Lanzamos un rayo hacia adelante para detectar enemigos
                 RaycastHit hit;
                 Debug.DrawRay(transform.position, Vector3.down * maxHeightAttack, Color.red, 1f); // Dibuja el rayo en la escena para depuración
-                if (Physics.Raycast(ray, out hit, maxHeightAttack)) // Si el rayo golpea algo dentro del rango de ataque
+                if (Physics.Raycast(ray, out hit, maxHeightAttack) && canAttack == true) // Si el rayo golpea algo dentro del rango de ataque
                 {
                     velocidadY = velocidadY/2f;
                     StartCoroutine(Atack()); // Iniciamos la rutina de ataque
@@ -205,6 +205,7 @@ public class MainCharacterMovement : MonoBehaviour
     // Rutina de ataque
     IEnumerator Atack()
     {
+            canAttack = false;
             isAttacking = true; // Marcamos que estamos atacando
             attackArea.SetActive(true); // Activamos el área de ataque
             velocidadY = velocidadY/2f; // Detenemos el movimiento vertical durante el ataque
@@ -216,13 +217,13 @@ public class MainCharacterMovement : MonoBehaviour
             
             attackArea.SetActive(false); // Desactivamos el área de ataque después de un momento
             isAttacking = false; // Terminamos el ataque
-            canAttack = false; // Desactivamos la posibilidad de atacar inmediatamente después
-            
+             // Desactivamos la posibilidad de atacar inmediatamente después
+            StartCoroutine(cooldownAttack());
         // Aquí iría la lógica de ataque, por ejemplo, detectar enemigos cercanos y aplicar daño
     }
-    IEnumerator cooldownAtack()
+    IEnumerator cooldownAttack()
     {
-        yield return new WaitForSeconds(0.5f); // Tiempo de espera entre ataques, ajusta según tu animación
+        yield return new WaitForSeconds(cooldownAttackNumber); // Tiempo de espera entre ataques, ajusta según tu animación
         canAttack = true; // Permitimos atacar de nuevo
     }
 }
