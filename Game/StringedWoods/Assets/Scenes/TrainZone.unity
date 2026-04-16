@@ -155,15 +155,19 @@ MonoBehaviour:
   gravity: 30
   rotationSpeed: 13
   derrape: 10
+  canMove: 1
+  canJump: 1
   velocidadDash: 50
   tiempoDash: 0.09
   cooldownDash: 1
   attackRange: 2
   attackDamage: 10
   attackArea: {fileID: 250650953}
+  attackAreaCargado: {fileID: 1401714181}
   maxHeightAttack: 2.5
   fuerzaGolpe: 5
   cooldownAttackNumber: 0.5
+  cooldownAttackCharged: 2
   velocidadY: 0
 --- !u!143 &13369346
 CharacterController:
@@ -254,6 +258,7 @@ Transform:
   m_Children:
   - {fileID: 2139650554}
   - {fileID: 250650954}
+  - {fileID: 1401714184}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &250650953
@@ -842,7 +847,7 @@ GameObject:
   - component: {fileID: 598415521}
   m_Layer: 0
   m_Name: GameManager
-  m_TagString: Untagged
+  m_TagString: GameController
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -862,11 +867,11 @@ MonoBehaviour:
   experiencia: 0
   multiplicadorDeExperiencia: 1
   nivel: 0
-  vida: 100
+  vidaActual: 0
   vidaMaxima: 100
   curacionDeVida: 0
   "da\xF1oAlAtacar": 10
-  velocidadDeAtaque: 0
+  velocidadDeAtaque: 0.5
   rangoDeAtaque: 2
   "aumentoDeDa\xF1oCritico": 0
   cooldownDeDash: 1
@@ -1221,6 +1226,68 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cda3ab423e34e422a962195392d2a52c, type: 3}
+--- !u!1 &1401714181
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1401714184}
+  - component: {fileID: 1401714183}
+  - component: {fileID: 1401714182}
+  m_Layer: 0
+  m_Name: AreaBasicAttack (1)
+  m_TagString: Ataque
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!65 &1401714182
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1401714181}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!33 &1401714183
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1401714181}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!4 &1401714184
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1401714181}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.097, y: 0.08, z: 0.859}
+  m_LocalScale: {x: 2, y: 1, z: 2}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 13369349}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1513391892
 GameObject:
   m_ObjectHideFlags: 0

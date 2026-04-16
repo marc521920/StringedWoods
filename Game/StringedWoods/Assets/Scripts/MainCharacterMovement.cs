@@ -8,6 +8,8 @@ public class MainCharacterMovement : MonoBehaviour
     public float gravity = 20.0f;
     public float rotationSpeed = 15.0f;
     public float derrape = 10f;
+    public bool canMove = true; // Variable para controlar si el personaje puede moverse o no
+    public bool canJump = true; // Variable para controlar si el personaje puede saltar o no
 
     //salto cargado
     private bool salto = true;
@@ -26,11 +28,14 @@ public class MainCharacterMovement : MonoBehaviour
     public float attackRange = 2f; // Rango del ataque
     public float attackDamage = 10f; // Daño del ataque
     public GameObject attackArea; // Un objeto vacío que representa el área de ataque, con un collider para detectar enemigos
+    public GameObject attackAreaJump; // Un objeto vacío que representa el área de ataque para el salto
+    public GameObject attackAreaCargado; // Un objeto vacío que representa el área de ataque cargado
     public float maxHeightAttack = 5f;
     private bool isAttacking = false; // Para saber si estamos en medio de un ataque
     public float fuerzaGolpe = 5f; // Fuerza del golpe que se aplicará al enemigo
     private bool canAttack = true; // Para controlar el tiempo entre ataques
     public float cooldownAttackNumber = 0.5f; // Tiempo de espera entre ataques
+    public float cooldownAttackCharged = 2f; // Tiempo que se debe mantener presionado el botón para hacer un ataque cargado
     // Usaremos esta variable solo para la caída y el salto
     public float velocidadY = 0.0f; 
 
@@ -40,20 +45,13 @@ public class MainCharacterMovement : MonoBehaviour
     {
         controller = GetComponent<CharacterController>();
         attackArea.SetActive(false); // Aseguramos que el área de ataque esté desactivada al inicio
-        float speed = PlayerPrefs.GetFloat("velocidadDeMovimiento", 6.0f);
-    
-    
-    
-        float tiempoDash = PlayerPrefs.GetFloat("tiempoDeDash", 0.2f); // Cuánto dura el impulso en segundos
-    
-        float cooldownDash = PlayerPrefs.GetFloat("cooldownDeDash", 1f); // Tiempo de espera entre dashes
-
-    
-        float attackRange = PlayerPrefs.GetFloat("rangoDeAtaque", 2f); // Rango del ataque
-        float attackDamage = PlayerPrefs.GetFloat("dañoAlAtacar", 10f); // Daño del ataque
-        float cooldownAttack = PlayerPrefs.GetFloat("velocidadDeAtaque", 0.5f); // Tiempo de espera entre ataques
-    
-        float fuerzaGolpe = PlayerPrefs.GetFloat("fuerzaDeEmpuje", 5f); // Fuerza del golpe que se aplicará al enemigo
+        speed = GameManager.Instance.velocidadDeMovimiento; // Velocidad de movimiento del personaje, cargada desde el GameManager
+        tiempoDash = GameManager.Instance.tiempoDeDash; // Cuánto dura el impulso en segundos
+        cooldownDash = GameManager.Instance.cooldownDeDash; // Tiempo de espera entre dashes
+        attackRange = GameManager.Instance.rangoDeAtaque; // Rango del ataque
+        attackDamage = GameManager.Instance.dañoAlAtacar; // Daño del ataque
+        cooldownAttackNumber = GameManager.Instance.velocidadDeAtaque; // Tiempo de espera entre ataques
+        fuerzaGolpe = GameManager.Instance.fuerzaDeEmpuje; // Fuerza del golpe que se aplicará al enemigo
         canAttack = true; // Permitimos atacar al inicio del juego
     }
 
@@ -65,7 +63,7 @@ public class MainCharacterMovement : MonoBehaviour
         Vector3 moveDirection = new Vector3(-Input.GetAxis("Horizontal"), 0, -Input.GetAxis("Vertical"));
         
         // Calculamos la rotación
-        if (moveDirection != Vector3.zero)
+        if (moveDirection != Vector3.zero && canMove)
         {
             Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
             //float anguloDeGiro = Quaternion.Angle(transform.rotation, targetRotation);
@@ -93,7 +91,7 @@ public class MainCharacterMovement : MonoBehaviour
             }
 
             // Salto
-            if (Input.GetKey(KeyCode.Space) && salto == false) {
+            if (Input.GetKey(KeyCode.Space) && salto == false && canJump == true) {
                 if (soltadoBotonSalto){
                     salto = true;
                 
@@ -131,7 +129,11 @@ public class MainCharacterMovement : MonoBehaviour
         moveDirection.y = velocidadY;
         
         // Movemos al personaje
-        controller.Move(moveDirection * Time.deltaTime);
+        if (canMove)
+        {
+            controller.Move(moveDirection * Time.deltaTime);
+        }
+        
 
         // Ataque
             if (Input.GetMouseButtonDown(0)) // Si se presiona el botón izquierdo del mouse
@@ -147,6 +149,7 @@ public class MainCharacterMovement : MonoBehaviour
                 }
                 else
                 {
+                    
                     if (velocidadY >= -20)
                     {
                         velocidadY = -10f*2f;
@@ -156,6 +159,13 @@ public class MainCharacterMovement : MonoBehaviour
                     {
                         velocidadY = velocidadY*2f;
                     }
+                    //while (!controller.isGrounded) 
+                    //{
+                        //Animation de caida con ataque
+                        //yield return null; // Esperamos al siguiente frame para continuar el bucle
+                    //}
+                    //StartCoroutine(AttackJump()); // Iniciamos la rutina de ataque para el salto
+                    
 
                 }
             }
@@ -205,9 +215,31 @@ public class MainCharacterMovement : MonoBehaviour
     // Rutina de ataque
     IEnumerator Atack()
     {
+        float rotationSpeedBackup = rotationSpeed; // Guardamos la velocidad de rotación original para restaurarla después del ataque
+        float tiempoPresionado = 0f; // Contador para medir cuánto tiempo se mantiene presionado el botón de ataque
+        while (Input.GetMouseButton(0))
+        {
+            isAttacking = true;
+            
+            tiempoPresionado += Time.deltaTime;
+            if (tiempoPresionado >= 0.3f) 
+            {
+                rotationSpeed = rotationSpeed/1.1f; // Reducimos la velocidad de rotación para hacer el ataque más lento y pesado
+                speed = speed/1.1f;
+                
+                canJump = false;
+                // Si se ha mantenido presionado el tiempo suficiente para un ataque cargado, salimos del bucle
+            }
+            
+            // yield return null le dice a Unity: "Pausa el bucle aquí y continúa en el siguiente frame"
+            yield return null; 
+        }
+        if (tiempoPresionado >= cooldownAttackCharged) // Si el botón se ha mantenido presionado durante al menos medio segundo, hacemos un ataque cargado
+        {
+            fuerzaGolpe = fuerzaGolpe*2f;
             canAttack = false;
-            isAttacking = true; // Marcamos que estamos atacando
-            attackArea.SetActive(true); // Activamos el área de ataque
+            
+            attackAreaCargado.SetActive(true); // Activamos el área de ataque
             velocidadY = velocidadY/2f; // Detenemos el movimiento vertical durante el ataque
             // Aquí podrías reproducir una animación de ataque, por ejemplo:
             // animator.SetTrigger("Attack");
@@ -215,14 +247,60 @@ public class MainCharacterMovement : MonoBehaviour
             // Esperamos un momento para simular el tiempo de ataque
             yield return new WaitForSeconds(0.2f); // Ajusta este valor según la duración de tu animación
             
+            attackAreaCargado.SetActive(false);
+            rotationSpeed = rotationSpeedBackup; // Restauramos la velocidad de rotación original
+            speed = GameManager.Instance.velocidadDeMovimiento; // Desactivamos el área de ataque después de un momento
+            isAttacking = false; // Terminamos el ataque
+            canMove = true;
+            canJump = true;
+             // Desactivamos la posibilidad de atacar inmediatamente después
+            StartCoroutine(cooldownAttack());
+        }
+        if (tiempoPresionado < cooldownAttackCharged) // Si el botón se ha soltado antes de tiempo, hacemos un ataque normal
+        {
+            rotationSpeed = rotationSpeedBackup; // Restauramos la velocidad de rotación original
+            speed = GameManager.Instance.velocidadDeMovimiento; // Aseguramos que la velocidad vuelva a su valor normal
+            fuerzaGolpe = GameManager.Instance.fuerzaDeEmpuje; 
+            canMove = true;
+            canJump = true;
+            // Aseguramos que la fuerza de golpe vuelva a su valor normal
+            canAttack = false;
+             // Marcamos que estamos atacando
+            attackArea.SetActive(true); // Activamos el área de ataque
+            velocidadY = velocidadY/2f; // Detenemos el movimiento vertical durante el ataque
+            // Aquí podrías reproducir una animación de ataque, por ejemplo:
+            // animator.SetTrigger("Attack");
+
+            // Esperamos un momento para simular el tiempo de ataque
+            yield return new WaitForSeconds(0.3f); // Ajusta este valor según la duración de tu animación
+            
             attackArea.SetActive(false); // Desactivamos el área de ataque después de un momento
             isAttacking = false; // Terminamos el ataque
              // Desactivamos la posibilidad de atacar inmediatamente después
             StartCoroutine(cooldownAttack());
+        }
         // Aquí iría la lógica de ataque, por ejemplo, detectar enemigos cercanos y aplicar daño
+    }
+    IEnumerator AttackJump()
+    {
+        canMove = false; // Desactivamos el movimiento durante el ataque
+        canJump = false; // Desactivamos el salto durante el ataque
+        velocidadY = velocidadY/2f; // Detenemos el movimiento vertical durante el ataque
+        // Aquí podrías reproducir una animación de ataque, por ejemplo:
+        // animator.SetTrigger("Attack");
+        attackAreaJump.SetActive(true); // Activamos el área de ataque para el salto
+
+        // Esperamos un momento para simular el tiempo de ataque
+        yield return new WaitForSeconds(0.2f); // Ajusta este valor según la duración de tu animación
+        attackAreaJump.SetActive(false); // Desactivamos el área de ataque después de un momento
+        canMove = true; // Reactivamos el movimiento después del ataque
+        canJump = true; // Reactivamos el salto después del ataque
+        StartCoroutine(cooldownAttack()); // Iniciamos el cooldown para evitar ataques consecutivos
+
     }
     IEnumerator cooldownAttack()
     {
+        fuerzaGolpe = GameManager.Instance.fuerzaDeEmpuje; // Aseguramos que la fuerza de golpe vuelva a su valor normal
         yield return new WaitForSeconds(cooldownAttackNumber); // Tiempo de espera entre ataques, ajusta según tu animación
         canAttack = true; // Permitimos atacar de nuevo
     }
