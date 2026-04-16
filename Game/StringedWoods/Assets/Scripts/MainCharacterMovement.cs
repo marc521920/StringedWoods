@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
+
 public class MainCharacterMovement : MonoBehaviour
 {
     public float speed = 6.0f;
@@ -39,6 +40,10 @@ public class MainCharacterMovement : MonoBehaviour
     public float cooldownAttackCharged = 2f; // Tiempo que se debe mantener presionado el botón para hacer un ataque cargado
     // Usaremos esta variable solo para la caída y el salto
     public float velocidadY = 0.0f; 
+
+    // animacion
+    [Header("Animator")]
+    public Animator animator;
 
     private CharacterController controller;
 
@@ -133,6 +138,18 @@ public class MainCharacterMovement : MonoBehaviour
         if (canMove)
         {
             controller.Move(moveDirection * Time.deltaTime);
+        }
+        if (controller.isGrounded && (moveDirection.x != 0 || moveDirection.z != 0)) 
+        {
+            animator.SetBool("isRunning", true);
+            // Aquí podrías reproducir una animación de caminar, por ejemplo:
+            // animator.SetBool("isWalking", true);
+        } 
+        else 
+        {
+            animator.SetBool("isRunning", false);
+            // Aquí podrías reproducir una animación de estar quieto, por ejemplo:
+            // animator.SetBool("isWalking", false);
         }
         
 
