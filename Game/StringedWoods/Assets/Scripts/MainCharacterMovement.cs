@@ -304,7 +304,7 @@ public class MainCharacterMovement : MonoBehaviour
         attackAreaJump.SetActive(true); // Activamos el área de ataque para el salto
 
         // Esperamos un momento para simular el tiempo de ataque
-        yield return new WaitForSeconds(0.3f); // Ajusta este valor según la duración de tu animación
+        yield return new WaitForSeconds(0.2f); // Ajusta este valor según la duración de tu animación
         attackAreaJump.SetActive(false); // Desactivamos el área de ataque después de un momento
         canMove = true; // Reactivamos el movimiento después del ataque
         canJump = true; // Reactivamos el salto después del ataque
