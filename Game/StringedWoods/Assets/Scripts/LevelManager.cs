@@ -10,6 +10,8 @@ public class LevelManager : MonoBehaviour
     public int probabilidadSalasEspeciales;
     public int probabilidadSalasNormales; 
 
+    private bool salaEspecialgenerada;
+
     public float espacioEntreSalasZ;
     public float espacioEntreSalasX;
     public Vector3 posicionSala;
@@ -73,12 +75,22 @@ public class LevelManager : MonoBehaviour
             {
 
                 int valorAleatorio = Random.Range(0, 100);
-                if (valorAleatorio < probabilidadSalasEspeciales)
+                if (valorAleatorio < probabilidadSalasEspeciales  && listaDeMapasEspecialesDisponibles.Count > 0)
                 {
-                    int indiceAleatorioEspecial = Random.Range(0, listaDeMapasEspecialesDisponibles.Count);
-                    GameObject nuevoMapaEspecial = Instantiate(listaDeMapasEspecialesDisponibles[indiceAleatorioEspecial], posicionSala, Quaternion.identity);
-                    nuevoMapaEspecial.name = "Level, " + (i + numeroDeSalasNormales) + " Especial";
-                    listaDeMapasEspecialesDisponibles.RemoveAt(indiceAleatorioEspecial);
+                    if (salaEspecialgenerada == false)
+                    {
+                        int indiceAleatorioEspecial = Random.Range(0, listaDeMapasEspecialesDisponibles.Count);
+                        GameObject nuevoMapaEspecial = Instantiate(listaDeMapasEspecialesDisponibles[indiceAleatorioEspecial], posicionSala, Quaternion.identity);
+                        nuevoMapaEspecial.name = "Level, " + (i + numeroDeSalasNormales) + " Especial";
+                        listaDeMapasEspecialesDisponibles.RemoveAt(indiceAleatorioEspecial);
+                        salaEspecialgenerada = true;
+
+                    }
+                    else                    
+                    {
+                        salaEspecialgenerada = false;
+                    }
+                    
                 }
                 
                 else if ((probabilidadSalasNormales + probabilidadSalasEspeciales) > valorAleatorio )
@@ -89,6 +101,7 @@ public class LevelManager : MonoBehaviour
                     // 1. Instanciamos y guardamos la copia en la variable "nuevoEnemigo"
                     GameObject nuevoMapa = Instantiate(listaDeMapas[indiceAleatorio], posicionSala , Quaternion.identity);
                     nuevoMapa.name = "Level," + (i + numeroDeSalasNormales);
+                    salaEspecialgenerada = false;
                 }
             }
 
@@ -100,6 +113,7 @@ public class LevelManager : MonoBehaviour
 
         for (int i = 0; i < numeroDeSalasNormales; i++)
         {
+
             if (posicionSala == posicionTienda)
             {
                 int indiceAleatorioTiendas = Random.Range(0, listaDeTiendas.Length);
@@ -110,13 +124,25 @@ public class LevelManager : MonoBehaviour
             {
 
                 float valorAleatorio = Random.Range(0f, 100f);
-                if (valorAleatorio < probabilidadSalasEspeciales && listaDeMapasEspecialesDisponibles.Count > 0)
+                if (valorAleatorio < probabilidadSalasEspeciales && listaDeMapasEspecialesDisponibles.Count > 0 )
                 {
-                    int indiceAleatorioEspecial = Random.Range(0, listaDeMapasEspecialesDisponibles.Count);
-                    GameObject nuevoMapaEspecial = Instantiate(listaDeMapasEspecialesDisponibles[indiceAleatorioEspecial], posicionSala, Quaternion.identity);
-                    nuevoMapaEspecial.name = "Level, " + (i + (numeroDeSalasNormales * 2)) + " Especial";
-                    listaDeMapasEspecialesDisponibles.RemoveAt(indiceAleatorioEspecial);
+                    
+                    if (salaEspecialgenerada == false)
+                    {
+                        int indiceAleatorioEspecial = Random.Range(0, listaDeMapasEspecialesDisponibles.Count);
+                        GameObject nuevoMapaEspecial = Instantiate(listaDeMapasEspecialesDisponibles[indiceAleatorioEspecial], posicionSala, Quaternion.identity);
+                        nuevoMapaEspecial.name = "Level, " + (i + (numeroDeSalasNormales * 2)) + " Especial";
+                        listaDeMapasEspecialesDisponibles.RemoveAt(indiceAleatorioEspecial);
+                        salaEspecialgenerada = true;
+                    }
+                    else
+                    {
+                        salaEspecialgenerada = false;
+
+                    }
+                    
                 }
+
                 
                 else if ((probabilidadSalasNormales + probabilidadSalasEspeciales) > valorAleatorio )
                 {
@@ -124,7 +150,9 @@ public class LevelManager : MonoBehaviour
                     // 1. Instanciamos y guardamos la copia en la variable "nuevoEnemigo"
                     GameObject nuevoMapa = Instantiate(listaDeMapas[indiceAleatorio], posicionSala , Quaternion.identity);
                     nuevoMapa.name = "Level," + (i + (numeroDeSalasNormales * 2));
+                    salaEspecialgenerada = false;
                 }
+
             }
 
             

@@ -5,9 +5,9 @@ public class EnemyScript : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public Color colorDaño = Color.red; 
     
-    private Color colorOriginal;
-    private Renderer meshRenderer;
-    private Rigidbody rb;
+    protected Color colorOriginal;
+    protected Renderer meshRenderer;
+    protected Rigidbody rb;
     public GameObject player; // Referencia al jugador para aplicar la fuerza en la dirección correcta
     
 
@@ -15,7 +15,7 @@ public class EnemyScript : MonoBehaviour
     public MainCharacterMovement PlayerScript; // Referencia al script del jugador para acceder a sus variables
     void Start()
     {
-        GameObject player = GameObject.FindWithTag("Player"); // Asegúrate de que el jugador tenga el tag "Player"
+        player = GameObject.FindWithTag("Player"); // Asegúrate de que el jugador tenga el tag "Player"
         if (player != null)
         {
             PlayerScript = player.GetComponent<MainCharacterMovement>(); // Obtenemos el script del jugador para acceder a sus variables
@@ -29,7 +29,7 @@ public class EnemyScript : MonoBehaviour
     }
     void Update()
     {
-        
+        Moverse();
         // Aquí podrías agregar lógica para el comportamiento del enemigo, como perseguir al jugador, atacar, etc.
     }
     
@@ -58,6 +58,10 @@ public class EnemyScript : MonoBehaviour
         meshRenderer.material.color = colorOriginal;
         rb.isKinematic = true; // Volvemos a hacer que el enemigo no se mueva por la física después de ser golpeado
         
+    }
+    protected virtual void Moverse()
+    {
+        // Aquí puedes implementar la lógica para reducir la salud del enemigo, reproducir animaciones de daño, etc.
     }
 
 }

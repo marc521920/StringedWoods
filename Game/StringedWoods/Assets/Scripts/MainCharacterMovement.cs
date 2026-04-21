@@ -88,6 +88,8 @@ public class MainCharacterMovement : MonoBehaviour
         // (Gravedad y Salto)
         if (controller.isGrounded) 
         {
+            animator.SetBool("inGround", true);
+            animator.SetBool("Jump", false);
             salto = false; // Reseteamos el estado de salto al estar en el suelo
            
             // Le damos un valor ligeramente negativo para que el personaje se mantenga pegado al suelo
@@ -100,6 +102,7 @@ public class MainCharacterMovement : MonoBehaviour
             if (Input.GetKey(KeyCode.Space) && salto == false && canJump == true) {
                 if (soltadoBotonSalto){
                     salto = true;
+                    animator.SetBool("Jump", true);
                 
                     velocidadY = jumpSpeed; // La velocidad de salto se multiplica por el valor cargado
 
@@ -115,6 +118,7 @@ public class MainCharacterMovement : MonoBehaviour
         }
         else 
         {
+            animator.SetBool("inGround", false);
             // Si NO estamos en el suelo (estamos en el aire), aplicamos la gravedad poco a poco
             velocidadY -= gravity * Time.deltaTime;
 
