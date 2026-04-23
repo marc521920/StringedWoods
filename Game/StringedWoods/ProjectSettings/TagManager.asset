@@ -9,6 +9,7 @@ TagManager:
   - limitXLeft
   - limitZForward
   - limitZBackward
+  - Enemy
   layers:
   - Default
   - TransparentFX

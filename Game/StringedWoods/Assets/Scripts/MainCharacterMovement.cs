@@ -41,6 +41,11 @@ public class MainCharacterMovement : MonoBehaviour
     // Usaremos esta variable solo para la caída y el salto
     public float velocidadY = 0.0f; 
 
+    [Header("Ajustes de Daño")]
+    private bool estaEmpujado = false; // Para perder el control mientras salimos volando
+    public float duracionEmpuje = 0.2f; // Cuánto dura el "vuelo" hacia atrás
+    public float fuerzaDeEmpuje = 10f; // Fuerza con la que el personaje es lanzado hacia atrás al recibir daño
+    // (La variable fuerzaDeEmpuje ya la tienes)
     // animacion
     [Header("Animator")]
     public Animator animator;
@@ -63,7 +68,7 @@ public class MainCharacterMovement : MonoBehaviour
 
     void Update() 
     {
-       if (isDashing) return;
+       if (isDashing|| estaEmpujado) return;
         //Debug.Log(velocidadY);
         // Calculamos el movimiento horizontal SIEMPRE (para poder movernos en el aire)
         Vector3 moveDirection = new Vector3(-Input.GetAxis("Horizontal"), 0, -Input.GetAxis("Vertical"));
@@ -181,6 +186,40 @@ public class MainCharacterMovement : MonoBehaviour
                 }
             }
     }
+
+
+public void RecibirDaño(float fuerza, Vector3 direccionHaciaAtras)
+{
+    Debug.Log("¡Ay! ¡Me han dado!");
+    // Aquí puedes quitar vida: GameManager.Instance.vidaActual -= 10;
+    
+    // Lanzamos la corrutina que nos empujará físicamente
+    StartCoroutine(RutinaKnockback(fuerza, direccionHaciaAtras));
+}
+
+IEnumerator RutinaKnockback(float fuerza, Vector3 direccion)
+{
+    estaEmpujado = true; // Bloqueamos el control del jugador
+    
+    // Opcional: Le damos un pequeño salto vertical para que parezca un golpe duro
+    
+
+    float tiempoPasado = 0f;
+
+    // Mientras dure el tiempo de empuje...
+    while (tiempoPasado < duracionEmpuje)
+    {
+        tiempoPasado += Time.deltaTime;
+        
+        // Movemos al jugador violentamente hacia atrás
+        controller.Move(direccion * fuerza * Time.deltaTime);
+        
+        yield return null;
+    }
+    yield return new WaitForSeconds(0.2f); // Pequeña pausa después de empujar para que el jugador no reciba control de golpe
+
+    estaEmpujado = false; // Le devolvemos el control al jugador
+}
 
 
 

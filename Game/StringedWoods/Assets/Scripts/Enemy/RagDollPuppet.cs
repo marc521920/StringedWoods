@@ -1,23 +1,31 @@
 using UnityEngine;
 using System.Collections;
+
 public class RagDollPuppet : EnemyScript
 {
     [Header("Ajustes de Visión")]
     public float rangoDeVision = 10f;
     public float anguloDeVision = 65f;
     public LayerMask capaObstaculos;
+    
+    [Header("Ajustes de Movimiento")]
     public float velocity = 3f;
     public float velocityCaminando = 1f;
-    float rotacionInicial; 
-    float rotacionFinal;
-    private bool estaGirando = false;
-    public float tiempoDeGiro = 1f; // Duración del giro en segundos
+    public float tiempoDeGiro = 1f; 
+    public float velocidadDeGiro = 45f; // Grados por segundo
     
+    private bool estaGirando = false;
     private bool jugadorDetectado = false;
+    private bool Golpeado = false; // Nueva variable para rastrear si el enemigo ha sido golpeado
+
+    [Header("Ajustes de Daño al Jugador")]
+    public float fuerzaDeMiGolpe = 7f;
+
+    // (He borrado 'float rotacionInicial' de aquí arriba porque creaba conflictos con la corrutina)
 
     protected override void Moverse()
     {
-
+        rb.isKinematic = false; // El enemigo no se ve afectado por la física mientras patrulla o persigue
         // 1. Calculamos la distancia y dirección
         float distanciaAlJugador = Vector3.Distance(transform.position, player.transform.position);
         Vector3 direccionAlJugador = (player.transform.position - transform.position).normalized;
@@ -27,7 +35,6 @@ public class RagDollPuppet : EnemyScript
         float anguloAlJugador = Vector3.Angle(transform.forward, direccionAlJugador);
         bool enAngulo = anguloAlJugador <= anguloDeVision;
 
-        // Raycast para ver si hay paredes
         bool tieneLineaDeVision = false;
         if (enRango && enAngulo)
         {
@@ -44,120 +51,122 @@ public class RagDollPuppet : EnemyScript
             {
                 jugadorDetectado = true;
                 Debug.Log("¡TE VEO! Empezando persecución.");
+                
+                // TRUCO PRO: Si estaba girando en su patrulla, cancelamos el giro de golpe para que te persiga
+                StopAllCoroutines(); 
+                estaGirando = false; 
             }
         }
         else
         {
             if (jugadorDetectado)
             {
-                rb.isKinematic = true; // Aseguramos que el enemigo no sea afectado por la física mientras se mueve
                 jugadorDetectado = false;
                 Debug.Log("Te perdí...");
-                // animacion de que se quede mirando donde estabas
-                // animacion de que lo ha perdido
+            }
+            else if (Golpeado)
+            {
+                // Si no ve al jugador y no está girando, tiene una pequeña probabilidad de empezar a girar para patrullar
+                jugadorDetectado = true; // Aseguramos que no esté en modo persecución
+                Golpeado = false; // Reseteamos el estado de golpeado para que pueda patrullar normalmente
             }
         }
 
-        // --- LÓGICA DE PERSECUCIÓN ---
+        // --- LÓGICA DE MOVIMIENTO ---
         if (jugadorDetectado)
         {
-            rb.isKinematic = false; // Aseguramos que el enemigo no sea afectado por la física mientras se mueve
-            // A) Rotar hacia el jugador (mirarlo)
-            // Creamos una rotación que ignore la altura (Y) para que el enemigo no se incline hacia arriba/abajo
+            // MODO PERSECUCIÓN
             Vector3 posicionObjetivo = new Vector3(player.transform.position.x, transform.position.y, player.transform.position.z);
             transform.LookAt(posicionObjetivo);
-
-            // B) Moverse hacia el jugador
-            // Usamos la velocidad que heredas de EnemyScript
             transform.position = Vector3.MoveTowards(transform.position, posicionObjetivo, velocity * Time.deltaTime);
         }
         else
         {
-           
+            // MODO PATRULLA
+            
+            // Regla de oro: SOLO caminamos y pensamos si NO estamos en medio de un giro
+            if (!estaGirando)
+            {
+                // Usamos transform.position en lugar de linearVelocity para evitar conflictos físicos raros
+                transform.position += transform.forward * velocityCaminando * Time.deltaTime;
+                
+                Debug.DrawRay(transform.position, transform.forward * 1.5f, Color.green);
 
-            int valorAleatorio = Random.Range(0, 1000);
-            rb.isKinematic = false; // Aseguramos que el enemigo no sea afectado por la física mientras se mueve
-            rb.linearVelocity = transform.forward  * velocityCaminando;
-            Debug.DrawRay(transform.position, transform.forward * 3f, Color.green);
-            if (valorAleatorio < 2) // 30% de probabilidad de cambiar de dirección
-            {
-                StartCoroutine(GirarProgresivamente());
+                // 1. Si detecta pared -> Gira
+                if (Physics.Raycast(transform.position, transform.forward, 1.5f))
+                {
+                    StartCoroutine(GirarHastaDespejar());
+                }
+                // 2. Si no hay pared, tiene un 0.2% de probabilidad de girar porque sí (patrulla aleatoria)
+                else
+                {
+                    int valorAleatorio = Random.Range(0, 1000);
+                    if (valorAleatorio < 2) 
+                    {
+                        StartCoroutine(GirarHastaDespejar());
+                    }
+                }
             }
-            if (!Physics.Raycast(transform.position, transform.forward, 3f))
-            {
-
-            }
-            else
-            {
-                 StartCoroutine(GirarProgresivamente());
-            }
-            // Aquí podrías agregar lógica para patrullar o quedarse quieto, dependiendo de tu diseño de juego
         }
     }
 
-    IEnumerator GirarProgresivamente()
+IEnumerator GirarHastaDespejar()
     {
-
         estaGirando = true;
+        float direccionGiro = Random.Range(0, 2) == 0 ? 1f : -1f;
 
-        // 1. Calculamos el ángulo aleatorio que querías (entre 90 y 180)
-        float gradosAleatorios = Random.Range(-90f, 90f);
-
-        // 2. Guardamos dónde estamos AHORA
-        Quaternion rotacionInicial = transform.rotation;
-        
-        // 3. Calculamos dónde queremos TERMINAR
-        // (Multiplicar Quaternions en Unity equivale a "sumar" rotaciones)
-        Quaternion rotacionFinal = rotacionInicial * Quaternion.Euler(0, gradosAleatorios, 0);
-
-        float tiempoPasado = 0f;
-
-        // 4. El bucle mágico: MIENTRAS no hayamos consumido todo el tiempo...
-        while (tiempoPasado < tiempoDeGiro)
+        // FASE 1: Esquivar el obstáculo
+        while (Physics.Raycast(transform.position, transform.forward, 3f, capaObstaculos))
         {
-            tiempoPasado += Time.deltaTime; // Sumamos el tiempo de este frame
-            
-            // Calculamos el porcentaje del viaje (de 0.0 a 1.0)
-            float porcentaje = tiempoPasado / tiempoDeGiro;
-
-            // Slerp hace la transición suave entre la rotación inicial y la final
-            transform.rotation = Quaternion.Slerp(rotacionInicial, rotacionFinal, porcentaje);
-
-            yield return null; // Pausamos hasta el siguiente frame
+            transform.Rotate(0, direccionGiro * velocidadDeGiro * Time.deltaTime, 0);
+            transform.position += transform.forward * (velocityCaminando * 0.5f) * Time.deltaTime;
+            yield return null; 
         }
 
-        // 5. Por si acaso los decimales fallan, aseguramos que quede EXACTAMENTE en el ángulo final
-        transform.rotation = rotacionFinal;
-        if (Physics.Raycast(transform.position, transform.forward, 3f))
+        // FASE 2: Margen de seguridad (Ahora con aleatoriedad)
+        // Calculamos el ángulo extra aleatorio para que no sea predecible
+        float gradosObjetivo = Random.Range(25f, 100f);
+        float gradosGirados = 0f; // Llevamos la cuenta de cuánto hemos girado en esta fase
+
+        // Mientras no hayamos alcanzado nuestro objetivo aleatorio...
+        while (gradosGirados < gradosObjetivo)
         {
-            Quaternion rotacionInicial = transform.rotation;
-        
-            // 3. Calculamos dónde queremos TERMINAR
-            // (Multiplicar Quaternions en Unity equivale a "sumar" rotaciones)
-            Quaternion rotacionFinal = rotacionInicial * Quaternion.Euler(0, gradosAleatorios, 0);
-
-            float tiempoPasado = 0f;
-
-            // 4. El bucle mágico: MIENTRAS no hayamos consumido todo el tiempo...
-            while (tiempoPasado < tiempoDeGiro)
-            {
-            tiempoPasado += Time.deltaTime; // Sumamos el tiempo de este frame
+            float giroActual = velocidadDeGiro * Time.deltaTime;
+            transform.Rotate(0, direccionGiro * giroActual, 0);
             
-            // Calculamos el porcentaje del viaje (de 0.0 a 1.0)
-            float porcentaje = tiempoPasado / tiempoDeGiro;
-
-            // Slerp hace la transición suave entre la rotación inicial y la final
-            transform.rotation = Quaternion.Slerp(rotacionInicial, rotacionFinal, porcentaje);
-
-            yield return null; // Pausamos hasta el siguiente frame
-            }
-
+            // Sigue completando la curva suave
+            transform.position += transform.forward * (velocityCaminando * 0.5f) * Time.deltaTime;
             
+            gradosGirados += giroActual;
+            yield return null;
         }
-        
-            estaGirando = false;
+
+        estaGirando = false;
     }
+    protected override void RecibirDaño()
+    {
+        Golpeado = true;
+    }
+    void OnCollisionEnter(Collision collision)
+    {
+        // Si con lo que me acabo de chocar es el Jugador...
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            // 1. Buscamos tu script en el jugador (cambia 'MainCharacterMovement' por el nombre de tu script si es otro)
+            MainCharacterMovement PlayerScript = collision.gameObject.GetComponent<MainCharacterMovement>();
 
-    // Mantén tu OnDrawGizmos igual, es perfecto para debugear
-    private void OnDrawGizmos() { /* ... tu código anterior ... */ }
+            // Si lo hemos encontrado...
+            if (PlayerScript != null)
+            {
+                // 2. Calculamos la dirección del golpe: Desde MÍ (Enemigo) hacia el JUGADOR
+                Vector3 direccionGolpe = (collision.transform.position - transform.position).normalized;
+                
+                // Anulamos la Y para que no lo mande a volar al espacio
+                direccionGolpe.y = 0;
+
+                // 3. ¡Le damos la orden al jugador de que reciba el daño y salga volando!
+                PlayerScript.RecibirDaño(fuerzaDeMiGolpe, direccionGolpe);
+            }
+        }
+    }
 }

@@ -41,7 +41,7 @@ public class EnemyScript : MonoBehaviour
             {
                 rb.isKinematic = false; // Permite que el enemigo sea afectado por la física
                 Debug.Log("¡Enemigo golpeado!");
-                //RecibirDaño();
+                RecibirDaño();
                 Vector3 direccionHaciaAtacante = other.transform.position - transform.position;
                 direccionHaciaAtacante = direccionHaciaAtacante.normalized;
                 rb.AddForce(-direccionHaciaAtacante * PlayerScript.fuerzaGolpe, ForceMode.Impulse); // Aplica una fuerza hacia atrás al enemigo
@@ -60,6 +60,10 @@ public class EnemyScript : MonoBehaviour
         
     }
     protected virtual void Moverse()
+    {
+        // Aquí puedes implementar la lógica para reducir la salud del enemigo, reproducir animaciones de daño, etc.
+    }
+    protected virtual void RecibirDaño()
     {
         // Aquí puedes implementar la lógica para reducir la salud del enemigo, reproducir animaciones de daño, etc.
     }
