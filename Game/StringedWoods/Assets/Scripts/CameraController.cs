@@ -42,9 +42,9 @@ public class CameraController : MonoBehaviour
         if (player.transform.position.x >= posicionInicial.x)
         {
             progresoY = Mathf.InverseLerp(posicionInicial.x, limitXRight.transform.position.x, player.transform.position.x);
-            Debug.Log("progresoY: " + limitXRight.transform.position.x);
+            
             angleY = Mathf.Lerp(180f, 190f, progresoY);
-            Debug.Log("progresoY: " + player.transform.position.x);
+            
         }
         else 
         {

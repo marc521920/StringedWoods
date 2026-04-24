@@ -149,11 +149,16 @@ IEnumerator GirarHastaDespejar()
     }
     void OnCollisionEnter(Collision collision)
     {
-        // Si con lo que me acabo de chocar es el Jugador...
         if (collision.gameObject.CompareTag("Player"))
         {
-            // 1. Buscamos tu script en el jugador (cambia 'MainCharacterMovement' por el nombre de tu script si es otro)
             MainCharacterMovement PlayerScript = collision.gameObject.GetComponent<MainCharacterMovement>();
+            // Si estás por encima de su cabeza rebotando, el enemigo ignora el choque y no te pega
+            if (collision.transform.position.y > transform.position.y + 0.8f)
+            {
+                return; 
+            }
+            // 1. Buscamos tu script en el jugador (cambia 'MainCharacterMovement' por el nombre de tu script si es otro)
+            
 
             // Si lo hemos encontrado...
             if (PlayerScript != null)
@@ -167,6 +172,11 @@ IEnumerator GirarHastaDespejar()
                 // 3. ¡Le damos la orden al jugador de que reciba el daño y salga volando!
                 PlayerScript.RecibirDaño(fuerzaDeMiGolpe, direccionGolpe);
             }
+
+            // (Aquí abajo ya iría el código normal donde el enemigo te hace daño si te choca de frente)
         }
+        // Si con lo que me acabo de chocar es el Jugador...
+
     }
+
 }

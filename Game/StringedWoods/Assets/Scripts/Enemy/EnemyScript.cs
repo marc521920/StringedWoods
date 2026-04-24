@@ -23,6 +23,7 @@ public class EnemyScript : MonoBehaviour
         meshRenderer = GetComponent<Renderer>();
         rb = GetComponent<Rigidbody>();
         rb.isKinematic = true; // El enemigo no se moverá por la física hasta que sea golpeado
+         // Desactivamos la gravedad para que no caiga mientras patrulla o persigue
         
        
         colorOriginal = meshRenderer.material.color;

@@ -10,6 +10,7 @@ TagManager:
   - limitZForward
   - limitZBackward
   - Enemy
+  - head
   layers:
   - Default
   - TransparentFX

@@ -187,6 +187,28 @@ public class MainCharacterMovement : MonoBehaviour
             }
     }
 
+   void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        // OJO: Asegúrate de que el tag aquí coincida exactamente con las mayúsculas/minúsculas de Unity
+        if (hit.gameObject.CompareTag("head")) 
+        {
+            // Si estamos cayendo y tocamos su cabeza desde arriba...
+            if (velocidadY < 0 && transform.position.y > hit.transform.position.y)
+            {
+                // 1. REBOTE AUTOMÁTICO: Te empuja hacia arriba para echarte de la cabeza.
+                // Ponle un número menor que tu jumpSpeed (ej. 10f o 12f) para que sea un rebote molesto.
+                velocidadY = 12f; 
+                
+                // 2. Le decimos a tu Update que el personaje está en el aire
+                salto = true; 
+
+                // 3. Anulamos el empujón/daño por si el cuerpo del enemigo intentó pegarte
+                estaEmpujado = false; 
+                
+                Debug.Log("¡Rebote automático! Te expulsa de la cabeza sin hacer daño.");
+            }
+        }
+    }
 
 public void RecibirDaño(float fuerza, Vector3 direccionHaciaAtras)
 {
