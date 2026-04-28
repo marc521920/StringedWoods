@@ -9,6 +9,7 @@ public class EnemyScript : MonoBehaviour
     protected Renderer meshRenderer;
     protected Rigidbody rb;
     public GameObject player; // Referencia al jugador para aplicar la fuerza en la dirección correcta
+    public float vida;
     
 
 
@@ -22,7 +23,7 @@ public class EnemyScript : MonoBehaviour
         }
         meshRenderer = GetComponent<Renderer>();
         rb = GetComponent<Rigidbody>();
-        rb.isKinematic = true; // El enemigo no se moverá por la física hasta que sea golpeado
+        rb.isKinematic = false; // El enemigo no se moverá por la física hasta que sea golpeado
          // Desactivamos la gravedad para que no caiga mientras patrulla o persigue
         
        
@@ -32,9 +33,13 @@ public class EnemyScript : MonoBehaviour
     {
         Moverse();
         // Aquí podrías agregar lógica para el comportamiento del enemigo, como perseguir al jugador, atacar, etc.
+        if (vida <= 0)
+        {
+            Destroy(gameObject); // Destruye el enemigo si su vida llega a 0 o menos
+        }
     }
     
-    void OnTriggerEnter(Collider other)
+    protected virtual void OnTriggerEnter(Collider other)
     {
         
          if (other.CompareTag("Ataque")) 
@@ -46,8 +51,10 @@ public class EnemyScript : MonoBehaviour
                 Vector3 direccionHaciaAtacante = other.transform.position - transform.position;
                 direccionHaciaAtacante = direccionHaciaAtacante.normalized;
                 rb.AddForce(-direccionHaciaAtacante * PlayerScript.fuerzaGolpe, ForceMode.Impulse); // Aplica una fuerza hacia atrás al enemigo
+                meshRenderer.material.color = colorDaño;
             }
-        meshRenderer.material.color = colorDaño;
+            
+        
             
         // Extra: Llamamos a la función de restaurar color después de medio segundo (0.5f)
         Invoke("RestaurarColor", 0.5f);

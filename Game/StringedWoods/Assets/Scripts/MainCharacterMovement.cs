@@ -28,7 +28,9 @@ public class MainCharacterMovement : MonoBehaviour
     [Header("Attack Settings")]
     public float attackRange = 2f; // Rango del ataque
     public float attackDamage = 10f; // Daño del ataque
-    public GameObject attackArea; // Un objeto vacío que representa el área de ataque, con un collider para detectar enemigos
+    public GameObject attackArea; // Golpe 1
+    public GameObject attackAreaCombo2; // Golpe 2
+    public GameObject attackAreaCombo3; // Golpe 3 (Fin del combo)
     public GameObject attackAreaJump; // Un objeto vacío que representa el área de ataque para el salto
     public GameObject attackAreaCargado; // Un objeto vacío que representa el área de ataque cargado
     public GameObject attackAreaDash; // Un objeto vacío que representa el área de ataque para el dash
@@ -38,14 +40,21 @@ public class MainCharacterMovement : MonoBehaviour
     public bool canAttack = true; // Para controlar el tiempo entre ataques
     public float cooldownAttackNumber = 0.5f; // Tiempo de espera entre ataques
     public float cooldownAttackCharged = 2f; // Tiempo que se debe mantener presionado el botón para hacer un ataque cargado
+    private bool isInvulnerable = false; // Activamos el estado de invulnerabilidad
     // Usaremos esta variable solo para la caída y el salto
     public float velocidadY = 0.0f; 
+  
+
+
+    // ... el resto de tus variables ...
 
     [Header("Ajustes de Daño")]
     private bool estaEmpujado = false; // Para perder el control mientras salimos volando
     public float duracionEmpuje = 0.2f; // Cuánto dura el "vuelo" hacia atrás
     public float fuerzaDeEmpuje = 10f; // Fuerza con la que el personaje es lanzado hacia atrás al recibir daño
     // (La variable fuerzaDeEmpuje ya la tienes)
+    private int layerPlayer;
+    private int layerEnemy;
     // animacion
     [Header("Animator")]
     public Animator animator;
@@ -64,6 +73,10 @@ public class MainCharacterMovement : MonoBehaviour
         cooldownAttackNumber = GameManager.Instance.velocidadDeAtaque; // Tiempo de espera entre ataques
         fuerzaGolpe = GameManager.Instance.fuerzaDeEmpuje; // Fuerza del golpe que se aplicará al enemigo
         canAttack = true; // Permitimos atacar al inicio del juego
+
+
+        layerPlayer = LayerMask.NameToLayer("player");
+        layerEnemy = LayerMask.NameToLayer("enemy");
     }
 
     void Update() 
@@ -189,6 +202,7 @@ public class MainCharacterMovement : MonoBehaviour
 
    void OnControllerColliderHit(ControllerColliderHit hit)
     {
+        if (isInvulnerable == true) return; // Si estamos invulnerables, no recibimos daño ni empujones
         // OJO: Asegúrate de que el tag aquí coincida exactamente con las mayúsculas/minúsculas de Unity
         if (hit.gameObject.CompareTag("head")) 
         {
@@ -212,6 +226,7 @@ public class MainCharacterMovement : MonoBehaviour
 
 public void RecibirDaño(float fuerza, Vector3 direccionHaciaAtras)
 {
+    if (isInvulnerable == true) return; // Si estamos invulnerables, no recibimos daño ni empujones
     Debug.Log("¡Ay! ¡Me han dado!");
     // Aquí puedes quitar vida: GameManager.Instance.vidaActual -= 10;
     
@@ -238,6 +253,7 @@ IEnumerator RutinaKnockback(float fuerza, Vector3 direccion)
         
         yield return null;
     }
+    StartCoroutine(Invulnerabilidad()); // Iniciamos la rutina de invulnerabilidad después de recibir el golpe
     yield return new WaitForSeconds(0.2f); // Pequeña pausa después de empujar para que el jugador no reciba control de golpe
 
     estaEmpujado = false; // Le devolvemos el control al jugador
@@ -285,92 +301,145 @@ IEnumerator RutinaKnockback(float fuerza, Vector3 direccion)
 
 
     // Rutina de ataque
+    // Rutina de ataque
     IEnumerator Atack()
     {
-        float rotationSpeedBackup = rotationSpeed; // Guardamos la velocidad de rotación original para restaurarla después del ataque
-        float tiempoPresionado = 0f; // Contador para medir cuánto tiempo se mantiene presionado el botón de ataque
+        float rotationSpeedBackup = rotationSpeed; 
+        float tiempoPresionado = 0f; 
+        
         while (Input.GetMouseButton(0))
         {
-
-            
-            
             tiempoPresionado += Time.deltaTime;
             if (tiempoPresionado >= 0.3f) 
             {
-                rotationSpeed = rotationSpeed/1.1f; // Reducimos la velocidad de rotación para hacer el ataque más lento y pesado
+                rotationSpeed = rotationSpeed/1.1f; 
                 speed = speed/1.1f;
-                
                 canJump = false;
+                
                 if (tiempoPresionado >= cooldownAttackCharged && isDashing == true) 
                 {
-                    rotationSpeed = rotationSpeedBackup; // Restauramos la velocidad de rotación original
-                    speed = GameManager.Instance.velocidadDeMovimiento; // Aseguramos que la velocidad vuelva a su valor normal
+                    rotationSpeed = rotationSpeedBackup; 
+                    speed = GameManager.Instance.velocidadDeMovimiento; 
                     canJump = true;
-                    StartCoroutine(AttackDash()); // Si se ha mantenido presionado el tiempo suficiente para un ataque cargado, hacemos un ataque de salto
-                    yield break; // Si se ha mantenido presionado el tiempo suficiente para un ataque cargado, salimos del bucle
+                    StartCoroutine(AttackDash()); 
+                    yield break; 
                 }
                 else if (tiempoPresionado < cooldownAttackCharged && isDashing == true) 
-                {    // Si se ha soltado el botón antes de tiempo, pero estamos dasheando, hacemos un ataque de salto normal
-                    rotationSpeed = rotationSpeedBackup; // Restauramos la velocidad de rotación original
-                    speed = GameManager.Instance.velocidadDeMovimiento; // Aseguramos que la velocidad vuelva a su valor normal
+                {    
+                    rotationSpeed = rotationSpeedBackup; 
+                    speed = GameManager.Instance.velocidadDeMovimiento; 
                     canJump = true;
-                    yield break; // Si se ha soltado el botón antes de tiempo, pero estamos dasheando, salimos del bucle
+                    yield break; 
                 }
-                // Si se ha mantenido presionado el tiempo suficiente para un ataque cargado, salimos del bucle
             }
-            
-            // yield return null le dice a Unity: "Pausa el bucle aquí y continúa en el siguiente frame"
             yield return null; 
         }
-        if (tiempoPresionado >= cooldownAttackCharged) // Si el botón se ha mantenido presionado durante al menos medio segundo, hacemos un ataque cargado
+
+        // --- ATAQUE CARGADO ---
+        if (tiempoPresionado >= cooldownAttackCharged) 
         {
             fuerzaGolpe = fuerzaGolpe*2f;
             canAttack = false;
-            
-            attackAreaCargado.SetActive(true); // Activamos el área de ataque
-            velocidadY = velocidadY/2f; // Detenemos el movimiento vertical durante el ataque
-            // Aquí podrías reproducir una animación de ataque, por ejemplo:
-            // animator.SetTrigger("Attack");
+            attackAreaCargado.SetActive(true); 
+            velocidadY = velocidadY/2f; 
 
-            // Esperamos un momento para simular el tiempo de ataque
-            yield return new WaitForSeconds(0.2f); // Ajusta este valor según la duración de tu animación
+            yield return new WaitForSeconds(0.2f); 
             
             attackAreaCargado.SetActive(false);
-            rotationSpeed = rotationSpeedBackup; // Restauramos la velocidad de rotación original
-            speed = GameManager.Instance.velocidadDeMovimiento; // Desactivamos el área de ataque después de un momento
-            isAttacking = false; // Terminamos el ataque
+            rotationSpeed = rotationSpeedBackup; 
+            speed = GameManager.Instance.velocidadDeMovimiento; 
+            isAttacking = false; 
             canMove = true;
             canJump = true;
-             // Desactivamos la posibilidad de atacar inmediatamente después
             StartCoroutine(cooldownAttack());
         }
-        else if (tiempoPresionado < cooldownAttackCharged) // Si el botón se ha soltado antes de tiempo, hacemos un ataque normal
+        // --- ATAQUE NORMAL (SISTEMA DE COMBO) ---
+        else if (tiempoPresionado < cooldownAttackCharged) 
         {
             isAttacking = true;
-            rotationSpeed = rotationSpeedBackup; // Restauramos la velocidad de rotación original
-            speed = GameManager.Instance.velocidadDeMovimiento; // Aseguramos que la velocidad vuelva a su valor normal
+            rotationSpeed = rotationSpeedBackup; 
+            speed = GameManager.Instance.velocidadDeMovimiento; 
             fuerzaGolpe = GameManager.Instance.fuerzaDeEmpuje; 
             canMove = true;
             canJump = true;
-            // Aseguramos que la fuerza de golpe vuelva a su valor normal
             canAttack = false;
-            animator.SetBool("basicAttack", true);
-             // Marcamos que estamos atacando
-            attackArea.SetActive(true); // Activamos el área de ataque
-            velocidadY = velocidadY/2f; // Detenemos el movimiento vertical durante el ataque
-            // Aquí podrías reproducir una animación de ataque, por ejemplo:
-            // animator.SetTrigger("Attack");
 
-            // Esperamos un momento para simular el tiempo de ataque
-            yield return new WaitForSeconds(0.3f); // Ajusta este valor según la duración de tu animación
+            // --- GOLPE 1 ---
+            animator.SetBool("basicAttack", true);
+            attackArea.SetActive(true); 
+            velocidadY = velocidadY/2f; 
+
+            float timer = 0f;
+            bool comboQueued = false; // Memoria de si el jugador pulsó click de nuevo
+
+            // En lugar de WaitForSeconds, usamos un bucle para "escuchar" clics mientras dura el ataque
+            while (timer < 0.3f) 
+            {
+                if (Input.GetMouseButtonDown(0)) comboQueued = true;
+                timer += Time.deltaTime;
+                yield return null;
+            }
             animator.SetBool("basicAttack", false);
-            attackArea.SetActive(false); // Desactivamos el área de ataque después de un momento
-            isAttacking = false; // Terminamos el ataque
-             // Desactivamos la posibilidad de atacar inmediatamente después
+            attackArea.SetActive(false); 
+
+            // Ventana extra de tiempo (0.2s) para pulsar el botón por si el jugador es un poco lento
+            timer = 0f;
+            while (timer < 0.2f && !comboQueued)
+            {
+                if (Input.GetMouseButtonDown(0)) { comboQueued = true; break; }
+                timer += Time.deltaTime;
+                yield return null;
+            }
+
+            // --- GOLPE 2 (Si el jugador pulsó click a tiempo) ---
+            if (comboQueued)
+            {
+                comboQueued = false; // Reseteamos la memoria para el siguiente golpe
+                
+                // Aquí podrías añadir: animator.SetBool("combo2", true);
+                attackAreaCombo2.SetActive(true); 
+                velocidadY = velocidadY/2f; // Volvemos a frenar la caída por el nuevo golpe
+
+                timer = 0f;
+                while (timer < 0.3f) // Duración del golpe 2
+                {
+                    if (Input.GetMouseButtonDown(0)) comboQueued = true;
+                    timer += Time.deltaTime;
+                    yield return null;
+                }
+                // animator.SetBool("combo2", false);
+                attackAreaCombo2.SetActive(false); 
+
+                timer = 0f;
+                while (timer < 0.2f && !comboQueued)
+                {
+                    if (Input.GetMouseButtonDown(0)) { comboQueued = true; break; }
+                    timer += Time.deltaTime;
+                    yield return null;
+                }
+
+                // --- GOLPE 3 FINISH (Si volvió a pulsar click) ---
+                if (comboQueued)
+                {
+                    // Aquí podrías añadir: animator.SetBool("combo3", true);
+                    attackAreaCombo3.SetActive(true); 
+                    fuerzaGolpe = fuerzaGolpe * 1.5f; // ¡El último golpe del combo empuja más fuerte!
+                    velocidadY = velocidadY/2f;
+
+                    // Como es el último golpe, ya no guardamos memoria de clics, solo esperamos a que termine
+                    yield return new WaitForSeconds(0.4f); // Dura un poco más por ser el remate
+                    
+                    // animator.SetBool("combo3", false);
+                    attackAreaCombo3.SetActive(false); 
+                }
+            }
+
+            isAttacking = false; 
             StartCoroutine(cooldownAttack());
         }
-        // Aquí iría la lógica de ataque, por ejemplo, detectar enemigos cercanos y aplicar daño
     }
+        // Aquí iría la lógica de ataque, por ejemplo, detectar enemigos cercanos y aplicar daño
+    
     IEnumerator AttackJump()
     {
         while (!controller.isGrounded) 
@@ -424,5 +493,17 @@ IEnumerator RutinaKnockback(float fuerza, Vector3 direccion)
         yield return new WaitForSeconds(cooldownAttackNumber); // Tiempo de espera entre ataques, ajusta según tu animación
         canAttack = true; // Permitimos atacar de nuevo
         cooldownAttackNumber = GameManager.Instance.velocidadDeAtaque; // Aseguramos que el tiempo de espera vuelva a su valor normal
+    }
+    IEnumerator Invulnerabilidad()
+    {
+        isInvulnerable = true; // Activamos el estado de invulnerabilidad
+        Debug.Log("¡Ahora soy invulnerable por un momento!");
+        Physics.IgnoreLayerCollision(layerPlayer, layerEnemy, true);
+        // Aquí podrías añadir una animación de parpadeo o algo para indicar que estás invulnerable
+        yield return new WaitForSeconds(0.8f); // Duración de la invulnerabilidad, ajusta según tu animación
+        Physics.IgnoreLayerCollision(layerPlayer, layerEnemy, false);
+        isInvulnerable = false; // Desactivamos el estado de invulnerabilidad
+
+        // Aquí terminaría la animación de invulnerabilidad
     }
 }

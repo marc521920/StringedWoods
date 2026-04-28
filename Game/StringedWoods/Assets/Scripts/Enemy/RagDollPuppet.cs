@@ -3,6 +3,7 @@ using System.Collections;
 
 public class RagDollPuppet : EnemyScript
 {
+    public float vida = 100;
     [Header("Ajustes de Visión")]
     public float rangoDeVision = 10f;
     public float anguloDeVision = 65f;
@@ -77,7 +78,22 @@ public class RagDollPuppet : EnemyScript
         {
             // MODO PERSECUCIÓN
             Vector3 posicionObjetivo = new Vector3(player.transform.position.x, transform.position.y, player.transform.position.z);
-            transform.LookAt(posicionObjetivo);
+            
+            // 1. Calculamos la dirección exacta hacia el jugador
+            Vector3 direccionAlObjetivo = (posicionObjetivo - transform.position).normalized;
+
+            // 2. Prevenimos un error matemático si el enemigo y el jugador están en la misma coordenada exacta
+            if (direccionAlObjetivo != Vector3.zero)
+            {
+                // 3. Calculamos a qué rotación final queremos llegar
+                Quaternion rotacionDeseada = Quaternion.LookRotation(direccionAlObjetivo);
+
+                // 4. ¡La Magia! Rotamos poco a poco hacia esa dirección. 
+                // El número "5f" es la velocidad de giro. ¡Súbelo si quieres que gire más rápido!
+                transform.rotation = Quaternion.Slerp(transform.rotation, rotacionDeseada, 10f * Time.deltaTime);
+            }
+
+            // B) Moverse hacia el jugador
             transform.position = Vector3.MoveTowards(transform.position, posicionObjetivo, velocity * Time.deltaTime);
         }
         else
@@ -145,15 +161,18 @@ IEnumerator GirarHastaDespejar()
     }
     protected override void RecibirDaño()
     {
+        vida = vida - PlayerScript.attackDamage;
         Golpeado = true;
     }
-    void OnCollisionEnter(Collision collision)
+    protected override void OnTriggerEnter(Collider other)
     {
-        if (collision.gameObject.CompareTag("Player"))
+        base.OnTriggerEnter(other);
+        
+        if (other.gameObject.CompareTag("Player"))
         {
-            MainCharacterMovement PlayerScript = collision.gameObject.GetComponent<MainCharacterMovement>();
+            MainCharacterMovement PlayerScript = other.gameObject.GetComponent<MainCharacterMovement>();
             // Si estás por encima de su cabeza rebotando, el enemigo ignora el choque y no te pega
-            if (collision.transform.position.y > transform.position.y + 0.8f)
+            if (other.transform.position.y > transform.position.y + 0.8f)
             {
                 return; 
             }
@@ -164,7 +183,7 @@ IEnumerator GirarHastaDespejar()
             if (PlayerScript != null)
             {
                 // 2. Calculamos la dirección del golpe: Desde MÍ (Enemigo) hacia el JUGADOR
-                Vector3 direccionGolpe = (collision.transform.position - transform.position).normalized;
+                Vector3 direccionGolpe = (other.transform.position - transform.position).normalized;
                 
                 // Anulamos la Y para que no lo mande a volar al espacio
                 direccionGolpe.y = 0;
