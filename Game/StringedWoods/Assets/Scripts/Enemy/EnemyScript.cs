@@ -10,12 +10,14 @@ public class EnemyScript : MonoBehaviour
     protected Rigidbody rb;
     public GameObject player; // Referencia al jugador para aplicar la fuerza en la dirección correcta
     public float vida;
-    
+    public Animator animator; // Referencia al Animator para controlar las animaciones
+    protected bool recibiendoGolpe = false;
 
 
     public MainCharacterMovement PlayerScript; // Referencia al script del jugador para acceder a sus variables
-    void Start()
+    protected virtual void Start()
     {
+        animator = GetComponent<Animator>();
         player = GameObject.FindWithTag("Player"); // Asegúrate de que el jugador tenga el tag "Player"
         if (player != null)
         {
@@ -39,33 +41,80 @@ public class EnemyScript : MonoBehaviour
         }
     }
     
+    // Seguro anti-multigolpe
+  
+
     protected virtual void OnTriggerEnter(Collider other)
     {
-        
-         if (other.CompareTag("Ataque")) 
-        
-            {
-                rb.isKinematic = false; // Permite que el enemigo sea afectado por la física
-                Debug.Log("¡Enemigo golpeado!");
+         if (other.CompareTag("Ataque") && !recibiendoGolpe) 
+         {
+                recibiendoGolpe = true; 
+                
+                // 1. Matamos cualquier corrutina de patrulla/giro que el enemigo estuviera haciendo
+                StopAllCoroutines(); 
+                
+                animator.SetBool("isWalking", false); 
+                
+                
+                // 2. Apagamos la física para evitar el teletransporte por superposición de colliders
+                rb.isKinematic = true; 
+                rb.linearVelocity = Vector3.zero; 
+
+                Debug.Log("¡Enemigo golpeado! Calculando desde el arma...");
                 RecibirDaño();
-                Vector3 direccionHaciaAtacante = other.transform.position - transform.position;
-                direccionHaciaAtacante = direccionHaciaAtacante.normalized;
-                rb.AddForce(-direccionHaciaAtacante * PlayerScript.fuerzaGolpe, ForceMode.Impulse); // Aplica una fuerza hacia atrás al enemigo
+
+                // 3. Calculamos la dirección estrictamente desde el centro del arma
+                Vector3 direccionEmpuje = transform.position - other.transform.position;
+                direccionEmpuje.y = 0; // Para que no se hunda en el suelo
+                
+                // Si justo el centro del arma y el del enemigo son el mismo punto (raro pero posible)
+                if (direccionEmpuje == Vector3.zero) 
+                {
+                    direccionEmpuje = -transform.forward;
+                }
+                else 
+                {
+                    direccionEmpuje = direccionEmpuje.normalized;
+                }
+                
                 meshRenderer.material.color = colorDaño;
-            }
+
+                // 4. Arrancamos el empujón manual
+                StartCoroutine(RutinaKnockbackEnemigo(direccionEmpuje));
+         }
+    }
+
+    // --- RUTINA MANUAL EXTREMA ---
+    IEnumerator RutinaKnockbackEnemigo(Vector3 direccion)
+    {
+        float duracionEmpuje = 0.2f; 
+        float tiempoPasado = 0f;
+        float velocidadEmpuje = PlayerScript.fuerzaGolpe * 2f; 
+
+        while (tiempoPasado < duracionEmpuje)
+        {
+            tiempoPasado += Time.deltaTime;
             
-        
+            // Usamos transform.position directamente. Esto anula CUALQUIER bug físico.
+            // El enemigo resbalará exactamente en la dirección que le decimos sin pestañear.
+            transform.position += direccion * velocidadEmpuje * Time.deltaTime;
             
-        // Extra: Llamamos a la función de restaurar color después de medio segundo (0.5f)
-        Invoke("RestaurarColor", 0.5f);
+            yield return null;
+        }
+
+        RestaurarColor();
     }
 
     void RestaurarColor()
     {
-        // Volvemos a ponerle el color normal a la cápsula
-        meshRenderer.material.color = colorOriginal;
-        rb.isKinematic = true; // Volvemos a hacer que el enemigo no se mueva por la física después de ser golpeado
         
+        meshRenderer.material.color = colorOriginal;
+        
+        // Devolvemos el control físico para la gravedad
+        rb.isKinematic = false; 
+        
+        // Quitamos el candado de los golpes
+        recibiendoGolpe = false; 
     }
     protected virtual void Moverse()
     {

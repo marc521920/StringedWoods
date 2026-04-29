@@ -267,6 +267,7 @@ IEnumerator RutinaKnockback(float fuerza, Vector3 direccion)
          
     //  Empezamos el dash
         isDashing = true;
+        Physics.IgnoreLayerCollision(layerPlayer, layerEnemy, true);
 
     // la velocidad Y a 0 para que no caiga mientras dashea en el aire
         velocidadY = 0f; 
@@ -282,7 +283,7 @@ IEnumerator RutinaKnockback(float fuerza, Vector3 direccion)
         // Esperamos al siguiente frame para continuar el bucle
         yield return null; 
         }
-
+        Physics.IgnoreLayerCollision(layerPlayer, layerEnemy, false);
         // 3. Terminamos el dash y devolvemos el control al jugador
         isDashing = false;
         dashInCooldown = true; // Activamos el cooldown para evitar dashes consecutivos

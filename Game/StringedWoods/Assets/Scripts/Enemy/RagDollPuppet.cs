@@ -3,7 +3,7 @@ using System.Collections;
 
 public class RagDollPuppet : EnemyScript
 {
-    public float vida = 100;
+    
     [Header("Ajustes de Visión")]
     public float rangoDeVision = 10f;
     public float anguloDeVision = 65f;
@@ -19,14 +19,25 @@ public class RagDollPuppet : EnemyScript
     private bool jugadorDetectado = false;
     private bool Golpeado = false; // Nueva variable para rastrear si el enemigo ha sido golpeado
 
+    
+
     [Header("Ajustes de Daño al Jugador")]
     public float fuerzaDeMiGolpe = 7f;
 
     // (He borrado 'float rotacionInicial' de aquí arriba porque creaba conflictos con la corrutina)
-
-    protected override void Moverse()
+    protected override void Start()
     {
-        rb.isKinematic = false; // El enemigo no se ve afectado por la física mientras patrulla o persigue
+        
+        base.Start();
+        // Aquí podrías agregar cualquier inicialización adicional específica para el RagDollPuppet
+        vida = 100;
+        
+    }
+protected override void Moverse()
+    {
+        if (animator != null && !animator.applyRootMotion) return;
+        rb.isKinematic = false; 
+        
         // 1. Calculamos la distancia y dirección
         float distanciaAlJugador = Vector3.Distance(transform.position, player.transform.position);
         Vector3 direccionAlJugador = (player.transform.position - transform.position).normalized;
@@ -53,7 +64,6 @@ public class RagDollPuppet : EnemyScript
                 jugadorDetectado = true;
                 Debug.Log("¡TE VEO! Empezando persecución.");
                 
-                // TRUCO PRO: Si estaba girando en su patrulla, cancelamos el giro de golpe para que te persiga
                 StopAllCoroutines(); 
                 estaGirando = false; 
             }
@@ -67,9 +77,8 @@ public class RagDollPuppet : EnemyScript
             }
             else if (Golpeado)
             {
-                // Si no ve al jugador y no está girando, tiene una pequeña probabilidad de empezar a girar para patrullar
-                jugadorDetectado = true; // Aseguramos que no esté en modo persecución
-                Golpeado = false; // Reseteamos el estado de golpeado para que pueda patrullar normalmente
+                jugadorDetectado = true; 
+                Golpeado = false; 
             }
         }
 
@@ -78,42 +87,37 @@ public class RagDollPuppet : EnemyScript
         {
             // MODO PERSECUCIÓN
             Vector3 posicionObjetivo = new Vector3(player.transform.position.x, transform.position.y, player.transform.position.z);
-            
-            // 1. Calculamos la dirección exacta hacia el jugador
             Vector3 direccionAlObjetivo = (posicionObjetivo - transform.position).normalized;
 
-            // 2. Prevenimos un error matemático si el enemigo y el jugador están en la misma coordenada exacta
             if (direccionAlObjetivo != Vector3.zero)
             {
-                // 3. Calculamos a qué rotación final queremos llegar
                 Quaternion rotacionDeseada = Quaternion.LookRotation(direccionAlObjetivo);
-
-                // 4. ¡La Magia! Rotamos poco a poco hacia esa dirección. 
-                // El número "5f" es la velocidad de giro. ¡Súbelo si quieres que gire más rápido!
                 transform.rotation = Quaternion.Slerp(transform.rotation, rotacionDeseada, 10f * Time.deltaTime);
             }
 
-            // B) Moverse hacia el jugador
-            transform.position = Vector3.MoveTowards(transform.position, posicionObjetivo, velocity * Time.deltaTime);
+            // B) Activamos la animación en lugar de moverlo por código
+            if (animator != null) 
+            {
+                animator.SetBool("isWalking", true);
+            }
         }
         else
         {
             // MODO PATRULLA
-            
-            // Regla de oro: SOLO caminamos y pensamos si NO estamos en medio de un giro
             if (!estaGirando)
             {
-                // Usamos transform.position en lugar de linearVelocity para evitar conflictos físicos raros
-                transform.position += transform.forward * velocityCaminando * Time.deltaTime;
+                // Activamos la animación de caminar
+                if (animator != null) 
+                {
+                    animator.SetBool("isWalking", true);
+                }
                 
                 Debug.DrawRay(transform.position, transform.forward * 1.5f, Color.green);
 
-                // 1. Si detecta pared -> Gira
                 if (Physics.Raycast(transform.position, transform.forward, 1.5f))
                 {
                     StartCoroutine(GirarHastaDespejar());
                 }
-                // 2. Si no hay pared, tiene un 0.2% de probabilidad de girar porque sí (patrulla aleatoria)
                 else
                 {
                     int valorAleatorio = Random.Range(0, 1000);
@@ -121,6 +125,14 @@ public class RagDollPuppet : EnemyScript
                     {
                         StartCoroutine(GirarHastaDespejar());
                     }
+                }
+            }
+            else
+            {
+                // Si el enemigo está quieto girando (en la corrutina), apagamos la animación de caminar
+                if (animator != null) 
+                {
+                    animator.SetBool("isWalking", false);
                 }
             }
         }
@@ -170,9 +182,10 @@ IEnumerator GirarHastaDespejar()
         
         if (other.gameObject.CompareTag("Player"))
         {
+            Debug.Log("¡Me chocaste! Intentando hacer daño al jugador...");
             MainCharacterMovement PlayerScript = other.gameObject.GetComponent<MainCharacterMovement>();
             // Si estás por encima de su cabeza rebotando, el enemigo ignora el choque y no te pega
-            if (other.transform.position.y > transform.position.y + 0.8f)
+            if (other.transform.position.y > transform.position.y + 1.5f)
             {
                 return; 
             }
@@ -182,6 +195,7 @@ IEnumerator GirarHastaDespejar()
             // Si lo hemos encontrado...
             if (PlayerScript != null)
             {
+                
                 // 2. Calculamos la dirección del golpe: Desde MÍ (Enemigo) hacia el JUGADOR
                 Vector3 direccionGolpe = (other.transform.position - transform.position).normalized;
                 
