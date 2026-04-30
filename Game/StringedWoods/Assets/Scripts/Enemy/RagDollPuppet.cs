@@ -3,7 +3,6 @@ using System.Collections;
 
 public class RagDollPuppet : EnemyScript
 {
-    
     [Header("Ajustes de Visión")]
     public float rangoDeVision = 10f;
     public float anguloDeVision = 65f;
@@ -13,36 +12,33 @@ public class RagDollPuppet : EnemyScript
     public float velocity = 3f;
     public float velocityCaminando = 1f;
     public float tiempoDeGiro = 1f; 
-    public float velocidadDeGiro = 45f; // Grados por segundo
+    public float velocidadDeGiro = 45f; 
+    public float distanciaDeAtaque = 1.5f; // NUEVO: Distancia a la que se frena para no fusionarse
     
-    private bool estaGirando = false;
-    private bool jugadorDetectado = false;
-    private bool Golpeado = false; // Nueva variable para rastrear si el enemigo ha sido golpeado
-
-    
-
     [Header("Ajustes de Daño al Jugador")]
     public float fuerzaDeMiGolpe = 7f;
 
-    // (He borrado 'float rotacionInicial' de aquí arriba porque creaba conflictos con la corrutina)
+    private bool estaGirando = false;
+    private bool jugadorDetectado = false;
+    private bool Golpeado = false; 
+
     protected override void Start()
     {
-        
         base.Start();
-        // Aquí podrías agregar cualquier inicialización adicional específica para el RagDollPuppet
         vida = 100;
-        
     }
-protected override void Moverse()
+
+    protected override void Moverse()
     {
         if (animator != null && !animator.applyRootMotion) return;
         rb.isKinematic = false; 
+
+        if (player == null) return;
         
-        // 1. Calculamos la distancia y dirección
         float distanciaAlJugador = Vector3.Distance(transform.position, player.transform.position);
         Vector3 direccionAlJugador = (player.transform.position - transform.position).normalized;
 
-        // --- LÓGICA DE DETECCIÓN ---
+        // --- 1. DETECCIÓN ---
         bool enRango = distanciaAlJugador <= rangoDeVision;
         float anguloAlJugador = Vector3.Angle(transform.forward, direccionAlJugador);
         bool enAngulo = anguloAlJugador <= anguloDeVision;
@@ -56,14 +52,13 @@ protected override void Moverse()
             }
         }
 
-        // --- CAMBIO DE ESTADO ---
+        // --- 2. CAMBIOS DE ESTADO ---
         if (tieneLineaDeVision)
         {
             if (!jugadorDetectado)
             {
                 jugadorDetectado = true;
                 Debug.Log("¡TE VEO! Empezando persecución.");
-                
                 StopAllCoroutines(); 
                 estaGirando = false; 
             }
@@ -82,7 +77,7 @@ protected override void Moverse()
             }
         }
 
-        // --- LÓGICA DE MOVIMIENTO ---
+        // --- 3. MOVIMIENTO MEJORADO ---
         if (jugadorDetectado)
         {
             // MODO PERSECUCIÓN
@@ -95,10 +90,15 @@ protected override void Moverse()
                 transform.rotation = Quaternion.Slerp(transform.rotation, rotacionDeseada, 10f * Time.deltaTime);
             }
 
-            // B) Activamos la animación en lugar de moverlo por código
-            if (animator != null) 
+            // FRENOS: Si está lejos, camina. Si está cerca, se detiene para pegarte.
+            if (distanciaAlJugador > distanciaDeAtaque)
             {
-                animator.SetBool("isWalking", true);
+                if (animator != null) animator.SetBool("isWalking", true);
+            }
+            else
+            {
+                if (animator != null) animator.SetBool("isWalking", false);
+                // Aquí podrías activar un animator.SetTrigger("Attack") en el futuro
             }
         }
         else
@@ -106,11 +106,7 @@ protected override void Moverse()
             // MODO PATRULLA
             if (!estaGirando)
             {
-                // Activamos la animación de caminar
-                if (animator != null) 
-                {
-                    animator.SetBool("isWalking", true);
-                }
+                if (animator != null) animator.SetBool("isWalking", true);
                 
                 Debug.DrawRay(transform.position, transform.forward * 1.5f, Color.green);
 
@@ -120,8 +116,8 @@ protected override void Moverse()
                 }
                 else
                 {
-                    int valorAleatorio = Random.Range(0, 1000);
-                    if (valorAleatorio < 2) 
+                    // Probabilidad fija basada en tiempo real (ej. 10% de girar cada segundo)
+                    if (Random.Range(0f, 100f) < (10f * Time.deltaTime)) 
                     {
                         StartCoroutine(GirarHastaDespejar());
                     }
@@ -129,16 +125,12 @@ protected override void Moverse()
             }
             else
             {
-                // Si el enemigo está quieto girando (en la corrutina), apagamos la animación de caminar
-                if (animator != null) 
-                {
-                    animator.SetBool("isWalking", false);
-                }
+                if (animator != null) animator.SetBool("isWalking", false);
             }
         }
     }
 
-IEnumerator GirarHastaDespejar()
+    IEnumerator GirarHastaDespejar()
     {
         estaGirando = true;
         float direccionGiro = Random.Range(0, 2) == 0 ? 1f : -1f;
@@ -146,24 +138,27 @@ IEnumerator GirarHastaDespejar()
         // FASE 1: Esquivar el obstáculo
         while (Physics.Raycast(transform.position, transform.forward, 3f, capaObstaculos))
         {
+            // Giramos
             transform.Rotate(0, direccionGiro * velocidadDeGiro * Time.deltaTime, 0);
-            transform.position += transform.forward * (velocityCaminando * 0.5f) * Time.deltaTime;
+            
+            // Nos movemos hacia adelante respetando las paredes usando MovePosition
+            Vector3 avance = transform.forward * (velocityCaminando * 0.5f) * Time.deltaTime;
+            rb.MovePosition(rb.position + avance);
+            
             yield return null; 
         }
 
-        // FASE 2: Margen de seguridad (Ahora con aleatoriedad)
-        // Calculamos el ángulo extra aleatorio para que no sea predecible
+        // FASE 2: Margen de seguridad (curva suave aleatoria)
         float gradosObjetivo = Random.Range(25f, 100f);
-        float gradosGirados = 0f; // Llevamos la cuenta de cuánto hemos girado en esta fase
+        float gradosGirados = 0f; 
 
-        // Mientras no hayamos alcanzado nuestro objetivo aleatorio...
         while (gradosGirados < gradosObjetivo)
         {
             float giroActual = velocidadDeGiro * Time.deltaTime;
             transform.Rotate(0, direccionGiro * giroActual, 0);
             
-            // Sigue completando la curva suave
-            transform.position += transform.forward * (velocityCaminando * 0.5f) * Time.deltaTime;
+            Vector3 avance = transform.forward * (velocityCaminando * 0.5f) * Time.deltaTime;
+            rb.MovePosition(rb.position + avance);
             
             gradosGirados += giroActual;
             yield return null;
@@ -171,45 +166,27 @@ IEnumerator GirarHastaDespejar()
 
         estaGirando = false;
     }
+
     protected override void RecibirDaño()
     {
-        vida = vida - PlayerScript.attackDamage;
+        vida -= PlayerScript.attackDamage;
         Golpeado = true;
     }
+
     protected override void OnTriggerEnter(Collider other)
     {
         base.OnTriggerEnter(other);
         
-        if (other.gameObject.CompareTag("Player"))
+        if (other.CompareTag("Player"))
         {
-            Debug.Log("¡Me chocaste! Intentando hacer daño al jugador...");
-            MainCharacterMovement PlayerScript = other.gameObject.GetComponent<MainCharacterMovement>();
-            // Si estás por encima de su cabeza rebotando, el enemigo ignora el choque y no te pega
-            if (other.transform.position.y > transform.position.y + 1.5f)
-            {
-                return; 
-            }
-            // 1. Buscamos tu script en el jugador (cambia 'MainCharacterMovement' por el nombre de tu script si es otro)
-            
+            if (other.transform.position.y > transform.position.y + 3f) return; 
 
-            // Si lo hemos encontrado...
-            if (PlayerScript != null)
+            if (other.TryGetComponent(out MainCharacterMovement playerScriptComponent))
             {
-                
-                // 2. Calculamos la dirección del golpe: Desde MÍ (Enemigo) hacia el JUGADOR
                 Vector3 direccionGolpe = (other.transform.position - transform.position).normalized;
-                
-                // Anulamos la Y para que no lo mande a volar al espacio
                 direccionGolpe.y = 0;
-
-                // 3. ¡Le damos la orden al jugador de que reciba el daño y salga volando!
-                PlayerScript.RecibirDaño(fuerzaDeMiGolpe, direccionGolpe);
+                playerScriptComponent.RecibirDaño(fuerzaDeMiGolpe, direccionGolpe);
             }
-
-            // (Aquí abajo ya iría el código normal donde el enemigo te hace daño si te choca de frente)
         }
-        // Si con lo que me acabo de chocar es el Jugador...
-
     }
-
 }

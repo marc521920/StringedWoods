@@ -56,6 +56,8 @@ public class GameManager : MonoBehaviour
 
     GameObject jugador; // Referencia al jugador en la escena
 
+    GameObject corazones; // Referencia a los corazones en la escena (si los usas para mostrar la vida)
+
     // 2. Llama a esta función cuando quieras guardar todos los datos de golpe
     
 
@@ -152,6 +154,29 @@ public class GameManager : MonoBehaviour
         else
         {
             Debug.LogWarning("No se encontró ningún archivo de guardado en: " + ruta);
+        }
+    }
+    public void BorrarPartida()
+    {
+        string ruta = Application.persistentDataPath + "/guardado.json";
+        if (File.Exists(ruta))
+        {
+            File.Delete(ruta);
+            Debug.Log("¡Archivo de guardado borrado correctamente!");
+        }
+        else
+        {
+            Debug.LogWarning("No se encontró ningún archivo de guardado para borrar en: " + ruta);
+        }
+    }
+    public void crearVida()
+    {
+        vidaActual = vidaMaxima;
+        for (int i = 0; i < vidaMaxima; i++)
+        {
+            // Aquí puedes instanciar un corazón o actualizar tu UI de vida
+            Debug.Log("Corazón " + (i + 1) + " creado");
+            
         }
     }
 

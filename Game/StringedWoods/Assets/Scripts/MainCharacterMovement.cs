@@ -236,27 +236,60 @@ public void RecibirDaño(float fuerza, Vector3 direccionHaciaAtras)
 
 IEnumerator RutinaKnockback(float fuerza, Vector3 direccion)
 {
-    estaEmpujado = true; // Bloqueamos el control del jugador
+    estaEmpujado = true; // Bloqueamos el control del jugador del Update
     
-    // Opcional: Le damos un pequeño salto vertical para que parezca un golpe duro
+    // Le damos un pequeño "saltito" inicial para despegarlo del suelo y que la caída tenga sentido
+    // Si ya estaba en el aire, esto interrumpe su caída normal y simula el impacto hacia arriba.
+    velocidadY = 5f; 
     
+    // Iniciamos la invulnerabilidad de inmediato para no recibir doble daño mientras volamos
+    StartCoroutine(Invulnerabilidad()); 
 
     float tiempoPasado = 0f;
+    float inerciaActual = fuerza; // Guardamos la fuerza inicial para ir reduciéndola
 
-    // Mientras dure el tiempo de empuje...
+    // --- FASE 1: EL IMPACTO INICIAL (Dura 'duracionEmpuje') ---
     while (tiempoPasado < duracionEmpuje)
     {
         tiempoPasado += Time.deltaTime;
         
-        // Movemos al jugador violentamente hacia atrás
-        controller.Move(direccion * fuerza * Time.deltaTime);
+        // Aplicamos nuestra propia gravedad manual mientras está bloqueado
+        velocidadY -= gravity * Time.deltaTime;
         
+        // Juntamos el empujón horizontal con la caída vertical
+        Vector3 movimiento = direccion * inerciaActual;
+        movimiento.y = velocidadY;
+        
+        controller.Move(movimiento * Time.deltaTime);
         yield return null;
     }
-    StartCoroutine(Invulnerabilidad()); // Iniciamos la rutina de invulnerabilidad después de recibir el golpe
-    yield return new WaitForSeconds(0.2f); // Pequeña pausa después de empujar para que el jugador no reciba control de golpe
 
-    estaEmpujado = false; // Le devolvemos el control al jugador
+    // --- FASE 2: CAÍDA LIBRE HASTA EL SUELO ---
+    // Si después del golpe fuerte inicial seguimos en el aire, no le devolvemos el control.
+    while (!controller.isGrounded)
+    {
+        // Seguimos aplicando gravedad para que caiga cada vez más rápido
+        velocidadY -= gravity * Time.deltaTime;
+        
+        // Fricción en el aire: reducimos la inercia horizontal poco a poco usando Lerp
+        // para que no salga disparado de forma infinita como una bala.
+        inerciaActual = Mathf.Lerp(inerciaActual, 0f, Time.deltaTime * 3f); 
+        
+        Vector3 movimiento = direccion * inerciaActual;
+        movimiento.y = velocidadY;
+        
+        controller.Move(movimiento * Time.deltaTime);
+        yield return null;
+    }
+
+    // --- FASE 3: ATERRIZAJE ---
+    // Al tocar el suelo, reseteamos la gravedad para que no se acumule
+    velocidadY = -2f; 
+    
+    // Opcional: Pequeño "stun" o tiempo de recuperación al chocar contra el suelo
+    yield return new WaitForSeconds(0.15f); 
+    
+    estaEmpujado = false; // ¡Le devolvemos el control al jugador!
 }
 
 
