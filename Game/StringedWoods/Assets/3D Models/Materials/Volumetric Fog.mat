@@ -102,8 +102,8 @@ Material:
     - _AddPrecomputedVelocity: 0
     - _AlphaClip: 0
     - _AlphaToMask: 0
-    - _Anisotropy: 0.514
-    - _Anisotropy_Blend: 0.04
+    - _Anisotropy: 0
+    - _Anisotropy_Blend: 1
     - _Blend: 0
     - _BlendModePreserveSpecular: 1
     - _BumpScale: 1
@@ -111,7 +111,7 @@ Material:
     - _ClearCoatSmoothness: 0
     - _Cull: 2
     - _Cutoff: 0.5
-    - _Density: 0.012
+    - _Density: 0.01
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
@@ -133,8 +133,8 @@ Material:
     - _Remap_Max: 1
     - _Remap_Min: 0
     - _SHADOWS: 1
-    - _Scattering_Remap_Max: 1
-    - _Scattering_Remap_Min: 0.107
+    - _Scattering_Remap_Max: 0.527
+    - _Scattering_Remap_Min: 0.202
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
@@ -148,7 +148,7 @@ Material:
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _Colour: {r: 0, g: 0.7176819, b: 1, a: 1}
+    - _Colour: {r: 0, g: 0.7176471, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []
