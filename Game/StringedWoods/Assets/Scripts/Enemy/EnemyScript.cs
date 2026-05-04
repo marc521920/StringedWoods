@@ -31,7 +31,7 @@ public class EnemyScript : MonoBehaviour
        
         colorOriginal = meshRenderer.material.color;
     }
-    void Update()
+    protected virtual void Update()
     {
         Moverse();
         // Aquí podrías agregar lógica para el comportamiento del enemigo, como perseguir al jugador, atacar, etc.
