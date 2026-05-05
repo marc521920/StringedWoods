@@ -18,7 +18,7 @@ MonoBehaviour:
   requirements: 0
   passMaterial: {fileID: 2100000, guid: fedf334cf2cc1b44d9ae7b524decb528, type: 2}
   passIndex: 0
-  bindDepthStencilAttachment: 0
+  bindDepthStencilAttachment: 1
   m_Version: 1
 --- !u!114 &-5866392038437389629
 MonoBehaviour:
@@ -33,12 +33,12 @@ MonoBehaviour:
   m_Name: Volumetric Fog
   m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.FullScreenPassRendererFeature
   m_Active: 1
-  injectionPoint: 550
+  injectionPoint: 600
   fetchColorBuffer: 1
-  requirements: 0
-  passMaterial: {fileID: 2100000, guid: fedf334cf2cc1b44d9ae7b524decb528, type: 2}
+  requirements: -1
+  passMaterial: {fileID: 2100000, guid: b7284ef15d251484aac1881606668e47, type: 2}
   passIndex: 0
-  bindDepthStencilAttachment: 0
+  bindDepthStencilAttachment: 1
   m_Version: 1
 --- !u!114 &-4376424148568782040
 MonoBehaviour:
@@ -49,11 +49,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 15057520a917a694db3f5ac3e4277259, type: 3}
+  m_Script: {fileID: 11500000, guid: a4e4b5b3996032e4681cda701e89f62f, type: 3}
   m_Name: VolumetricFogRendererFeature
   m_EditorClassIdentifier: Assembly-CSharp::VolumetricFogRendererFeature
-  m_Active: 0
-  fogMaterial: {fileID: 2100000, guid: fedf334cf2cc1b44d9ae7b524decb528, type: 2}
+  material: {fileID: 2100000, guid: 4b571ad8ab04e49d0b2001fafb082963, type: 2}
+  additionalLightCountBase: 109
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -217,7 +217,7 @@ MonoBehaviour:
     Source: 1
     NormalSamples: 1
     Intensity: 0.4
-    DirectLightingStrength: 0.25
+    DirectLightingStrength: 0.203
     Radius: 0.3
     Samples: 1
     BlurQuality: 0
