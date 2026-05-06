@@ -377,6 +377,7 @@ IEnumerator RutinaKnockback(float fuerza, Vector3 direccion)
             fuerzaGolpe = fuerzaGolpe*2f;
             canAttack = false;
             attackAreaCargado.SetActive(true); 
+            GameManager.Instance.ataqueActual = 3; // Set the current attack to the charged attack
             velocidadY = velocidadY/2f; 
 
             yield return new WaitForSeconds(0.2f); 
@@ -403,6 +404,7 @@ IEnumerator RutinaKnockback(float fuerza, Vector3 direccion)
             // --- GOLPE 1 ---
             animator.SetBool("basicAttack", true);
             attackArea.SetActive(true); 
+                GameManager.Instance.ataqueActual = 0; // Set the current attack to the first attack
             velocidadY = velocidadY/2f; 
             
 
@@ -435,6 +437,7 @@ IEnumerator RutinaKnockback(float fuerza, Vector3 direccion)
                 
                 // Aquí podrías añadir: animator.SetBool("combo2", true);
                 attackAreaCombo2.SetActive(true); 
+                GameManager.Instance.ataqueActual = 1; // Set the current attack to the second attack
                 velocidadY = velocidadY/2f; // Volvemos a frenar la caída por el nuevo golpe
 
                 timer = 0f;
@@ -460,6 +463,7 @@ IEnumerator RutinaKnockback(float fuerza, Vector3 direccion)
                 {
                     // Aquí podrías añadir: animator.SetBool("combo3", true);
                     attackAreaCombo3.SetActive(true); 
+                    GameManager.Instance.ataqueActual = 2; // Set the current attack to the third attack
                     fuerzaGolpe = fuerzaGolpe * 1.5f; // ¡El último golpe del combo empuja más fuerte!
                     velocidadY = velocidadY/2f;
 
@@ -491,6 +495,7 @@ IEnumerator RutinaKnockback(float fuerza, Vector3 direccion)
         // Aquí podrías reproducir una animación de ataque, por ejemplo:
         // animator.SetTrigger("Attack");
         attackAreaJump.SetActive(true); // Activamos el área de ataque para el salto
+        GameManager.Instance.ataqueActual = 4; // Set the current attack to the charged attack
 
         // Esperamos un momento para simular el tiempo de ataque
         yield return new WaitForSeconds(0.04f); // Ajusta este valor según la duración de tu animación
@@ -515,6 +520,7 @@ IEnumerator RutinaKnockback(float fuerza, Vector3 direccion)
         // Aquí podrías reproducir una animación de ataque, por ejemplo:
         // animator.SetTrigger("Attack");
         attackAreaDash.SetActive(true); // Activamos el área de ataque para el salto
+        GameManager.Instance.ataqueActual = 5; // Set the current attack to the dash attack
 
         // Esperamos un momento para simular el tiempo de ataque
         yield return new WaitForSeconds(0.2f); // Ajusta este valor según la duración de tu animación

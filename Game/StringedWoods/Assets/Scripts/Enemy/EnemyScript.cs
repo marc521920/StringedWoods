@@ -48,6 +48,7 @@ public class EnemyScript : MonoBehaviour
     {
          if (other.CompareTag("Ataque") && !recibiendoGolpe) 
          {
+                GameManager.Instance.ActivarHitStop(); // Guardamos las estadísticas del jugador al recibir un golpe
                 recibiendoGolpe = true; 
                 
                 // 1. Matamos cualquier corrutina de patrulla/giro que el enemigo estuviera haciendo

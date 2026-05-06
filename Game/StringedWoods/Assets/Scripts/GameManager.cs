@@ -55,18 +55,20 @@ public class GameManager : MonoBehaviour
     public float velocidadDeMovimiento;
     public float fuerzaDeEmpuje;
     public float suerte;
-
+    [Header("Otros")]
     GameObject jugador; // Referencia al jugador en la escena
 
     GameObject corazones; // Referencia a los corazones en la escena (si los usas para mostrar la vida)
 
-    public List<bool> ataques = new List<bool>();
+    public int ataqueActual; // Variable para saber qué ataque se está usando, para el hit stop
     // ataque 0 = normal
     // ataque 1 = normal combo 2
     // ataque 2 = normal combo 3
     // ataque 3 = cargado
     // ataque 4 = en salto
     // ataque 5 = en dash
+    public bool juegoPausado = false;
+    
 
     // 2. Llama a esta función cuando quieras guardar todos los datos de golpe
     
@@ -98,6 +100,20 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (juegoPausado)
+            {
+                Time.timeScale = 1f; // Reanuda el juego
+                juegoPausado = false;
+            }
+            else
+            {
+                PausarJuego();
+                juegoPausado = true;
+            }
+
+        }
         
     }
     public void GuardarEstadisticas()
@@ -190,10 +206,36 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void ActivarHitStop(float duracion)
+    public void ActivarHitStop()
     {
+        float duracionHitStop = 0.1f; // Duración del hit stop en segundos
+        switch (ataqueActual) // <-- ¡Solo he cambiado la 's' a minúscula!
+        {
+            case 0:
+                duracionHitStop = 0.1f;
+                break;
+            case 1:
+                duracionHitStop = 0.12f;
+                break;
+            case 2:
+                duracionHitStop = 0.15f;
+                break;
+            case 3:
+                duracionHitStop = 0.3f;
+                break;
+            case 4:
+                duracionHitStop = 0.18f;
+                break;
+            case 5:
+                duracionHitStop = 0.25f;
+                break;
+            default:
+                duracionHitStop = 0.1f;
+                break;
+        }
+        
         // Le pasamos el ingrediente a la corrutina
-        StartCoroutine(HitStop(duracion));
+        StartCoroutine(HitStop(duracionHitStop));
     }
     IEnumerator HitStop(float duracion)
     {
@@ -203,15 +245,18 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSecondsRealtime(duracion); 
     
         Time.timeScale = 1f;
+        ResetearAtaques();
 
         
     }
-    public void ResetearEstados()
+    public void ResetearAtaques()
     {
-        for (int i = 0; i < ataques.Count; i++)
-        {
-            ataques[i] = false;
-        }
+        ataqueActual = 0;
+        // Aquí también podrías resetear cualquier bool o trigger de ataque en tu animator
+    }
+    public void PausarJuego()
+    {
+        Time.timeScale = 0f;
     }
 
 }

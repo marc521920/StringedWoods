@@ -169,6 +169,7 @@ public class RagDollPuppet : EnemyScript
 
     protected override void RecibirDaño()
     {
+        
         vida -= PlayerScript.attackDamage;
         Golpeado = true;
     }
