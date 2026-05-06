@@ -38,6 +38,7 @@ public class GameManager : MonoBehaviour
     public float experiencia;
     public float multiplicadorDeExperiencia;
     public int nivel;
+    public int monedas;
 
     [Header("Supervivencia")]
     public int vidaActual;
