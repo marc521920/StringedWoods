@@ -13,6 +13,7 @@ public class DatosJugador {
     public int salud;
     public float experiencia;
     public int nivel;
+    public int monedas;
 }
 [System.Serializable]
 public class Estadisticas {
@@ -257,6 +258,32 @@ public class GameManager : MonoBehaviour
     public void PausarJuego()
     {
         Time.timeScale = 0f;
+    }
+    public void ReanudarJuego()
+    {
+        Time.timeScale = 1f;
+    }
+    public void GanarExperiencia(float cantidad)
+    {
+        experiencia += cantidad * multiplicadorDeExperiencia;
+        Debug.Log("¡Has ganado " + (cantidad * multiplicadorDeExperiencia) + " de experiencia! Total: " + experiencia);
+        // Aquí podrías agregar lógica para subir de nivel si alcanzas cierta cantidad de experiencia
+    }
+    public void Curar(int cantidad)
+    {
+        vidaActual += cantidad;
+        if (vidaActual > vidaMaxima)
+        {
+            vidaActual = vidaMaxima;
+        }
+        Debug.Log("¡Has sido curado por " + cantidad + "! Vida actual: " + vidaActual);
+        // Aquí podrías actualizar tu UI de vida para reflejar el cambio
+    }
+    public void GanarMonedas(int cantidad)
+    {
+        monedas += cantidad;
+        // Aquí podrías agregar lógica para sumar monedas al jugador
+        Debug.Log("¡Has ganado " + cantidad + " monedas!"); 
     }
 
 }

@@ -28,7 +28,7 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: luz led
-    second: {fileID: 2100000, guid: c87cb24d7a3065149831a5335c0a230a, type: 2}
+    second: {fileID: 2100000, guid: 7d7640ae979892647809446a8112b84d, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
