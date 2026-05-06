@@ -1,5 +1,7 @@
 using UnityEngine;
 using System.IO;
+using System.Collections;
+using System.Collections.Generic;
 [System.Serializable]
 public class DatosGuardado {
     public DatosJugador jugador;
@@ -57,6 +59,14 @@ public class GameManager : MonoBehaviour
     GameObject jugador; // Referencia al jugador en la escena
 
     GameObject corazones; // Referencia a los corazones en la escena (si los usas para mostrar la vida)
+
+    public List<bool> ataques = new List<bool>();
+    // ataque 0 = normal
+    // ataque 1 = normal combo 2
+    // ataque 2 = normal combo 3
+    // ataque 3 = cargado
+    // ataque 4 = en salto
+    // ataque 5 = en dash
 
     // 2. Llama a esta función cuando quieras guardar todos los datos de golpe
     
@@ -177,6 +187,30 @@ public class GameManager : MonoBehaviour
             // Aquí puedes instanciar un corazón o actualizar tu UI de vida
             Debug.Log("Corazón " + (i + 1) + " creado");
             
+        }
+    }
+
+    public void ActivarHitStop(float duracion)
+    {
+        // Le pasamos el ingrediente a la corrutina
+        StartCoroutine(HitStop(duracion));
+    }
+    IEnumerator HitStop(float duracion)
+    {
+        Time.timeScale = 0f;
+    
+    // ESTA ES LA LÍNEA QUE FALTA PARA QUE EL ERROR DESAPAREZCA
+        yield return new WaitForSecondsRealtime(duracion); 
+    
+        Time.timeScale = 1f;
+
+        
+    }
+    public void ResetearEstados()
+    {
+        for (int i = 0; i < ataques.Count; i++)
+        {
+            ataques[i] = false;
         }
     }
 

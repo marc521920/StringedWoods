@@ -61,6 +61,8 @@ public class MainCharacterMovement : MonoBehaviour
 
     private CharacterController controller;
 
+    public GameObject gameManager;
+
     void Start()
     {
         controller = GetComponent<CharacterController>();
@@ -402,6 +404,7 @@ IEnumerator RutinaKnockback(float fuerza, Vector3 direccion)
             animator.SetBool("basicAttack", true);
             attackArea.SetActive(true); 
             velocidadY = velocidadY/2f; 
+            
 
             float timer = 0f;
             bool comboQueued = false; // Memoria de si el jugador pulsó click de nuevo
