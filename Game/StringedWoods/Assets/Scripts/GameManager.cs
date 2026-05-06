@@ -58,9 +58,12 @@ public class GameManager : MonoBehaviour
     public float fuerzaDeEmpuje;
     public float suerte;
     [Header("Otros")]
-    GameObject jugador; // Referencia al jugador en la escena
+    public GameObject jugador; // Referencia al jugador en la escena
 
     GameObject corazones; // Referencia a los corazones en la escena (si los usas para mostrar la vida)
+    public GameObject monedaPrefab;
+    public GameObject corazonPrefab;
+    public GameObject experienciaPrefab;
 
     public int ataqueActual; // Variable para saber qué ataque se está usando, para el hit stop
     // ataque 0 = normal

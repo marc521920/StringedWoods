@@ -37,7 +37,8 @@ public class EnemyScript : MonoBehaviour
         // Aquí podrías agregar lógica para el comportamiento del enemigo, como perseguir al jugador, atacar, etc.
         if (vida <= 0)
         {
-            Destroy(gameObject); // Destruye el enemigo si su vida llega a 0 o menos
+            Morir();
+             // Destruye el enemigo si su vida llega a 0 o menos
         }
     }
     
@@ -124,6 +125,13 @@ public class EnemyScript : MonoBehaviour
     protected virtual void RecibirDaño()
     {
         // Aquí puedes implementar la lógica para reducir la salud del enemigo, reproducir animaciones de daño, etc.
+    }
+    protected virtual void Morir()
+    {
+        Instantiate(GameManager.Instance.monedaPrefab, transform.position, Quaternion.identity);
+        Destroy(gameObject);
+        
+       
     }
 
 }
