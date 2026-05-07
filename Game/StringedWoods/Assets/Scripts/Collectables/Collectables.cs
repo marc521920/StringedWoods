@@ -67,16 +67,13 @@ public class Collectables : MonoBehaviour
             {
                 GameManager.Instance.GanarExperiencia(cantidad);
             }
+            if (esMoneda)
+            {
+                GameManager.Instance.GanarMonedas(cantidad);
+            }
             
             Destroy(gameObject); // Destruye el objeto después de recogerlo
         }
     }
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (collision.gameObject.CompareTag("Player") && esMoneda)
-        {
-            GameManager.Instance.GanarMonedas(cantidad);
-            Destroy(gameObject); // Destruye el objeto después de recogerlo
-        }
-    }
+
 }

@@ -143,6 +143,11 @@ public class BailarinaScript : EnemyScript
         }
         else
         {
+            foreach (GameObject marca in marcasDeRuta)
+            {
+                if (marca != null) Destroy(marca);
+            }
+            marcasDeRuta.Clear();
             // --- MODO PATRULLA REBOTANTE ---
             if (direccionPatrulla == Vector3.zero)
             {

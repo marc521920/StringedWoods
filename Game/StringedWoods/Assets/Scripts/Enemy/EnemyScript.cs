@@ -126,12 +126,50 @@ public class EnemyScript : MonoBehaviour
     {
         // Aquí puedes implementar la lógica para reducir la salud del enemigo, reproducir animaciones de daño, etc.
     }
-    protected virtual void Morir()
+  protected virtual void Morir()
     {
-        Instantiate(GameManager.Instance.monedaPrefab, transform.position, Quaternion.identity);
-        Destroy(gameObject);
+        // --- 1. MONEDAS (Entre 0 y 4) ---
+        // En Random.Range para números enteros (int), el último número es EXCLUSIVO. 
+        // Por eso ponemos (0, 5) para que el resultado sea 0, 1, 2, 3 o 4.
+        int cantidadMonedas = Random.Range(0, 5); 
+        for (int i = 0; i < cantidadMonedas; i++)
+        {
+            InstanciarBotin(GameManager.Instance.monedaPrefab);
+        }
+
+        // --- 2. EXPERIENCIA (Entre 5 y 7) ---
+        // Ponemos (5, 8) para que nos dé 5, 6 o 7.
+        int cantidadExperiencia = Random.Range(5, 8);
+        for (int i = 0; i < cantidadExperiencia; i++)
+        {
+            InstanciarBotin(GameManager.Instance.experienciaPrefab);
+        }
+
+        // --- 3. CORAZONES (Basado en la Suerte) ---
+        // Matemática: Si luk 4 = 50%, significa que cada 1 punto de luk te da un 12.5% de probabilidad (50 / 4).
+        // Si tienes luk 1 (la base), tienes 12.5% de que caiga. Si tienes luk 8, tendrás 100%.
+        float probabilidadCorazon = GameManager.Instance.suerte * 12.5f; 
         
-       
+        // Tiramos un dado de 100 caras. Si sale menor o igual a tu probabilidad, ¡Premio!
+        if (Random.Range(0f, 100f) <= probabilidadCorazon)
+        {
+            InstanciarBotin(GameManager.Instance.corazonPrefab);
+        }
+
+        // Finalmente, destruimos al enemigo
+        Destroy(gameObject);
+    }
+
+    // --- FUNCIÓN DE APOYO PARA QUE EL BOTÍN NO EXPLOTE ---
+    private void InstanciarBotin(GameObject prefab)
+    {
+        if (prefab == null) return; // Por seguridad, por si olvidas poner el prefab en el GameManager
+
+        // Creamos un pequeño círculo imaginario alrededor del enemigo para que el botín se esparza
+        Vector3 offsetAleatorio = new Vector3(Random.Range(-0.5f, 0.5f), 0.5f, Random.Range(-0.5f, 0.5f));
+        
+        // Instanciamos el objeto en la posición del enemigo + el pequeño desplazamiento
+        Instantiate(prefab, transform.position + offsetAleatorio, Quaternion.identity);
     }
 
 }
