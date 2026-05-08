@@ -12,7 +12,7 @@ public class EnemyScript : MonoBehaviour
     public float vida;
     public Animator animator; // Referencia al Animator para controlar las animaciones
     protected bool recibiendoGolpe = false;
-
+    public bool estaGolpeado = false; // Nueva variable para controlar el estado de golpeado
 
     public MainCharacterMovement PlayerScript; // Referencia al script del jugador para acceder a sus variables
     protected virtual void Start()
@@ -54,16 +54,16 @@ public class EnemyScript : MonoBehaviour
                 
                 // 1. Matamos cualquier corrutina de patrulla/giro que el enemigo estuviera haciendo
                 StopAllCoroutines(); 
-                
-                animator.SetBool("isWalking", false); 
+                RecibirDaño();
+               
                 
                 
                 // 2. Apagamos la física para evitar el teletransporte por superposición de colliders
-                rb.isKinematic = true; 
+                
                 rb.linearVelocity = Vector3.zero; 
 
                 Debug.Log("¡Enemigo golpeado! Calculando desde el arma...");
-                RecibirDaño();
+                
 
                 // 3. Calculamos la dirección estrictamente desde el centro del arma
                 Vector3 direccionEmpuje = transform.position - other.transform.position;
@@ -92,6 +92,10 @@ public class EnemyScript : MonoBehaviour
         float duracionEmpuje = 0.2f; 
         float tiempoPasado = 0f;
         float velocidadEmpuje = PlayerScript.fuerzaGolpe * 2f; 
+        estaGolpeado = true; // Activamos el estado de golpeado para que el enemigo sepa que no puede actuar
+
+         // Activamos el modo kinematic para controlar manualmente la posición sin interferencias físicas
+        
 
         while (tiempoPasado < duracionEmpuje)
         {
@@ -109,7 +113,7 @@ public class EnemyScript : MonoBehaviour
 
     void RestaurarColor()
     {
-        
+        estaGolpeado = false; // Desactivamos el estado de golpeado para que el enemigo pueda actuar de nuevo
         meshRenderer.material.color = colorOriginal;
         
         // Devolvemos el control físico para la gravedad

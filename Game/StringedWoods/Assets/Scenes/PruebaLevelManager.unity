@@ -2285,7 +2285,7 @@ MonoBehaviour:
   posicionSala: {x: 0, y: 0, z: 0}
   posicionTienda: {x: 0, y: 0, z: 0}
   listaDeMapas:
-  - {fileID: 5706937320390312381, guid: 89fde6bb8fd8313449ead1719dd3dab4, type: 3}
+  - {fileID: 8771749402582411558, guid: 9181fe77472d2d54daa4c166f304e8ec, type: 3}
   listaDeMapasEspecialesOriginales:
   - {fileID: 1359130843012555866, guid: 94e815f1b3c0c4156b5104a432afff0c, type: 3}
   listaDeMapasEspecialesDisponibles: []

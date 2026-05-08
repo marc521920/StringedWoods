@@ -11,6 +11,8 @@ TagManager:
   - limitZBackward
   - Enemy
   - head
+  - SalaDerecha
+  - SalaIzquierda
   layers:
   - Default
   - TransparentFX

@@ -101,6 +101,7 @@ public class LevelManager : MonoBehaviour
                     // 1. Instanciamos y guardamos la copia en la variable "nuevoEnemigo"
                     GameObject nuevoMapa = Instantiate(listaDeMapas[indiceAleatorio], posicionSala , Quaternion.identity);
                     nuevoMapa.name = "Level," + (i + numeroDeSalasNormales);
+                    nuevoMapa.tag = "SalaDerecha";
                     salaEspecialgenerada = false;
                 }
             }
@@ -150,6 +151,7 @@ public class LevelManager : MonoBehaviour
                     // 1. Instanciamos y guardamos la copia en la variable "nuevoEnemigo"
                     GameObject nuevoMapa = Instantiate(listaDeMapas[indiceAleatorio], posicionSala , Quaternion.identity);
                     nuevoMapa.name = "Level," + (i + (numeroDeSalasNormales * 2));
+                    nuevoMapa.tag = "SalaIzquierda";
                     salaEspecialgenerada = false;
                 }
 

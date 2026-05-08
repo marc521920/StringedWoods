@@ -50,7 +50,7 @@ public class BailarinaScript : EnemyScript
 
     protected override void Moverse()
     {
-        if (player == null || rb == null) return;
+        if (player == null || rb == null || estaGolpeado) return;
         
         float distanciaAlJugador = Vector3.Distance(transform.position, player.transform.position);
         Vector3 direccionAlJugador = (player.transform.position - transform.position).normalized;
@@ -294,6 +294,12 @@ IEnumerator AtaqueAzul()
         
         attackStarted = false; 
         temporizador = 0f; // Reiniciamos el temporizador para que vuelva a contar desde 0 en el próximo ataque
+    }
+        protected override void RecibirDaño()
+    {
+        
+        vida -= PlayerScript.attackDamage;
+        Golpeado = true;
     }
 
 }
