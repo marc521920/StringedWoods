@@ -74,6 +74,7 @@ public class GameManager : MonoBehaviour
     // ataque 5 = en dash
     public bool juegoPausado = false;
     
+    public float subirDeNivel;
 
     // 2. Llama a esta función cuando quieras guardar todos los datos de golpe
     
@@ -271,6 +272,10 @@ public class GameManager : MonoBehaviour
     {
         experiencia += cantidad * multiplicadorDeExperiencia;
         Debug.Log("¡Has ganado " + (cantidad * multiplicadorDeExperiencia) + " de experiencia! Total: " + experiencia);
+        if (experiencia >= subirDeNivel)
+        {
+            SubirNivel();
+        }
         // Aquí podrías agregar lógica para subir de nivel si alcanzas cierta cantidad de experiencia
     }
     public void Curar(int cantidad)
@@ -288,6 +293,10 @@ public class GameManager : MonoBehaviour
         monedas += cantidad;
         // Aquí podrías agregar lógica para sumar monedas al jugador
         Debug.Log("¡Has ganado " + cantidad + " monedas!"); 
+    }
+    public void SubirNivel()
+    {
+        
     }
 
 }
