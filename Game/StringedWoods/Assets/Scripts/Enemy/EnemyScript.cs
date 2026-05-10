@@ -152,7 +152,7 @@ public class EnemyScript : MonoBehaviour
         // --- 3. CORAZONES (Basado en la Suerte) ---
         // Matemática: Si luk 4 = 50%, significa que cada 1 punto de luk te da un 12.5% de probabilidad (50 / 4).
         // Si tienes luk 1 (la base), tienes 12.5% de que caiga. Si tienes luk 8, tendrás 100%.
-        float probabilidadCorazon = GameManager.Instance.suerte * 12.5f; 
+        float probabilidadCorazon = GameManager.Instance.suerte * 10.5f; 
         
         // Tiramos un dado de 100 caras. Si sale menor o igual a tu probabilidad, ¡Premio!
         if (Random.Range(0f, 100f) <= probabilidadCorazon)
@@ -175,5 +175,6 @@ public class EnemyScript : MonoBehaviour
         // Instanciamos el objeto en la posición del enemigo + el pequeño desplazamiento
         Instantiate(prefab, transform.position + offsetAleatorio, Quaternion.identity);
     }
+
 
 }

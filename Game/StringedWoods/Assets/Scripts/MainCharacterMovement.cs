@@ -230,7 +230,8 @@ public void RecibirDaño(float fuerza, Vector3 direccionHaciaAtras)
 {
     if (isInvulnerable == true) return; // Si estamos invulnerables, no recibimos daño ni empujones
     Debug.Log("¡Ay! ¡Me han dado!");
-    // Aquí puedes quitar vida: GameManager.Instance.vidaActual -= 10;
+    GameManager.Instance.vidaActual -= 1;
+    GameManager.Instance.CambiarCorazones();
     
     // Lanzamos la corrutina que nos empujará físicamente
     StartCoroutine(RutinaKnockback(fuerza, direccionHaciaAtras));

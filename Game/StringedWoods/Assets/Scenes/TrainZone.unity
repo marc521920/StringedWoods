@@ -10503,6 +10503,68 @@ PrefabInstance:
       addedObject: {fileID: 1088919665}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0bf3a8ad0b8664131b27ebb6c4ee192b, type: 3}
+--- !u!1 &196621717
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 196621718}
+  - component: {fileID: 196621719}
+  m_Layer: 5
+  m_Name: Health
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &196621718
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 196621717}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 454962028}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -502.14, y: 307.6}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &196621719
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 196621717}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.HorizontalLayoutGroup
+  m_Padding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
+  m_ChildAlignment: 0
+  m_Spacing: -70.76
+  m_ChildForceExpandWidth: 1
+  m_ChildForceExpandHeight: 0
+  m_ChildControlWidth: 0
+  m_ChildControlHeight: 0
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
+  m_ReverseArrangement: 0
 --- !u!1 &216270385
 GameObject:
   m_ObjectHideFlags: 0
@@ -16006,7 +16068,7 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 792921894}
+  - {fileID: 196621718}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -16502,6 +16564,7 @@ MonoBehaviour:
   player: {fileID: 0}
   vida: 100
   animator: {fileID: 0}
+  estaGolpeado: 0
   PlayerScript: {fileID: 0}
   rangoDeVision: 40
   anguloDeVision: 65
@@ -16620,7 +16683,7 @@ MonoBehaviour:
   nivel: 0
   monedas: 0
   vidaActual: 0
-  vidaMaxima: 100
+  vidaMaxima: 3
   curacionDeVida: 0
   "da\xF1oAlAtacar": 10
   velocidadDeAtaque: 0.5
@@ -16635,6 +16698,12 @@ MonoBehaviour:
   monedaPrefab: {fileID: 2486139045116907302, guid: 32e83f5eb759041639ed9b91f23b3491, type: 3}
   corazonPrefab: {fileID: 3745881032604742700, guid: f8eefea80bb008a48adaae8c8bb00b60, type: 3}
   experienciaPrefab: {fileID: 3745881032604742700, guid: f8eefea80bb008a48adaae8c8bb00b60, type: 3}
+  corazonUIPrefab: {fileID: 2596988427718401853, guid: e226da42b49193142844ab579e0449bc, type: 3}
+  contenedorCorazones: {fileID: 196621718}
+  listaCorazonesUI: []
+  corazonLleno: {fileID: 0}
+  corazonMitad: {fileID: 0}
+  corazonVacio: {fileID: 0}
   ataqueActual: 0
   juegoPausado: 0
 --- !u!4 &598415522
@@ -18681,6 +18750,7 @@ MonoBehaviour:
   player: {fileID: 0}
   vida: 100
   animator: {fileID: 0}
+  estaGolpeado: 0
   PlayerScript: {fileID: 0}
   rangoDeVision: 10
   anguloDeVision: 65
@@ -19073,81 +19143,6 @@ PrefabInstance:
       addedObject: {fileID: 1398073315}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0bf3a8ad0b8664131b27ebb6c4ee192b, type: 3}
---- !u!1 &792921893
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 792921894}
-  - component: {fileID: 792921896}
-  - component: {fileID: 792921895}
-  m_Layer: 5
-  m_Name: Heart1
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &792921894
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 792921893}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 454962028}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -772.9, y: 434.5}
-  m_SizeDelta: {x: 150, y: 150}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &792921895
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 792921893}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: e9115af14cb024774ac8af9cf52ba5fb, type: 3}
-  m_Type: 0
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
---- !u!222 &792921896
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 792921893}
-  m_CullTransparentMesh: 1
 --- !u!1 &809801997
 GameObject:
   m_ObjectHideFlags: 0
@@ -22061,6 +22056,7 @@ MonoBehaviour:
   player: {fileID: 0}
   vida: 100
   animator: {fileID: 1206108992}
+  estaGolpeado: 0
   PlayerScript: {fileID: 0}
   rangoDeVision: 10
   anguloDeVision: 90
@@ -22354,6 +22350,7 @@ MonoBehaviour:
   player: {fileID: 0}
   vida: 100
   animator: {fileID: 1206108992}
+  estaGolpeado: 0
   PlayerScript: {fileID: 0}
   rangoDeVision: 10
   anguloDeVision: 90
@@ -22539,6 +22536,7 @@ MonoBehaviour:
   player: {fileID: 0}
   vida: 100
   animator: {fileID: 0}
+  estaGolpeado: 0
   PlayerScript: {fileID: 0}
   rangoDeVision: 10
   anguloDeVision: 65
@@ -24029,6 +24027,7 @@ MonoBehaviour:
   player: {fileID: 0}
   vida: 100000000
   animator: {fileID: 0}
+  estaGolpeado: 0
   PlayerScript: {fileID: 0}
 --- !u!136 &2062019686
 CapsuleCollider:

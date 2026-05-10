@@ -2,6 +2,7 @@ using UnityEngine;
 using System.IO;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI; // <-- ¡Obligatorio para poder editar imágenes de la interfaz!
 [System.Serializable]
 public class DatosGuardado {
     public DatosJugador jugador;
@@ -18,7 +19,7 @@ public class DatosJugador {
 [System.Serializable]
 public class Estadisticas {
     public float dañoAlAtacar;
-    public int vidaMaxima;
+    public int saludMaxima;
     public float curacionDeVida;
     public float velocidadDeAtaque;
     public float rangoDeAtaque;
@@ -65,6 +66,16 @@ public class GameManager : MonoBehaviour
     public GameObject corazonPrefab;
     public GameObject experienciaPrefab;
 
+    [Header("UI y Corazones")]
+    public GameObject corazonUIPrefab; // El prefab del corazón (¡debe ser un objeto de UI!)
+    public Transform contenedorCorazones; // Un panel o Layout Group en tu Canvas
+    public List<GameObject> listaCorazonesUI = new List<GameObject>(); // Aquí los guardaremos
+
+    [Header("Sprites de Corazones")]
+    public Sprite corazonLleno;
+    public Sprite corazonMitad;
+    public Sprite corazonVacio;
+
     public int ataqueActual; // Variable para saber qué ataque se está usando, para el hit stop
     // ataque 0 = normal
     // ataque 1 = normal combo 2
@@ -74,7 +85,6 @@ public class GameManager : MonoBehaviour
     // ataque 5 = en dash
     public bool juegoPausado = false;
     
-    public float subirDeNivel;
 
     // 2. Llama a esta función cuando quieras guardar todos los datos de golpe
     
@@ -95,12 +105,16 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
-    void Start()
+void Start()
     {
-        GameObject jugador = GameObject.FindWithTag("Player");
+        jugador = GameObject.FindWithTag("Player");
+        CrearCorazones(); 
+        
+        // ¡IMPORTANTE! Si vidaMaxima son 3 corazones, tu vidaActual empieza en 6 (mitades)
+        vidaActual = vidaMaxima * 2; 
+        
         GuardarEstadisticas();
         PlayerPrefs.SetString("Nombre", "");
-
     }
 
     // Update is called once per frame
@@ -119,6 +133,12 @@ public class GameManager : MonoBehaviour
                 juegoPausado = true;
             }
 
+        }
+
+        if (vidaActual <= 0) 
+        {
+            GameOver();
+            
         }
         
     }
@@ -140,6 +160,7 @@ public class GameManager : MonoBehaviour
         misDatos.jugador.posicion[1] = jugador.transform.position.y;
         misDatos.jugador.posicion[2] = jugador.transform.position.z;
         misDatos.jugador.salud = vidaActual;
+        misDatos.stats.saludMaxima = vidaMaxima;
         misDatos.jugador.experiencia = experiencia;
         misDatos.jugador.nivel = nivel;
         misDatos.stats.dañoAlAtacar = dañoAlAtacar;
@@ -166,6 +187,7 @@ public class GameManager : MonoBehaviour
             DatosGuardado misDatos = JsonUtility.FromJson<DatosGuardado>(json);
             // Aquí puedes asignar los datos cargados a tus variables
             vidaActual = misDatos.jugador.salud;
+            vidaMaxima = misDatos.stats.saludMaxima;
             experiencia = misDatos.jugador.experiencia;
             nivel = misDatos.jugador.nivel;
             dañoAlAtacar = misDatos.stats.dañoAlAtacar;
@@ -272,7 +294,7 @@ public class GameManager : MonoBehaviour
     {
         experiencia += cantidad * multiplicadorDeExperiencia;
         Debug.Log("¡Has ganado " + (cantidad * multiplicadorDeExperiencia) + " de experiencia! Total: " + experiencia);
-        if (experiencia >= subirDeNivel)
+        if (experiencia >= 100 + (nivel * 10))
         {
             SubirNivel();
         }
@@ -298,5 +320,63 @@ public class GameManager : MonoBehaviour
     {
         
     }
+    private void GameOver()
+    {
+        Destroy(jugador);
 
+    }
+    public void CrearCorazones()
+    {
+        // 1. Limpiamos por si acaso ya había corazones de antes
+        foreach (GameObject corazon in listaCorazonesUI)
+        {
+            if (corazon != null) Destroy(corazon);
+        }
+        listaCorazonesUI.Clear();
+
+        // 2. Comprobamos que no se nos olvidó poner las referencias
+        if (corazonUIPrefab == null || contenedorCorazones == null)
+        {
+            Debug.LogWarning("Falta asignar el Prefab del Corazón UI o el Contenedor en el GameManager");
+            return;
+        }
+
+        // 3. Instanciamos tantos corazones como vida máxima tengamos
+        for (int i = 0; i < vidaMaxima; i++)
+        {
+            // Instanciamos el corazón dentro del contenedor del Canvas
+            GameObject nuevoCorazon = Instantiate(corazonUIPrefab, contenedorCorazones);
+            
+            // Lo guardamos en la lista para poder cambiarlo de color o apagarlo luego
+            listaCorazonesUI.Add(nuevoCorazon); 
+        }
+
+        Debug.Log("Se han creado " + vidaMaxima + " corazones en la UI.");
+    }
+public void CambiarCorazones()
+    {
+        for (int i = 0; i < listaCorazonesUI.Count; i++)
+        {
+            // En lugar de buscar la Image, buscamos el Animator de tu prefab
+            Animator animCorazon = listaCorazonesUI[i].GetComponent<Animator>();
+            
+            if (animCorazon == null) continue; // Por seguridad, si el prefab no tiene animator, lo salta
+
+            int valorParaEstarLleno = (i + 1) * 2; 
+
+            // Le pasamos el número exacto al Animator
+            if (vidaActual >= valorParaEstarLleno)
+            {
+                animCorazon.SetInteger("EstadoVida", 2); // 2 = Lleno
+            }
+            else if (vidaActual == valorParaEstarLleno - 1)
+            {
+                animCorazon.SetInteger("EstadoVida", 1); // 1 = Mitad
+            }
+            else
+            {
+                animCorazon.SetInteger("EstadoVida", 0); // 0 = Vacío
+            }
+        }
+    }
 }

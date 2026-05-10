@@ -301,5 +301,21 @@ IEnumerator AtaqueAzul()
         vida -= PlayerScript.attackDamage;
         Golpeado = true;
     }
+        protected override void OnTriggerEnter(Collider other)
+    {
+        base.OnTriggerEnter(other);
+        
+        if (other.CompareTag("Player"))
+        {
+            if (other.transform.position.y > transform.position.y + 3f) return; 
+
+            if (other.TryGetComponent(out MainCharacterMovement playerScriptComponent))
+            {
+                Vector3 direccionGolpe = (other.transform.position - transform.position).normalized;
+                direccionGolpe.y = 0;
+                playerScriptComponent.RecibirDaño(fuerzaDeMiGolpe, direccionGolpe);
+            }
+        }
+    }
 
 }
