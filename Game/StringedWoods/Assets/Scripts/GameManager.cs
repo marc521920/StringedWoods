@@ -76,6 +76,9 @@ public class GameManager : MonoBehaviour
     public Sprite corazonMitad;
     public Sprite corazonVacio;
 
+    [Header("Weapons")]
+    public float Armas;
+
     public int ataqueActual; // Variable para saber qué ataque se está usando, para el hit stop
     // ataque 0 = normal
     // ataque 1 = normal combo 2
