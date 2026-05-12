@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: ae404916e5756cd499dbdfbe7ee9d5af
+guid: fd3c55b5ba87045b7bfc247ccacdfd3a
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
@@ -14,11 +14,6 @@ ModelImporter:
       assembly: UnityEngine.CoreModule
       name: cinta led
     second: {fileID: 2100000, guid: e27bbb804a1b1f445977443751d4ec2d, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: cuerda del telon
-    second: {fileID: 2100000, guid: b72615fe6a3dda7489e1e0aeaa3ce03b, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
@@ -37,16 +32,6 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: madera marco telon
-    second: {fileID: 2100000, guid: 53ae68ee7dd86cc40b18b6e99360390c, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: madera marco telon lateral
-    second: {fileID: 2100000, guid: a4f1de2f274584743be239682dff3737, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
       name: negro
     second: {fileID: 2100000, guid: 5ca0712b0c90caf4e8bc9fd176a29567, type: 2}
   - first:
@@ -54,11 +39,6 @@ ModelImporter:
       assembly: UnityEngine.CoreModule
       name: on off led
     second: {fileID: 2100000, guid: 01f3856d4ee470b4ea3b87e524ef9c06, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: pared telon
-    second: {fileID: 2100000, guid: 048dba307073bb34ba2f2501201ed60e, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
@@ -79,11 +59,6 @@ ModelImporter:
       assembly: UnityEngine.CoreModule
       name: suelo
     second: {fileID: 2100000, guid: add2e1d769baa8241a7d280e6175075b, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: telon
-    second: {fileID: 2100000, guid: b02a0c7634f56f948ab98d0a1b6f2d7b, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -159,7 +134,7 @@ ModelImporter:
     blendShapeNormalImportMode: 1
     normalSmoothingSource: 0
   referencedClips: []
-  importAnimation: 0
+  importAnimation: 1
   humanDescription:
     serializedVersion: 3
     human: []

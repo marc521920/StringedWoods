@@ -1,40 +1,36 @@
 using UnityEngine;
 using System.Collections.Generic;
-using System.Collections;
 
 public class Salas : MonoBehaviour
 {
-    // ... tus otras variables (CartonIzquierda, etc) ...
-
     [Header("Listas de la Sala")]
-    // ¡IMPORTANTE! La ponemos public para que el Spawner pueda verla y meter al enemigo
     public List<GameObject> EnemigosSala = new List<GameObject>(); 
-    
-    // Aquí arrastrarás desde el Inspector todos los spawners que hayas puesto en esta sala
     public List<SpawnerEnemigos> spawnersDeLaSala = new List<SpawnerEnemigos>(); 
 
+    [Header("Tipos de Sala")]
     public bool salaBoss;
     public bool salaEspecial;
     public bool salaNormal;
     public bool salaInicial;
     public bool salaTienda;
 
+    [Header("Estados")]
     public bool salaLimpia; 
     public bool jugadorDentro; 
 
+    [Header("Detectores")]
     public GameObject detectorSalaCircundante;
+    public GameObject detectorPlayerDentro;
 
-    [Header("paredes de carton")]
+    [Header("Paredes de carton")]
     public Animation paredCartonIzquierda;
     public Animation paredCartonDerecha;
     public Animation paredCartonDelante;
     
-    // NUEVO: Un "cerrojo" para no spawnear 60 veces por segundo en el Update
     private bool enemigosGenerados = false; 
     
     void Update()
     {
-        // Si el jugador entra, la sala no está limpia, y AÚN NO hemos generado enemigos...
         if (jugadorDentro && !salaLimpia && !enemigosGenerados)
         {
             if (!salaInicial && !salaTienda)
@@ -43,64 +39,88 @@ public class Salas : MonoBehaviour
             }
             else
             {
-                // Si es tienda o inicial, la marcamos como limpia directamente
+                // Si es tienda o inicial, la marcamos como limpia y ABRIMOS LAS PUERTAS
                 salaLimpia = true; 
+                terminarSala();
             }
-            
         }
+
         if (enemigosGenerados && !salaLimpia)
-            {
-            // 1. EL BARRENDERO: Esta línea mágica busca cualquier enemigo destruido y lo borra de la lista
+        {
             EnemigosSala.RemoveAll(enemigo => enemigo == null);
 
-            // 2. Comprobamos si, tras limpiar a los muertos, la lista se ha quedado vacía
             if (EnemigosSala.Count == 0)
             {
                 salaLimpia = true;
                 terminarSala();
-
-                // Aquí pondrías el código para abrir las puertas o soltar el cofre de recompensa
             }
         }
     }
 
     void SpawnearEnemigos()
     {
-        // 1. Echamos el cerrojo inmediatamente para que el Update no vuelva a entrar aquí
         enemigosGenerados = true; 
-
-        // 2. Recorremos todos los spawners que asignaste a esta sala
         foreach (SpawnerEnemigos spawner in spawnersDeLaSala)
         {
-            // 3. Le decimos al spawner que actúe. 
-            // La palabra "this" significa "yo mismo" (le pasamos este script Salas al spawner)
             spawner.SpawnearEnemigos(this);
         }
     }
+
     void terminarSala()
     {
-        if (tag == "SalaIzquierda")
+        Debug.Log("¡La sala " + gameObject.name + " se ha limpiado! Abriendo puertas...");
+
+        // 1. Usamos 'if' separados para que TODAS las condiciones se puedan cumplir a la vez
+        if (gameObject.CompareTag("SalaIzquierda") && paredCartonDerecha != null)
         {
-            
+            paredCartonDerecha["AbrirDerecha"].wrapMode = WrapMode.ClampForever;
             paredCartonDerecha.Play("AbrirDerecha");
         }
-        else if (tag == "SalaDerecha")
+        
+        if (gameObject.CompareTag("SalaDerecha") && paredCartonIzquierda != null)
         {
+            paredCartonIzquierda["AbrirIzquierda"].wrapMode = WrapMode.ClampForever;
             paredCartonIzquierda.Play("AbrirIzquierda");
         }
-        else if (salaNormal)
+        
+        // 2. Si es una sala normal (o inicial/tienda), revisamos las puertas principales
+        if (salaNormal || salaInicial || salaTienda) 
         {
-            paredCartonDelante.Play("AbrirDelante");
-            if (Physics.Raycast(detectorSalaCircundante.transform.position, detectorSalaCircundante.transform.right, out RaycastHit hit, 100f))
+            if (paredCartonDelante != null)
             {
-                paredCartonDerecha.Play("AbrirDerecha");
+                paredCartonDelante["AbrirDelante"].wrapMode = WrapMode.ClampForever;
+                paredCartonDelante.Play("AbrirDelante");
             }
-            if (Physics.Raycast(detectorSalaCircundante.transform.position, -detectorSalaCircundante.transform.right, out RaycastHit hit2, 100f))
+
+            // 3. Comprobamos los raycasts (¡Ojo! Asegurándonos de que el detector exista para evitar errores)
+            if (detectorSalaCircundante != null)
             {
-                paredCartonIzquierda.Play("AbrirIzquierda");
+                if (Physics.Raycast(detectorSalaCircundante.transform.position, detectorSalaCircundante.transform.right, out RaycastHit hit, 100f))
+                {
+                    if (paredCartonDerecha != null) 
+                    {
+                        paredCartonDerecha["AbrirDerecha"].wrapMode = WrapMode.ClampForever;
+                        paredCartonDerecha.Play("AbrirDerecha");
+                    }
+                }
+                
+                if (Physics.Raycast(detectorSalaCircundante.transform.position, -detectorSalaCircundante.transform.right, out RaycastHit hit2, 100f))
+                {
+                    if (paredCartonIzquierda != null) 
+                    {
+                        paredCartonIzquierda["AbrirIzquierda"].wrapMode = WrapMode.ClampForever;
+                        paredCartonIzquierda.Play("AbrirIzquierda");
+                    }
+                }
             }
         }
+    }
 
-        // Aquí pondrías el código para abrir las puertas o soltar el cofre de recompensa
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            jugadorDentro = true;
+        }
     }
 }

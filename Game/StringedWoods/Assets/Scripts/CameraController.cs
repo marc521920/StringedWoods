@@ -41,26 +41,26 @@ public class CameraController : MonoBehaviour
         // --- EJE X (Rotación en Y) ---
         if (player.transform.position.x >= posicionInicial.x)
         {
-            progresoY = Mathf.InverseLerp(posicionInicial.x, limitXRight.transform.position.x, player.transform.position.x);
+            progresoY = Mathf.InverseLerp(posicionInicial.x, limitXLeft.transform.position.x, player.transform.position.x);
             
             angleY = Mathf.Lerp(180f, 190f, progresoY);
             
         }
         else 
         {
-            progresoY = Mathf.InverseLerp(posicionInicial.x, limitXLeft.transform.position.x, player.transform.position.x);
+            progresoY = Mathf.InverseLerp(posicionInicial.x, limitXRight.transform.position.x, player.transform.position.x);
             angleY = Mathf.Lerp(180f, 170f, progresoY);
         }
 
         // --- EJE Z (Rotación en X) ---
         if (player.transform.position.z >= posicionInicial.z)
         {
-            progresoX = Mathf.InverseLerp(posicionInicial.z, limitZForward.transform.position.z, player.transform.position.z);
+            progresoX = Mathf.InverseLerp(posicionInicial.z, limitZBackward.transform.position.z, player.transform.position.z);
             angleX = Mathf.Lerp(angleXinicial, 25f, progresoX);
         }
         else 
         {
-            progresoX = Mathf.InverseLerp(posicionInicial.z, limitZBackward.transform.position.z, player.transform.position.z);
+            progresoX = Mathf.InverseLerp(posicionInicial.z, limitZForward.transform.position.z, player.transform.position.z);
             angleX = Mathf.Lerp(angleXinicial, 15f, progresoX);
         }
 

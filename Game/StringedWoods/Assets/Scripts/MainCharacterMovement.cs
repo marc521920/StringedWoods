@@ -63,6 +63,11 @@ public class MainCharacterMovement : MonoBehaviour
 
     public GameObject gameManager;
 
+    [Header("Effects")]
+    public GameObject AttackDownEffect; // Efecto visual para el ataque hacia abajo
+    public GameObject TransformAttackDownEffect; // Efecto visual para la transformación del ataque hacia abajo
+
+
     void Start()
     {
         controller = GetComponent<CharacterController>();
@@ -496,6 +501,7 @@ IEnumerator RutinaKnockback(float fuerza, Vector3 direccion)
         // Aquí podrías reproducir una animación de ataque, por ejemplo:
         // animator.SetTrigger("Attack");
         attackAreaJump.SetActive(true); // Activamos el área de ataque para el salto
+        Instantiate(AttackDownEffect,TransformAttackDownEffect.transform.position, TransformAttackDownEffect.transform.rotation); // Reproducimos el efecto visual del ataque hacia abajo
         GameManager.Instance.ataqueActual = 4; // Set the current attack to the charged attack
 
         // Esperamos un momento para simular el tiempo de ataque

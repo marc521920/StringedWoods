@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: ae404916e5756cd499dbdfbe7ee9d5af
+guid: fc46dd9a6d8074445908ad021c2ec5b4
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
@@ -7,83 +7,78 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: caja led
-    second: {fileID: 2100000, guid: d2bc893150c0aa64ab3269bb2e1e1b4a, type: 2}
+      name: Material
+    second: {fileID: 2100000, guid: 62debbc4c111bd64baa5eea148e963ad, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: cinta led
-    second: {fileID: 2100000, guid: e27bbb804a1b1f445977443751d4ec2d, type: 2}
+      name: arena
+    second: {fileID: 2100000, guid: 7c718964dd6221447b4c64e27d33a7ef, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: carpa
+    second: {fileID: 2100000, guid: b0af625861bb29f46aaf03a0af7935f0, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: cuerda del telon
-    second: {fileID: 2100000, guid: b72615fe6a3dda7489e1e0aeaa3ce03b, type: 2}
+    second: {fileID: 2100000, guid: f59d67a34a3ddb54790df47654f19e04, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: interruptor led
-    second: {fileID: 2100000, guid: 1e55968b667cdc64d88328d42501a6b3, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: luz led
-    second: {fileID: 2100000, guid: 7d7640ae979892647809446a8112b84d, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: madera estructural
-    second: {fileID: 2100000, guid: a3bab9dee8e4d5547a47e1e913a1c953, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: madera marco telon
-    second: {fileID: 2100000, guid: 53ae68ee7dd86cc40b18b6e99360390c, type: 2}
+      name: dorado
+    second: {fileID: 2100000, guid: e1b65248da6ae954ab44b2c5ea16d175, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: madera marco telon lateral
-    second: {fileID: 2100000, guid: a4f1de2f274584743be239682dff3737, type: 2}
+    second: {fileID: 2100000, guid: 7b3eed1db233b914ea456acaf8b998c7, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: negro
-    second: {fileID: 2100000, guid: 5ca0712b0c90caf4e8bc9fd176a29567, type: 2}
+      name: muro circo principal
+    second: {fileID: 2100000, guid: 207e6cf44e00b7b4194ed20f935773b3, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: on off led
-    second: {fileID: 2100000, guid: 01f3856d4ee470b4ea3b87e524ef9c06, type: 2}
+      name: negro.001
+    second: {fileID: 2100000, guid: 4862a0885de4a5444bda1bc69d5c5c36, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: pared telon
-    second: {fileID: 2100000, guid: 048dba307073bb34ba2f2501201ed60e, type: 2}
+      name: negro.004
+    second: {fileID: 2100000, guid: db8217f1353337c4b825de28ab40ac3c, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: pared.001
-    second: {fileID: 2100000, guid: 401e5b5b6a1e94267bc7d9a9c90d76c0, type: 2}
+      name: pared circo
+    second: {fileID: 2100000, guid: 83cc32f19208d3a469a588e833cf8a3c, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: pared.l
-    second: {fileID: 2100000, guid: d1680ebd5c999cc4e8b05de3c1b8dae1, type: 2}
+      name: pared pasillo
+    second: {fileID: 2100000, guid: 6ca3423e85639f848853ad4709b9b9ca, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: pared.r
-    second: {fileID: 2100000, guid: 5227d181fb272e644ae6eb6b6e52054e, type: 2}
+      name: rojo
+    second: {fileID: 2100000, guid: 3ea224ea08a3906428f0271cae062718, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: suelo
-    second: {fileID: 2100000, guid: add2e1d769baa8241a7d280e6175075b, type: 2}
+      name: suelo circo
+    second: {fileID: 2100000, guid: 56e533d4eeae7124c8ad0b5669a13511, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: suelo.pasillo
+    second: {fileID: 2100000, guid: 4701fa95831e5524684da6c3e3af4e95, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: telon
-    second: {fileID: 2100000, guid: b02a0c7634f56f948ab98d0a1b6f2d7b, type: 2}
+    second: {fileID: 2100000, guid: 85afd5ed156f5b8429479cb0c3daa3e8, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -159,7 +154,7 @@ ModelImporter:
     blendShapeNormalImportMode: 1
     normalSmoothingSource: 0
   referencedClips: []
-  importAnimation: 0
+  importAnimation: 1
   humanDescription:
     serializedVersion: 3
     human: []
