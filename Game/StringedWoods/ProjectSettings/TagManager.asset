@@ -13,6 +13,7 @@ TagManager:
   - head
   - SalaDerecha
   - SalaIzquierda
+  - AtaqueEnemigo
   layers:
   - Default
   - TransparentFX

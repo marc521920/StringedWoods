@@ -20,6 +20,7 @@ public class BailarinaScript : EnemyScript
     public bool attackStarted = false; // NUEVO: Para controlar cuándo empieza el ataque
     private float temporizador = 0f;
     public float tiempoEntreAtaques = 2f; // Tiempo que tarda en volver a atacar después de atrapar al jugador
+    public float tiempoDeAtaqueRojo = 3f;
     private Vector3 posicionJugador; // NUEVO: Para guardar la posición del jugador al iniciar el ataque
     public GameObject prefabAvisoRuta; // El circulito o marca que aparecerá en el suelo
     public float distanciaEntreAvisos = 2f; // Cada cuántos metros aparece una marca
@@ -35,7 +36,16 @@ public class BailarinaScript : EnemyScript
     private bool jugadorDetectado = false;
     private bool Golpeado = false; 
     public string color;
-    // red or blue
+        // red or blue
+    [Header ("Ataque")]
+
+    public GameObject AtaqueArea;
+    public GameObject EfectoAtaqueAzul;
+    public GameObject EfectoAtaqueRojo;
+
+    
+
+
 
     protected override void Start()
     {
@@ -46,6 +56,9 @@ public class BailarinaScript : EnemyScript
         {
             rb.isKinematic = false;
         }
+        AtaqueArea.SetActive(false);
+        EfectoAtaqueAzul.SetActive(false);
+        EfectoAtaqueRojo.SetActive(false);
     }
 
     protected override void Moverse()
@@ -100,11 +113,31 @@ public class BailarinaScript : EnemyScript
             Vector3 direccionAlObjetivo = (posicionObjetivo - transform.position).normalized;
             if (color == "red")
             {
+                temporizador += Time.deltaTime;
                 if (direccionAlObjetivo != Vector3.zero)
                 {
                     Quaternion rotacionDeseada = Quaternion.LookRotation(direccionAlObjetivo);
                     transform.rotation = Quaternion.Slerp(transform.rotation, rotacionDeseada, 10f * Time.deltaTime);
+
                 }
+                if (temporizador >= tiempoEntreAtaques && attackStarted == false)
+                {
+                    attackStarted = true;
+                    velocity = velocity/1.5f;
+                    AtaqueArea.SetActive(true);
+                    EfectoAtaqueRojo.SetActive(true);
+
+                }
+                else if (temporizador >= tiempoDeAtaqueRojo && attackStarted == true)
+                {
+                    attackStarted = false;
+                    velocity = velocity*1.5f;
+                    AtaqueArea.SetActive(false);
+                    EfectoAtaqueRojo.SetActive(false);
+                    temporizador = 0;
+                    
+                }
+
             
 
             // FRENOS: Si está lejos, corre. Si está cerca, frena en seco.
@@ -112,6 +145,7 @@ public class BailarinaScript : EnemyScript
                 if (distanciaAlJugador > distanciaDeAtaque)
                 {
                     rb.linearVelocity = new Vector3(transform.forward.x * velocity, rb.linearVelocity.y, transform.forward.z * velocity);
+                    
                 }
                 else
                 {
@@ -248,6 +282,8 @@ IEnumerator AtaqueAzul()
         // ==========================================
         // FASE 2: LA EMBESTIDA (Y limpiar al pisar)
         // ==========================================
+        AtaqueArea.SetActive(true);
+        EfectoAtaqueAzul.SetActive(true);
         while (true)
         {
             origenDelRayo = transform.position + Vector3.up; 
@@ -284,6 +320,8 @@ IEnumerator AtaqueAzul()
         // FASE 3: FIN DEL ATAQUE Y LIMPIEZA FINAL
         // ==========================================
         rb.linearVelocity = new Vector3(0, rb.linearVelocity.y, 0);
+        AtaqueArea.SetActive(false);
+        EfectoAtaqueAzul.SetActive(false);
         
         // Por si ha sobrado alguna marca sin pisar, la limpiamos por seguridad
         foreach (GameObject marca in marcasDeRuta)
