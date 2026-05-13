@@ -97,6 +97,7 @@ public class BailarinaScript : EnemyScript
             {
                 jugadorDetectado = false;
                 Debug.Log("Te perdí...");
+                
             }
             else if (Golpeado)
             {
@@ -126,9 +127,10 @@ public class BailarinaScript : EnemyScript
                     velocity = velocity/1.5f;
                     AtaqueArea.SetActive(true);
                     EfectoAtaqueRojo.SetActive(true);
+                    temporizador = 0;
 
                 }
-                else if (temporizador >= tiempoDeAtaqueRojo && attackStarted == true)
+                if (temporizador >= tiempoDeAtaqueRojo && attackStarted == true)
                 {
                     attackStarted = false;
                     velocity = velocity*1.5f;
@@ -181,6 +183,17 @@ public class BailarinaScript : EnemyScript
             {
                 if (marca != null) Destroy(marca);
             }
+            if (color == "Red")
+            {
+                
+                EfectoAtaqueRojo.SetActive(false);
+            }
+            else if (color == "Blue")
+            {
+                AtaqueArea.SetActive(false);
+                EfectoAtaqueAzul.SetActive(false);
+            }
+
             marcasDeRuta.Clear();
             // --- MODO PATRULLA REBOTANTE ---
             if (direccionPatrulla == Vector3.zero)

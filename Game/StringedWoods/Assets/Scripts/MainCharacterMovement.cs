@@ -513,7 +513,7 @@ IEnumerator RutinaKnockback(float fuerza, Vector3 direccion)
                     yield return new WaitForSeconds(0.4f); // Dura un poco más por ser el remate
                     
                     // animator.SetBool("combo3", false);
-                    animator.SetInteger("Attack", 0);
+                    
                     attackAreaCombo3.SetActive(false); 
                 }
             }

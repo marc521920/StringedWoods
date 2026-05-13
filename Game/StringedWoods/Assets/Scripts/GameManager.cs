@@ -270,7 +270,7 @@ void Start()
     }
     IEnumerator HitStop(float duracion)
     {
-        Time.timeScale = 0f;
+        Time.timeScale = 0.5f;
     
     // ESTA ES LA LÍNEA QUE FALTA PARA QUE EL ERROR DESAPAREZCA
         yield return new WaitForSecondsRealtime(duracion); 

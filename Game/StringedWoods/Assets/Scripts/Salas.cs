@@ -26,25 +26,33 @@ public class Salas : MonoBehaviour
     public Animation paredCartonIzquierda;
     public Animation paredCartonDerecha;
     public Animation paredCartonDelante;
+    [Header("Paredes de Habitacion")]
+    public GameObject paredDerecha;
+    public GameObject paredIzquierda;
+    public GameObject paredAtras;
+    public GameObject paredDelante;
+
+    public List<GameObject> ParedTrasera = new List<GameObject>();
+
+    public CameraController ControladorCamara;
     
     private bool enemigosGenerados = false; 
+
     
     void Update()
     {
+        Debug.DrawRay(detectorSalaCircundante.transform.position, detectorSalaCircundante.transform.right * 100f, Color.red);
+        // Limpiamos las salas pacíficas (Tienda o Inicial) de forma automática
         if (jugadorDentro && !salaLimpia && !enemigosGenerados)
         {
-            if (!salaInicial && !salaTienda)
+            if (salaInicial || salaTienda)
             {
-                SpawnearEnemigos();
-            }
-            else
-            {
-                // Si es tienda o inicial, la marcamos como limpia y ABRIMOS LAS PUERTAS
                 salaLimpia = true; 
                 terminarSala();
             }
         }
 
+        // Comprobamos si hemos matado a todos los monstruos
         if (enemigosGenerados && !salaLimpia)
         {
             EnemigosSala.RemoveAll(enemigo => enemigo == null);
@@ -95,7 +103,7 @@ public class Salas : MonoBehaviour
             // 3. Comprobamos los raycasts (¡Ojo! Asegurándonos de que el detector exista para evitar errores)
             if (detectorSalaCircundante != null)
             {
-                if (Physics.Raycast(detectorSalaCircundante.transform.position, detectorSalaCircundante.transform.right, out RaycastHit hit, 100f))
+                if (Physics.Raycast(detectorSalaCircundante.transform.position, -detectorSalaCircundante.transform.right, out RaycastHit hit, 100f))
                 {
                     if (paredCartonDerecha != null) 
                     {
@@ -104,7 +112,7 @@ public class Salas : MonoBehaviour
                     }
                 }
                 
-                if (Physics.Raycast(detectorSalaCircundante.transform.position, -detectorSalaCircundante.transform.right, out RaycastHit hit2, 100f))
+                if (Physics.Raycast(detectorSalaCircundante.transform.position, detectorSalaCircundante.transform.right, out RaycastHit hit2, 100f))
                 {
                     if (paredCartonIzquierda != null) 
                     {
@@ -118,9 +126,47 @@ public class Salas : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
+        if (other.CompareTag("Player") )
+        {
+            if (!salaLimpia && !enemigosGenerados)
+            {
+            
+            SpawnearEnemigos();
+            }
+        if (!jugadorDentro)
+        {
+            paredDelante.SetActive(true);
+            foreach (GameObject obj in ParedTrasera)
+        {
+            if (obj != null)
+            {
+                obj.SetActive(true);
+            }
+        }
+            ControladorCamara.CambioDeReferencia(paredIzquierda,paredDerecha,paredDelante,paredAtras,transform.position);
+            jugadorDentro = true;
+
+        }
+            
+        }
+        
+    }
+    private void OnTriggerExit(Collider other) 
+    {
         if (other.CompareTag("Player"))
         {
-            jugadorDentro = true;
+            foreach (GameObject obj in ParedTrasera)
+            {
+            // Esta comprobación evita errores si alguno de los objetos ya fue destruido antes
+            if (obj != null)
+                {
+                obj.SetActive(false); 
+                }
+            }
+            paredDelante.SetActive(false);
+            jugadorDentro = false;
+            
         }
+        
     }
 }

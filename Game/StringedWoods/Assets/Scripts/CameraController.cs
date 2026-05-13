@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class CameraController : MonoBehaviour
 {
@@ -56,7 +57,7 @@ public class CameraController : MonoBehaviour
         if (player.transform.position.z >= posicionInicial.z)
         {
             progresoX = Mathf.InverseLerp(posicionInicial.z, limitZBackward.transform.position.z, player.transform.position.z);
-            angleX = Mathf.Lerp(angleXinicial, 25f, progresoX);
+            angleX = Mathf.Lerp(angleXinicial, 22f, progresoX);
         }
         else 
         {
@@ -66,5 +67,35 @@ public class CameraController : MonoBehaviour
 
         // Aplicamos la rotación usando nuestro 'angleZ' guardado, sin preguntarle a Unity
         transform.rotation = Quaternion.Euler(angleX, -angleY, angleZ); 
+    }
+    public void CambioDeReferencia(GameObject referenciaNuevaIzquierda , GameObject referenciaNuevaDerecha , GameObject referenciaNuevaDelante , GameObject referenciaNuevaDetras, Vector3 posicionNuevaSala)
+    {
+        Vector3 posicionNuevaCamara = new Vector3(posicionNuevaSala.x, transform.position.y, posicionNuevaSala.z + 7f);
+        StartCoroutine(TransicionCamara(posicionNuevaCamara));
+        limitXLeft = referenciaNuevaIzquierda;
+        limitXRight = referenciaNuevaDerecha;
+        limitZBackward = referenciaNuevaDetras;
+        limitZForward = referenciaNuevaDelante;
+        
+    }
+    IEnumerator TransicionCamara(Vector3 destino)
+    {
+        Vector3 posicionInicial = transform.position; // Guardamos dónde está la cámara ahora mismo
+        float duracion = 0.4f; // 0.4 segundos es una velocidad "medio rápida" ideal para esto
+        float tiempo = 0f;
+
+        // Mientras no haya pasado el tiempo establecido, movemos la cámara poco a poco
+        while (tiempo < duracion)
+        {
+            tiempo += Time.deltaTime;
+            
+            // Vector3.Lerp calcula la posición intermedia entre A y B basándose en el porcentaje de tiempo
+            transform.position = Vector3.Lerp(posicionInicial, destino, tiempo / duracion);
+            
+            yield return null; // Esperamos al siguiente frame
+        }
+
+        // Medida de seguridad: al terminar, nos aseguramos de que esté EXACTAMENTE en el destino
+        transform.position = destino;
     }
 }
