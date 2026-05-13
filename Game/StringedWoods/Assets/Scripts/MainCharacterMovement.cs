@@ -63,6 +63,8 @@ public class MainCharacterMovement : MonoBehaviour
 
     public GameObject gameManager;
 
+    private float tiempoSinTocarSuelo = 0f;
+
     [Header("Effects")]
     public GameObject AttackDownEffect; // Efecto visual para el ataque hacia abajo
     public GameObject TransformAttackDownEffect; // Efecto visual para la transformación del ataque hacia abajo
@@ -113,48 +115,50 @@ public class MainCharacterMovement : MonoBehaviour
         // (Gravedad y Salto)
         if (controller.isGrounded) 
         {
+            tiempoSinTocarSuelo = 0f; // Reseteamos el temporizador
             animator.SetBool("isOnFloor", true);
-
-            salto = false; // Reseteamos el estado de salto al estar en el suelo
+            salto = false; 
            
-            // Le damos un valor ligeramente negativo para que el personaje se mantenga pegado al suelo
             if (velocidadY < 0) 
             {
                 velocidadY = -2f; 
             }
 
-            // Salto
-            if (Input.GetKey(KeyCode.Space) && salto == false && canJump == true) {
-                if (soltadoBotonSalto){
+            if (Input.GetKey(KeyCode.Space) && salto == false && canJump == true) 
+            {
+                if (soltadoBotonSalto)
+                {
                     salto = true;
                     animator.SetTrigger("isJumping");
-                
-                    velocidadY = jumpSpeed; // La velocidad de salto se multiplica por el valor cargado
-
-                    soltadoBotonSalto = false; // Se marca que el botón de salto está siendo presionado
-
+                    velocidadY = jumpSpeed; 
+                    soltadoBotonSalto = false; 
                 }                
-            } else if (!Input.GetKeyUp(KeyCode.Space)) {
-                soltadoBotonSalto = true; // Se marca que el botón de salto ha sido soltado
-
-                
+            } 
+            else if (!Input.GetKeyUp(KeyCode.Space)) 
+            {
+                soltadoBotonSalto = true; 
             }
-            
         }
+        
         else 
         {
-            animator.ResetTrigger("isJumping");
-            animator.SetBool("isOnFloor", false);
-            // Si NO estamos en el suelo (estamos en el aire), aplicamos la gravedad poco a poco
+            // --- APLICAMOS LA GRAVEDAD SIEMPRE QUE ESTEMOS EN EL AIRE ---
             velocidadY -= gravity * Time.deltaTime;
 
-           if (!Input.GetKey(KeyCode.Space) && velocidadY > 0 && salto == true) 
+            // --- PERO LAS ANIMACIONES SE ESPERAN 0.1 SEGUNDOS ANTES DE REACCIONAR ---
+            tiempoSinTocarSuelo += Time.deltaTime;
+            
+            if (tiempoSinTocarSuelo > 0.1f) 
             {
-                salto = false;
-                // Esto hace que pierda fuerza pero siga subiendo un poquito por inercia
-                velocidadY *= 0.5f; 
+                animator.ResetTrigger("isJumping");
+                animator.SetBool("isOnFloor", false);
             }
 
+            if (!Input.GetKey(KeyCode.Space) && velocidadY > 0 && salto == true) 
+            {
+                salto = false;
+                velocidadY *= 0.5f; 
+            }
         }
         
         if (Input.GetKeyDown(KeyCode.Q) && !dashInCooldown && !isAttacking) 
@@ -163,12 +167,20 @@ public class MainCharacterMovement : MonoBehaviour
         }
         // Unimos el movimiento vertical (Y) con el horizontal (X, Z)
         moveDirection.y = velocidadY;
-        
-        // Movemos al personaje
-        if (canMove)
+
+        if (Time.timeScale > 0f && canMove) 
         {
             controller.Move(moveDirection * Time.deltaTime);
         }
+        else if (canMove)
+        {
+            controller.Move(moveDirection * Time.deltaTime);
+        }
+        else
+        {
+            controller.Move(new Vector3(0, moveDirection.y, 0) * Time.deltaTime); // Si no puede moverse, solo aplicamos la gravedad
+        }
+
         if ( (moveDirection.x != 0 || moveDirection.z != 0)) 
         {
             animator.SetBool("isRunning", true);
@@ -189,11 +201,14 @@ public class MainCharacterMovement : MonoBehaviour
                 Ray ray = new Ray(transform.position, Vector3.down); // Lanzamos un rayo hacia adelante para detectar enemigos
                 RaycastHit hit;
                 Debug.DrawRay(transform.position, Vector3.down * maxHeightAttack, Color.red, 1f); // Dibuja el rayo en la escena para depuración
-                if (Physics.Raycast(ray, out hit, maxHeightAttack) && canAttack == true) // Si el rayo golpea algo dentro del rango de ataque
+                if (Physics.Raycast(ray, out hit, maxHeightAttack) && canAttack == true) 
                 {
-                    velocidadY = velocidadY/2f;
-                    StartCoroutine(Atack()); // Iniciamos la rutina de ataque
-                    
+                // ¡SOLO frenamos si está en el aire!
+                    if (!controller.isGrounded) 
+                    {
+                        velocidadY = velocidadY / 2f;
+                    }
+                    StartCoroutine(Atack()); 
                 }
                 else if (canAttack == true) // Si el rayo no golpea nada, pero el jugador puede atacar, hacemos un ataque de salto
                 {
@@ -513,29 +528,56 @@ IEnumerator RutinaKnockback(float fuerza, Vector3 direccion)
     
     IEnumerator AttackJump()
     {
-        while (!controller.isGrounded) 
+        float temporizador = 0f;
+        // --- 1. PREPARACIÓN ---
+        animator.SetInteger("Attack", 5);
+        
+        canJump = false; 
+        canAttack = false; 
+        canMove = false;
+
+        // Guardamos la velocidad y detenemos al jugador en el aire por completo
+        float velocidadNormal = velocidadY;
+        velocidadY = 0f; // 0f lo deja totalmente "congelado" en el aire. Si quieres que caiga despacito, usa velocidadY / 2f;
+
+        // --- 2. SUSPENSIÓN EN EL AIRE ---
+       while (temporizador < 0.5f) // El personaje se queda suspendido en el aire durante medio segundo, ajusta este valor a tu gusto
         {
-            //Animation de caida con ataque
+            velocidadY = 0f; // Seguimos asegurando que no caiga durante la suspensión
+            temporizador += Time.deltaTime;
             yield return null; // Esperamos al siguiente frame para continuar el bucle
         }
-        canMove = false; // Desactivamos el movimiento durante el ataque
-        canJump = false; // Desactivamos el salto durante el ataque
-        velocidadY = velocidadY/2f; // Detenemos el movimiento vertical durante el ataque
-        canAttack = false; // Desactivamos la posibilidad de atacar inmediatamente después
-        // Aquí podrías reproducir una animación de ataque, por ejemplo:
-        // animator.SetTrigger("Attack");
-        attackAreaJump.SetActive(true); // Activamos el área de ataque para el salto
-        Instantiate(AttackDownEffect,TransformAttackDownEffect.transform.position, TransformAttackDownEffect.transform.rotation); // Reproducimos el efecto visual del ataque hacia abajo
-        GameManager.Instance.ataqueActual = 4; // Set the current attack to the charged attack
 
-        // Esperamos un momento para simular el tiempo de ataque
-        yield return new WaitForSeconds(0.04f); // Ajusta este valor según la duración de tu animación
-        attackAreaJump.SetActive(false); // Desactivamos el área de ataque después de un momento
-        canMove = true; // Reactivamos el movimiento después del ataque
-        canJump = true; // Reactivamos el salto después del ataque
-        cooldownAttackNumber = cooldownAttackNumber+0.2f; // Reducimos el tiempo de espera entre ataques para hacer el ataque de salto más fluido
-        StartCoroutine(cooldownAttack()); // Iniciamos el cooldown para evitar ataques consecutivos
+        // --- 3. CAÍDA Y ATAQUE ---
+        velocidadY = velocidadNormal*2; // Devolvemos la gravedad/velocidad a la normalidad
+        attackAreaJump.SetActive(true); // Encendemos el área de daño mientras cae
+        GameManager.Instance.ataqueActual = 4;
 
+        // --- 4. ESPERAR HASTA ATERRIZAR ---
+        // Este while es mágico: pausa la corrutina frame a frame HASTA que el jugador toque el suelo.
+        while (!controller.isGrounded)
+        {
+            yield return null; // "Espera al siguiente frame y vuelve a comprobar"
+        }
+
+        // --- 5. IMPACTO EN EL SUELO ---
+        // ¡Boom! Toca el suelo, instanciamos las partículas
+        Instantiate(AttackDownEffect, TransformAttackDownEffect.transform.position, TransformAttackDownEffect.transform.rotation);
+        
+        // --- 6. TIEMPO DE RECUPERACIÓN (RECOVERY) ---
+        // Esperamos medio segundo (0.5f) para que se vea el impacto antes de dejarle moverse.
+        // Ajusta este valor si quieres que la pausa en el suelo sea mayor o menor.
+        yield return new WaitForSeconds(0.2f); 
+
+        // --- 7. RESETEO TOTAL ---
+        animator.SetInteger("Attack", 0);
+        attackAreaJump.SetActive(false); 
+        
+        canMove = true; 
+        canJump = true; 
+        
+        cooldownAttackNumber += 0.2f; 
+        StartCoroutine(cooldownAttack()); 
     }
     IEnumerator AttackDash()
     {
