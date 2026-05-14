@@ -82,6 +82,15 @@ public class GameManager : MonoBehaviour
     // martillo 2
     // Guadaña 3
     // Lanza 4
+    public GameObject attackAreaEspadalv1;
+    public GameObject attackAreaEspadalv2;
+    public GameObject attackAreaMartillolv1;
+    public GameObject attackAreaMartillolv2;
+    public GameObject attackAreaGuadañalv1;
+    public GameObject attackAreaGuadañalv2;
+    public GameObject attackAreaLanzalv1;
+    public GameObject attackAreaLanzalv2;
+    public GameObject areaActual;
 
     public int ataqueActual; // Variable para saber qué ataque se está usando, para el hit stop
     // ataque 0 = normal
@@ -94,30 +103,35 @@ public class GameManager : MonoBehaviour
      public float ataque1Espada;
      public float ataque2Espada;
      public float ataque3Espada;
+     public float ataqueEnElAireEspada;
      public float ataqueCargadoEspada;
      public float ataqueSaltoEspada;
      public float ataqueDashEspada;
         public float ataque1Martillo;
         public float ataque2Martillo;
         public float ataque3Martillo;
+        public float ataqueEnElAireMartillo;
         public float ataqueCargadoMartillo;
         public float ataqueSaltoMartillo;
         public float ataqueDashMartillo;
         public float ataque1Guadaña;
         public float ataque2Guadaña;
         public float ataque3Guadaña;
+        public float ataqueEnElAireGuadaña;
         public float ataqueCargadoGuadaña;
         public float ataqueSaltoGuadaña;
         public float ataqueDashGuadaña;
         public float ataque1Lanza;
         public float ataque2Lanza;
         public float ataque3Lanza;
+        public float ataqueEnElAireLanza;
         public float ataqueCargadoLanza;
         public float ataqueSaltoLanza;
         public float ataqueDashLanza;
         public float duracionAtaque1;
         public float duracionAtaque2;
         public float duracionAtaque3;
+        public float duracionAtaqueEnElAire;
         public float duracionAtaqueCargado;
         public float duracionAtaqueSalto;
         public float duracionAtaqueDash;
@@ -458,6 +472,15 @@ public void CambiarCorazones()
             duracionAtaqueCargado = ataqueCargadoEspada;
             duracionAtaqueSalto = ataqueSaltoEspada;
             duracionAtaqueDash = ataqueDashEspada;
+            duracionAtaqueEnElAire = ataqueEnElAireEspada;
+            if (Armas == 1)
+            {
+                areaActual = attackAreaEspadalv1;
+            }
+            else
+            {
+                areaActual = attackAreaEspadalv2;
+            }
         }
         else if (Armas == 2 || Armas == 6)
         {
@@ -467,6 +490,15 @@ public void CambiarCorazones()
             duracionAtaqueCargado = ataqueCargadoMartillo;
             duracionAtaqueSalto = ataqueSaltoMartillo;
             duracionAtaqueDash = ataqueDashMartillo;
+            duracionAtaqueEnElAire = ataqueEnElAireMartillo;
+            if (Armas == 2)
+            {
+                areaActual = attackAreaMartillolv1;
+            }
+            else
+            {
+                areaActual = attackAreaMartillolv2;
+            }
         }
         else if (Armas == 3 || Armas == 7)
         {
@@ -476,6 +508,15 @@ public void CambiarCorazones()
             duracionAtaqueCargado = ataqueCargadoGuadaña;
             duracionAtaqueSalto = ataqueSaltoGuadaña;
             duracionAtaqueDash = ataqueDashGuadaña;
+            duracionAtaqueEnElAire = ataqueEnElAireGuadaña;
+            if (Armas == 3)
+            {
+                areaActual = attackAreaGuadañalv1;
+            }
+            else
+            {
+                areaActual = attackAreaGuadañalv2;
+            }
         }
         else if (Armas == 4 || Armas == 8)
         {
@@ -485,6 +526,15 @@ public void CambiarCorazones()
             duracionAtaqueCargado = ataqueCargadoLanza;
             duracionAtaqueSalto = ataqueSaltoLanza;
             duracionAtaqueDash = ataqueDashLanza;
+            duracionAtaqueEnElAire = ataqueEnElAireLanza;
+            if (Armas == 4)
+            {
+                areaActual = attackAreaLanzalv1;
+            }
+            else
+            {
+                areaActual = attackAreaLanzalv2;
+            }
         }
 
     }

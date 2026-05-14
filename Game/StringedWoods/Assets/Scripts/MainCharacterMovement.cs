@@ -84,7 +84,8 @@ public class MainCharacterMovement : MonoBehaviour
     void Start()
     {
         controller = GetComponent<CharacterController>();
-        attackArea.SetActive(false); // Aseguramos que el área de ataque esté desactivada al inicio
+        //attackArea.SetActive(false); // Aseguramos que el área de ataque esté desactivada al inicio
+        GameManager.Instance.areaActual.SetActive(false); // Aseguramos que el área de ataque esté desactivada al inicio
         speed = GameManager.Instance.velocidadDeMovimiento; // Velocidad de movimiento del personaje, cargada desde el GameManager
         tiempoDash = GameManager.Instance.tiempoDeDash; // Cuánto dura el impulso en segundos
         cooldownDash = GameManager.Instance.cooldownDeDash; // Tiempo de espera entre dashes
@@ -344,7 +345,7 @@ IEnumerator RutinaKnockback(float fuerza, Vector3 direccion)
         float startTime = Time.time; // Guardamos el momento exacto en el que empieza
 
     // Mientras no haya pasado el tiempoDash, nos movemos
-        while (Time.time < startTime + tiempoDash)
+        while (Time.time < startTime + GameManager.Instance.tiempoDeDash)
         {
         // Movemos al personaje hacia donde mira
             controller.Move(transform.forward * velocidadDash * Time.deltaTime);
@@ -365,7 +366,7 @@ IEnumerator RutinaKnockback(float fuerza, Vector3 direccion)
     // Rutina de cooldown para el dash
     IEnumerator CooldownDash()
     {
-      yield return new WaitForSeconds(cooldownDash); // Esperamos el tiempo de cooldown antes de permitir otro dash
+      yield return new WaitForSeconds(GameManager.Instance.cooldownDeDash); // Esperamos el tiempo de cooldown antes de permitir otro dash
       dashInCooldown = false; // Desactivamos el cooldown
     }
 
@@ -415,13 +416,15 @@ IEnumerator RutinaKnockback(float fuerza, Vector3 direccion)
             animator.SetBool("isCharging", false); // Aquí terminarías la animación de carga, por ejemplo:
             fuerzaGolpe = fuerzaGolpe*2f;
             canAttack = false;
-            attackAreaCargado.SetActive(true); 
+            //attackAreaCargado.SetActive(true); 
+            GameManager.Instance.areaActual.SetActive(true);
             GameManager.Instance.ataqueActual = 3; // Set the current attack to the charged attack
             velocidadY = velocidadY/2f; 
 
             yield return new WaitForSeconds(GameManager.Instance.duracionAtaqueCargado); // Duración del ataque cargado
             
-            attackAreaCargado.SetActive(false);
+            //attackAreaCargado.SetActive(false);
+            GameManager.Instance.areaActual.SetActive(false);
             animator.SetInteger("Attack", 0);
             rotationSpeed = rotationSpeedBackup; 
             speed = GameManager.Instance.velocidadDeMovimiento; 
@@ -444,7 +447,8 @@ IEnumerator RutinaKnockback(float fuerza, Vector3 direccion)
 
             // --- GOLPE 1 ---
             animator.SetInteger("Attack", 1);
-            attackArea.SetActive(true); 
+            //attackArea.SetActive(true); 
+            GameManager.Instance.areaActual.SetActive(true);
             GameManager.Instance.ataqueActual = 0; // Set the current attack to the first attack
             velocidadY = velocidadY/2f; 
             
@@ -452,21 +456,27 @@ IEnumerator RutinaKnockback(float fuerza, Vector3 direccion)
             float timer = 0f;
             bool comboQueued = false; // Memoria de si el jugador pulsó click de nuevo
             bool ataqueEnElAire = false; // Para saber si el ataque se hizo en el aire o en el suelo
-
-            // En lugar de WaitForSeconds, usamos un bucle para "escuchar" clics mientras dura el ataque
-            while (timer < GameManager.Instance.duracionAtaque1) 
-            {
-                if (!controller.isGrounded) {
+            float temporizadorAtaque = 0f;
+            temporizadorAtaque = GameManager.Instance.duracionAtaque1;
+                if (!controller.isGrounded) 
+                {
+                    temporizadorAtaque = GameManager.Instance.duracionAtaqueEnElAire;
                     ataqueEnElAire = true;
                      // Cambiamos a la animación de ataque en el aire
                 }
+
+            // En lugar de WaitForSeconds, usamos un bucle para "escuchar" clics mientras dura el ataque
+            while (timer < temporizadorAtaque) 
+            {
+
                  // Si el jugador aterriza, interrumpimos el ataque para que no se quede flotando
                 if (Input.GetMouseButtonDown(0) && ataqueEnElAire == false) comboQueued = true;
                 timer += Time.deltaTime;
                 yield return null;
             }
 
-            attackArea.SetActive(false); 
+            //attackArea.SetActive(false); 
+            GameManager.Instance.areaActual.SetActive(false);
             if (ataqueEnElAire) {
                 // Si el ataque se hizo en el aire, reseteamos la animación al golpear el suelo
                 animator.SetInteger("Attack", 0);
@@ -487,7 +497,8 @@ IEnumerator RutinaKnockback(float fuerza, Vector3 direccion)
                 comboQueued = false; // Reseteamos la memoria para el siguiente golpe
                 animator.SetInteger("Attack", 2);
                 // Aquí podrías añadir: animator.SetBool("combo2", true);
-                attackAreaCombo2.SetActive(true); 
+                //attackAreaCombo2.SetActive(true); 
+                GameManager.Instance.areaActual.SetActive(true);
                 GameManager.Instance.ataqueActual = 1; // Set the current attack to the second attack
                 velocidadY = velocidadY/2f; // Volvemos a frenar la caída por el nuevo golpe
 
@@ -500,7 +511,8 @@ IEnumerator RutinaKnockback(float fuerza, Vector3 direccion)
                     
                 }
                 // animator.SetBool("combo2", false);
-                attackAreaCombo2.SetActive(false); 
+                //attackAreaCombo2.SetActive(false); 
+                GameManager.Instance.areaActual.SetActive(false);
 
                 timer = 0f;
                 while (timer < 0.2f && !comboQueued)
@@ -515,7 +527,8 @@ IEnumerator RutinaKnockback(float fuerza, Vector3 direccion)
                 {
                     // Aquí podrías añadir: animator.SetBool("combo3", true);
                     animator.SetInteger("Attack", 3);
-                    attackAreaCombo3.SetActive(true); 
+                    //attackAreaCombo3.SetActive(true); 
+                    GameManager.Instance.areaActual.SetActive(true);
                     GameManager.Instance.ataqueActual = 2; // Set the current attack to the third attack
                     fuerzaGolpe = fuerzaGolpe * 1.5f; // ¡El último golpe del combo empuja más fuerte!
                     velocidadY = velocidadY/2f;
@@ -525,7 +538,8 @@ IEnumerator RutinaKnockback(float fuerza, Vector3 direccion)
                     
                     // animator.SetBool("combo3", false);
                     
-                    attackAreaCombo3.SetActive(false); 
+                    //attackAreaCombo3.SetActive(false); 
+                    GameManager.Instance.areaActual.SetActive(false); 
                 }
             }
             ataqueEnElAire = false;
@@ -616,12 +630,14 @@ IEnumerator RutinaKnockback(float fuerza, Vector3 direccion)
         canAttack = false; // Desactivamos la posibilidad de atacar inmediatamente después
         // Aquí podrías reproducir una animación de ataque, por ejemplo:
         // animator.SetTrigger("Attack");
-        attackAreaDash.SetActive(true); // Activamos el área de ataque para el salto
+        //attackAreaDash.SetActive(true); // Activamos el área de ataque para el salto
+        GameManager.Instance.areaActual.SetActive(true);
         GameManager.Instance.ataqueActual = 5; // Set the current attack to the dash attack
 
         // Esperamos un momento para simular el tiempo de ataque
         yield return new WaitForSeconds(0.2f); // Ajusta este valor según la duración de tu animación
-        attackAreaDash.SetActive(false); // Desactivamos el área de ataque después de un momento
+        //attackAreaDash.SetActive(false); // Desactivamos el área de ataque después de un momento
+        GameManager.Instance.areaActual.SetActive(false);
         canMove = true; // Reactivamos el movimiento después del ataque
         canJump = true; // Reactivamos el salto después del ataque
         animator.SetBool("isDashing", false); // Aquí terminarías la animación de dash, por ejemplo:
