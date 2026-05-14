@@ -38,7 +38,24 @@ public class Salas : MonoBehaviour
     
     private bool enemigosGenerados = false; 
 
-    
+    void Start()
+    {
+        // Aseguramos que las paredes de cartón estén en su estado inicial (cerradas)
+        if (paredCartonIzquierda != null) paredCartonIzquierda.Stop();
+        if (paredCartonDerecha != null) paredCartonDerecha.Stop();
+        if (paredCartonDelante != null) paredCartonDelante.Stop();
+        if (gameObject.CompareTag("SalaIzquierda") && paredCartonDerecha != null)
+        {
+            paredCartonDerecha["AbrirDerecha"].wrapMode = WrapMode.ClampForever;
+            paredCartonDerecha.Play("AbrirDerecha");
+        }
+        
+        if (gameObject.CompareTag("SalaDerecha") && paredCartonIzquierda != null)
+        {
+            paredCartonIzquierda["AbrirIzquierda"].wrapMode = WrapMode.ClampForever;
+            paredCartonIzquierda.Play("AbrirIzquierda");
+        }
+    }
     void Update()
     {
         Debug.DrawRay(detectorSalaCircundante.transform.position, detectorSalaCircundante.transform.right * 100f, Color.red);
@@ -77,16 +94,24 @@ public class Salas : MonoBehaviour
     void terminarSala()
     {
         Debug.Log("¡La sala " + gameObject.name + " se ha limpiado! Abriendo puertas...");
+        paredCartonDelante["AbrirDelante"].speed = 1f; // <--- Aseguramos velocidad
+                paredCartonDelante["AbrirDelante"].time = 0f;  // <--- Aseguramos que empiece de cero
+                paredCartonDelante["AbrirDelante"].wrapMode = WrapMode.ClampForever;
+                paredCartonDelante.Play("AbrirDelante");
 
         // 1. Usamos 'if' separados para que TODAS las condiciones se puedan cumplir a la vez
         if (gameObject.CompareTag("SalaIzquierda") && paredCartonDerecha != null)
         {
+            paredCartonDerecha["AbrirDerecha"].time = 0f;
+            paredCartonDerecha["AbrirDerecha"].speed = 1f;
             paredCartonDerecha["AbrirDerecha"].wrapMode = WrapMode.ClampForever;
             paredCartonDerecha.Play("AbrirDerecha");
         }
         
         if (gameObject.CompareTag("SalaDerecha") && paredCartonIzquierda != null)
         {
+            paredCartonIzquierda["AbrirIzquierda"].time = 0f;
+            paredCartonIzquierda["AbrirIzquierda"].speed = 1f;
             paredCartonIzquierda["AbrirIzquierda"].wrapMode = WrapMode.ClampForever;
             paredCartonIzquierda.Play("AbrirIzquierda");
         }
@@ -107,6 +132,7 @@ public class Salas : MonoBehaviour
                 {
                     if (paredCartonDerecha != null) 
                     {
+                        paredCartonDerecha["AbrirDerecha"].speed = 1f;
                         paredCartonDerecha["AbrirDerecha"].wrapMode = WrapMode.ClampForever;
                         paredCartonDerecha.Play("AbrirDerecha");
                     }
@@ -116,11 +142,47 @@ public class Salas : MonoBehaviour
                 {
                     if (paredCartonIzquierda != null) 
                     {
+                        paredCartonIzquierda["AbrirIzquierda"].speed = 1f;
                         paredCartonIzquierda["AbrirIzquierda"].wrapMode = WrapMode.ClampForever;
                         paredCartonIzquierda.Play("AbrirIzquierda");
                     }
                 }
             }
+        }
+    }
+    void CerrarParedes()
+    {
+        Debug.Log("¡Cerrando paredes de la sala " + gameObject.name + " para generar enemigos!");
+        paredDelante.SetActive(true);
+        
+        foreach (GameObject obj in ParedTrasera)
+        {
+            if (obj != null)
+            {
+                obj.SetActive(true);
+            }
+        }
+
+        if (gameObject.CompareTag("SalaIzquierda") && paredCartonDerecha != null)
+        {
+            paredCartonDerecha["AbrirDerecha"].speed = -1f;
+            paredCartonDerecha["AbrirDerecha"].wrapMode = WrapMode.ClampForever;
+            
+            // --- ESTA ES LA LÍNEA QUE TE FALTA Y QUE HACE LA MAGIA ---
+            paredCartonDerecha["AbrirDerecha"].time = paredCartonDerecha["AbrirDerecha"].length; 
+            
+            paredCartonDerecha.Play("AbrirDerecha");
+        }
+        
+        if (gameObject.CompareTag("SalaDerecha") && paredCartonIzquierda != null)
+        {
+            paredCartonIzquierda["AbrirIzquierda"].speed = -1f;
+            paredCartonIzquierda["AbrirIzquierda"].wrapMode = WrapMode.ClampForever;
+            
+            // --- ESTA ES LA LÍNEA QUE TE FALTA Y QUE HACE LA MAGIA ---
+            paredCartonIzquierda["AbrirIzquierda"].time = paredCartonIzquierda["AbrirIzquierda"].length;
+            
+            paredCartonIzquierda.Play("AbrirIzquierda");
         }
     }
 
@@ -130,7 +192,7 @@ public class Salas : MonoBehaviour
         {
             if (!salaLimpia && !enemigosGenerados)
             {
-            
+            CerrarParedes();
             SpawnearEnemigos();
             }
         if (!jugadorDentro)
@@ -153,17 +215,22 @@ public class Salas : MonoBehaviour
     }
     private void OnTriggerExit(Collider other) 
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") )
         {
-            foreach (GameObject obj in ParedTrasera)
+            if (!gameObject.CompareTag("SalaIzquierda") && !gameObject.CompareTag("SalaDerecha"))
             {
-            // Esta comprobación evita errores si alguno de los objetos ya fue destruido antes
-            if (obj != null)
+                foreach (GameObject obj in ParedTrasera)
                 {
+                    // Esta comprobación evita errores si alguno de los objetos ya fue destruido antes
+                    if (obj != null)
+                    {
+
                 obj.SetActive(false); 
                 }
+                }
+                paredDelante.SetActive(false);
             }
-            paredDelante.SetActive(false);
+            
             jugadorDentro = false;
             
         }

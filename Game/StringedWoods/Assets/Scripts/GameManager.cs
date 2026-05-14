@@ -77,7 +77,11 @@ public class GameManager : MonoBehaviour
     public Sprite corazonVacio;
 
     [Header("Weapons")]
-    public float Armas;
+    public int Armas;
+    // espada 1
+    // martillo 2
+    // Guadaña 3
+    // Lanza 4
 
     public int ataqueActual; // Variable para saber qué ataque se está usando, para el hit stop
     // ataque 0 = normal
@@ -86,6 +90,38 @@ public class GameManager : MonoBehaviour
     // ataque 3 = cargado
     // ataque 4 = en salto
     // ataque 5 = en dash
+    [Header("Timmings armas")]
+     public float ataque1Espada;
+     public float ataque2Espada;
+     public float ataque3Espada;
+     public float ataqueCargadoEspada;
+     public float ataqueSaltoEspada;
+     public float ataqueDashEspada;
+        public float ataque1Martillo;
+        public float ataque2Martillo;
+        public float ataque3Martillo;
+        public float ataqueCargadoMartillo;
+        public float ataqueSaltoMartillo;
+        public float ataqueDashMartillo;
+        public float ataque1Guadaña;
+        public float ataque2Guadaña;
+        public float ataque3Guadaña;
+        public float ataqueCargadoGuadaña;
+        public float ataqueSaltoGuadaña;
+        public float ataqueDashGuadaña;
+        public float ataque1Lanza;
+        public float ataque2Lanza;
+        public float ataque3Lanza;
+        public float ataqueCargadoLanza;
+        public float ataqueSaltoLanza;
+        public float ataqueDashLanza;
+        public float duracionAtaque1;
+        public float duracionAtaque2;
+        public float duracionAtaque3;
+        public float duracionAtaqueCargado;
+        public float duracionAtaqueSalto;
+        public float duracionAtaqueDash;
+    [Header("Estado del Juego")]
     public bool juegoPausado = false;
     
 
@@ -143,7 +179,33 @@ void Start()
             GameOver();
             
         }
-        
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            GanarExperiencia(50);
+        }
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            Curar(1);
+        }
+        if (Input.GetKeyDown(KeyCode.J))
+        {            
+            GanarMonedas(10);
+        }
+        if (Input.GetKeyDown(KeyCode.U))
+        {
+            CambiarArma(1);
+        }
+        if (Input.GetKeyDown(KeyCode.I))
+        {
+            CambiarArma(2);
+        }
+        if (Input.GetKeyDown(KeyCode.O))
+        {
+            CambiarArma(3);
+        }
+        if (Input.GetKeyDown(KeyCode.P))
+        {            CambiarArma(4);
+        }
     }
     public void GuardarEstadisticas()
     {
@@ -381,5 +443,49 @@ public void CambiarCorazones()
                 animCorazon.SetInteger("EstadoVida", 0); // 0 = Vacío
             }
         }
+    }
+    public void CambiarArma(int nuevoTipoArma)
+    {
+        // Aquí podrías cambiar el sprite del arma que tiene el jugador, o activar/desactivar modelos 3D, etc.
+        Armas = nuevoTipoArma;
+        Debug.Log("¡Has cambiado de arma! Arma actual: " + Armas);
+        jugador.GetComponent<MainCharacterMovement>().CambiarArma();
+        if (Armas == 1|| Armas == 5)
+        {
+            duracionAtaque1 = ataque1Espada;
+            duracionAtaque2 = ataque2Espada;
+            duracionAtaque3 = ataque3Espada;
+            duracionAtaqueCargado = ataqueCargadoEspada;
+            duracionAtaqueSalto = ataqueSaltoEspada;
+            duracionAtaqueDash = ataqueDashEspada;
+        }
+        else if (Armas == 2 || Armas == 6)
+        {
+            duracionAtaque1 = ataque1Martillo;
+            duracionAtaque2 = ataque2Martillo;
+            duracionAtaque3 = ataque3Martillo;
+            duracionAtaqueCargado = ataqueCargadoMartillo;
+            duracionAtaqueSalto = ataqueSaltoMartillo;
+            duracionAtaqueDash = ataqueDashMartillo;
+        }
+        else if (Armas == 3 || Armas == 7)
+        {
+            duracionAtaque1 = ataque1Guadaña;
+            duracionAtaque2 = ataque2Guadaña;
+            duracionAtaque3 = ataque3Guadaña;
+            duracionAtaqueCargado = ataqueCargadoGuadaña;
+            duracionAtaqueSalto = ataqueSaltoGuadaña;
+            duracionAtaqueDash = ataqueDashGuadaña;
+        }
+        else if (Armas == 4 || Armas == 8)
+        {
+            duracionAtaque1 = ataque1Lanza;
+            duracionAtaque2 = ataque2Lanza;
+            duracionAtaque3 = ataque3Lanza;
+            duracionAtaqueCargado = ataqueCargadoLanza;
+            duracionAtaqueSalto = ataqueSaltoLanza;
+            duracionAtaqueDash = ataqueDashLanza;
+        }
+
     }
 }

@@ -11,12 +11,16 @@ public class CameraController : MonoBehaviour
 
     public float angleY = 0f; 
     public float angleX = 0f; 
-    private float angleZ = 0f; // NUEVO: Guardamos el ángulo Z aquí
+    private float angleZ = 0f; 
 
     public float progresoY;
     public float progresoX;
     private Vector3 posicionInicial; 
-    public float angleXinicial; // NUEVO: Guardamos el ángulo Y inicial para usarlo como referencia
+    public float angleXinicial; 
+    public float angleYinicial; 
+
+    // NUEVO: Candado para evitar que el LateUpdate pelee con la corrutina
+    private bool enTransicion = false;
 
     void Start()
     {
@@ -33,24 +37,25 @@ public class CameraController : MonoBehaviour
         angleX = transform.rotation.eulerAngles.x; 
         angleZ = transform.rotation.eulerAngles.z; 
 
-        angleXinicial = angleX; // Velocidad de rotación suave
+        angleXinicial = angleX; 
+        angleYinicial = angleY; 
     }
 
-    // CAMBIO IMPORTANTE: LateUpdate se ejecuta después de que el jugador ya se movió
     void LateUpdate()
     {
+        // ¡CANDADO! Si la cámara está viajando a otra sala, no calculamos nada aquí
+        if (enTransicion == true) return; 
+
         // --- EJE X (Rotación en Y) ---
         if (player.transform.position.x >= posicionInicial.x)
         {
             progresoY = Mathf.InverseLerp(posicionInicial.x, limitXLeft.transform.position.x, player.transform.position.x);
-            
-            angleY = Mathf.Lerp(180f, 190f, progresoY);
-            
+            angleY = Mathf.Lerp(angleYinicial, 190f, progresoY);
         }
         else 
         {
             progresoY = Mathf.InverseLerp(posicionInicial.x, limitXRight.transform.position.x, player.transform.position.x);
-            angleY = Mathf.Lerp(180f, 170f, progresoY);
+            angleY = Mathf.Lerp(angleYinicial, 170f, progresoY);
         }
 
         // --- EJE Z (Rotación en X) ---
@@ -65,37 +70,56 @@ public class CameraController : MonoBehaviour
             angleX = Mathf.Lerp(angleXinicial, 15f, progresoX);
         }
 
-        // Aplicamos la rotación usando nuestro 'angleZ' guardado, sin preguntarle a Unity
+        // Aplicamos la rotación
         transform.rotation = Quaternion.Euler(angleX, -angleY, angleZ); 
     }
-    public void CambioDeReferencia(GameObject referenciaNuevaIzquierda , GameObject referenciaNuevaDerecha , GameObject referenciaNuevaDelante , GameObject referenciaNuevaDetras, Vector3 posicionNuevaSala)
+
+    public void CambioDeReferencia(GameObject referenciaNuevaIzquierda, GameObject referenciaNuevaDerecha, GameObject referenciaNuevaDelante, GameObject referenciaNuevaDetras, Vector3 posicionNuevaSala)
     {
+        // --- LA LÍNEA MÁGICA: Actualizamos el "Punto Cero" al centro de la nueva sala ---
+        posicionInicial = posicionNuevaSala; 
+
         Vector3 posicionNuevaCamara = new Vector3(posicionNuevaSala.x, transform.position.y, posicionNuevaSala.z + 7f);
+        
+        // Iniciamos el viaje de la cámara
         StartCoroutine(TransicionCamara(posicionNuevaCamara));
+        
+        // Actualizamos los límites para la nueva sala
         limitXLeft = referenciaNuevaIzquierda;
         limitXRight = referenciaNuevaDerecha;
         limitZBackward = referenciaNuevaDetras;
         limitZForward = referenciaNuevaDelante;
-        
     }
+
     IEnumerator TransicionCamara(Vector3 destino)
     {
-        Vector3 posicionInicial = transform.position; // Guardamos dónde está la cámara ahora mismo
-        float duracion = 0.4f; // 0.4 segundos es una velocidad "medio rápida" ideal para esto
+        enTransicion = true; // CERRAMOS EL CANDADO
+
+        Vector3 posicionInicialCam = transform.position; 
+        Quaternion rotacionInicialCam = transform.rotation; // Guardamos cómo estaba girada al salir
+        Quaternion rotacionCentro = Quaternion.Euler(angleXinicial, -angleYinicial, angleZ); // La rotación base (neutra)
+
+        float duracion = 0.4f; 
         float tiempo = 0f;
 
-        // Mientras no haya pasado el tiempo establecido, movemos la cámara poco a poco
         while (tiempo < duracion)
         {
             tiempo += Time.deltaTime;
+            float porcentaje = tiempo / duracion;
+
+            // Movemos la posición progresivamente
+            transform.position = Vector3.Lerp(posicionInicialCam, destino, porcentaje);
             
-            // Vector3.Lerp calcula la posición intermedia entre A y B basándose en el porcentaje de tiempo
-            transform.position = Vector3.Lerp(posicionInicial, destino, tiempo / duracion);
-            
-            yield return null; // Esperamos al siguiente frame
+            // Centramos la rotación suavemente durante el viaje para que no empiece torcida en la nueva sala
+            transform.rotation = Quaternion.Slerp(rotacionInicialCam, rotacionCentro, porcentaje);
+
+            yield return null; 
         }
 
-        // Medida de seguridad: al terminar, nos aseguramos de que esté EXACTAMENTE en el destino
+        // Medidas de seguridad finales
         transform.position = destino;
+        transform.rotation = rotacionCentro;
+        
+        enTransicion = false; // ABRIMOS EL CANDADO
     }
 }

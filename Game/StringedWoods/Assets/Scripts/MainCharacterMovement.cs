@@ -65,6 +65,17 @@ public class MainCharacterMovement : MonoBehaviour
 
     private float tiempoSinTocarSuelo = 0f;
 
+    [Header("Armas")]
+    public GameObject espada;
+    public GameObject martillo;
+    public GameObject guadaña;
+    public GameObject lanza;
+    public GameObject espadaLv2;
+    public GameObject martilloLv2;
+    public GameObject guadañaLv2;
+    public GameObject lanzaLv2;
+    public GameObject armaActual; // Para guardar el arma que tenemos equipada y mostrarla en el UI, por ejemplo
+
     [Header("Effects")]
     public GameObject AttackDownEffect; // Efecto visual para el ataque hacia abajo
     public GameObject TransformAttackDownEffect; // Efecto visual para la transformación del ataque hacia abajo
@@ -408,7 +419,7 @@ IEnumerator RutinaKnockback(float fuerza, Vector3 direccion)
             GameManager.Instance.ataqueActual = 3; // Set the current attack to the charged attack
             velocidadY = velocidadY/2f; 
 
-            yield return new WaitForSeconds(0.2f); 
+            yield return new WaitForSeconds(GameManager.Instance.duracionAtaqueCargado); // Duración del ataque cargado
             
             attackAreaCargado.SetActive(false);
             animator.SetInteger("Attack", 0);
@@ -434,7 +445,7 @@ IEnumerator RutinaKnockback(float fuerza, Vector3 direccion)
             // --- GOLPE 1 ---
             animator.SetInteger("Attack", 1);
             attackArea.SetActive(true); 
-                GameManager.Instance.ataqueActual = 0; // Set the current attack to the first attack
+            GameManager.Instance.ataqueActual = 0; // Set the current attack to the first attack
             velocidadY = velocidadY/2f; 
             
 
@@ -443,7 +454,7 @@ IEnumerator RutinaKnockback(float fuerza, Vector3 direccion)
             bool ataqueEnElAire = false; // Para saber si el ataque se hizo en el aire o en el suelo
 
             // En lugar de WaitForSeconds, usamos un bucle para "escuchar" clics mientras dura el ataque
-            while (timer < 0.3f) 
+            while (timer < GameManager.Instance.duracionAtaque1) 
             {
                 if (!controller.isGrounded) {
                     ataqueEnElAire = true;
@@ -481,7 +492,7 @@ IEnumerator RutinaKnockback(float fuerza, Vector3 direccion)
                 velocidadY = velocidadY/2f; // Volvemos a frenar la caída por el nuevo golpe
 
                 timer = 0f;
-                while (timer < 0.3f) // Duración del golpe 2
+                while (timer < GameManager.Instance.duracionAtaque2) // Duración del golpe 2
                 {
                     if (Input.GetMouseButtonDown(0)) comboQueued = true;
                     timer += Time.deltaTime;
@@ -510,7 +521,7 @@ IEnumerator RutinaKnockback(float fuerza, Vector3 direccion)
                     velocidadY = velocidadY/2f;
 
                     // Como es el último golpe, ya no guardamos memoria de clics, solo esperamos a que termine
-                    yield return new WaitForSeconds(0.4f); // Dura un poco más por ser el remate
+                    yield return new WaitForSeconds(GameManager.Instance.duracionAtaque3); // Dura un poco más por ser el remate
                     
                     // animator.SetBool("combo3", false);
                     
@@ -526,6 +537,10 @@ IEnumerator RutinaKnockback(float fuerza, Vector3 direccion)
     }
         // Aquí iría la lógica de ataque, por ejemplo, detectar enemigos cercanos y aplicar daño
     
+
+
+
+
     IEnumerator AttackJump()
     {
         float temporizador = 0f;
@@ -579,6 +594,11 @@ IEnumerator RutinaKnockback(float fuerza, Vector3 direccion)
         cooldownAttackNumber += 0.2f; 
         StartCoroutine(cooldownAttack()); 
     }
+
+
+
+
+
     IEnumerator AttackDash()
     {
         animator.SetBool("isCharging", false); // Aquí terminarías la animación de carga, por ejemplo:
@@ -609,6 +629,11 @@ IEnumerator RutinaKnockback(float fuerza, Vector3 direccion)
         StartCoroutine(cooldownAttack()); // Iniciamos el cooldown para evitar ataques consecutivos
 
     }
+
+
+
+
+
     IEnumerator cooldownAttack()
     {
         fuerzaGolpe = GameManager.Instance.fuerzaDeEmpuje; // Aseguramos que la fuerza de golpe vuelva a su valor normal
@@ -616,6 +641,9 @@ IEnumerator RutinaKnockback(float fuerza, Vector3 direccion)
         canAttack = true; // Permitimos atacar de nuevo
         cooldownAttackNumber = GameManager.Instance.velocidadDeAtaque; // Aseguramos que el tiempo de espera vuelva a su valor normal
     }
+
+
+
     IEnumerator Invulnerabilidad()
     {
         isInvulnerable = true; // Activamos el estado de invulnerabilidad
@@ -627,5 +655,123 @@ IEnumerator RutinaKnockback(float fuerza, Vector3 direccion)
         isInvulnerable = false; // Desactivamos el estado de invulnerabilidad
 
         // Aquí terminaría la animación de invulnerabilidad
+    }
+
+    public void CambiarArma()
+    {
+        // Aquí podrías cambiar el sprite del arma que tiene el jugador, o activar/desactivar modelos 3D, etc.
+        if (GameManager.Instance.Armas == 1)
+        {
+            animator.SetInteger("Weapon", 1);
+            animator.Play("IDDLE_sword");
+            espada.SetActive(true);
+            martillo.SetActive(false);
+            guadaña.SetActive(false);
+            lanza.SetActive(false);
+            espadaLv2.SetActive(false);
+            martilloLv2.SetActive(false);
+            guadañaLv2.SetActive(false);
+            lanzaLv2.SetActive(false);
+             // Cambia a la segunda arma (ejemplo)
+        }
+        else if (GameManager.Instance.Armas == 2)
+        {
+            animator.SetInteger("Weapon", 2);
+            animator.Play("IDDLE_hammer");
+            espada.SetActive(false);
+            martillo.SetActive(true);
+            guadaña.SetActive(false);
+            lanza.SetActive(false);
+            espadaLv2.SetActive(false);
+            martilloLv2.SetActive(false);
+            guadañaLv2.SetActive(false);
+            lanzaLv2.SetActive(false);
+             // Cambia a la tercera arma (ejemplo)
+        }
+        else if (GameManager.Instance.Armas == 3)
+        {
+            animator.SetInteger("Weapon", 3);
+            animator.Play("IDDLE_scythe");
+            espada.SetActive(false);
+            martillo.SetActive(false);
+            guadaña.SetActive(true);
+            lanza.SetActive(false);
+            espadaLv2.SetActive(false);
+            martilloLv2.SetActive(false);
+            guadañaLv2.SetActive(false);
+            lanzaLv2.SetActive(false);
+             // Cambia a la cuarta arma (ejemplo)
+        }
+        else if (GameManager.Instance.Armas == 4)
+        {
+            animator.SetInteger("Weapon", 4);
+            animator.Play("IDDLE_spear");
+            espada.SetActive(false);
+            martillo.SetActive(false);
+            guadaña.SetActive(false);
+            lanza.SetActive(true);
+            espadaLv2.SetActive(false);
+            martilloLv2.SetActive(false);
+            guadañaLv2.SetActive(false);
+            lanzaLv2.SetActive(false);
+             // Cambia a la quinta arma (ejemplo)
+        }
+        else if (GameManager.Instance.Armas == 5)
+        {
+            animator.SetInteger("Weapon", 1);
+            animator.Play("IDDLE_sword");
+            espada.SetActive(false);
+            martillo.SetActive(false);
+            guadaña.SetActive(false);
+            lanza.SetActive(false);
+            espadaLv2.SetActive(true);
+            martilloLv2.SetActive(false);
+            guadañaLv2.SetActive(false);
+            lanzaLv2.SetActive(false);
+             // Cambia a la sexta arma (ejemplo)
+        }
+        else if (GameManager.Instance.Armas == 6)
+        {
+            animator.SetInteger("Weapon", 2);
+            animator.Play("IDDLE_hammer");
+            espada.SetActive(false);
+            martillo.SetActive(false);
+            guadaña.SetActive(false);
+            lanza.SetActive(false);
+            espadaLv2.SetActive(false);
+            martilloLv2.SetActive(true);
+            guadañaLv2.SetActive(false);
+            lanzaLv2.SetActive(false);
+             // Cambia a la séptima arma (ejemplo)
+        }
+        else if (GameManager.Instance.Armas == 7)
+        {
+            animator.SetInteger("Weapon", 3);
+            animator.Play("IDDLE_scythe");
+            espada.SetActive(false);
+            martillo.SetActive(false);
+            guadaña.SetActive(false);
+            lanza.SetActive(false);
+            espadaLv2.SetActive(false);
+            martilloLv2.SetActive(false);
+            guadañaLv2.SetActive(true);
+            lanzaLv2.SetActive(false);
+             // Cambia a la octava arma (ejemplo)
+        }
+        else if (GameManager.Instance.Armas == 8)
+        {
+            animator.SetInteger("Weapon", 4);
+            animator.Play("IDDLE_spear");
+            espada.SetActive(false);
+            martillo.SetActive(false);
+            guadaña.SetActive(false);
+            lanza.SetActive(false);
+            espadaLv2.SetActive(false);
+            martilloLv2.SetActive(false);
+            guadañaLv2.SetActive(false);
+            lanzaLv2.SetActive(true);
+             // Cambia a la novena arma (ejemplo)
+        }
+        Debug.Log("¡Has cambiado de arma! Arma actual: " + GameManager.Instance.Armas);
     }
 }
