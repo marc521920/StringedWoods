@@ -97,10 +97,15 @@ public class Salas : MonoBehaviour
     void terminarSala()
     {
         Debug.Log("¡La sala " + gameObject.name + " se ha limpiado! Abriendo puertas...");
-        paredCartonDelante["AbrirDelante"].speed = 1f; // <--- Aseguramos velocidad
-                paredCartonDelante["AbrirDelante"].time = 0f;  // <--- Aseguramos que empiece de cero
-                paredCartonDelante["AbrirDelante"].wrapMode = WrapMode.ClampForever;
-                paredCartonDelante.Play("AbrirDelante");
+
+        // ESCUDO: Comprobamos que no esté vacío antes de tocarlo
+        if (paredCartonDelante != null)
+        {
+            paredCartonDelante["AbrirDelante"].speed = 1f; 
+            paredCartonDelante["AbrirDelante"].time = 0f;  
+            paredCartonDelante["AbrirDelante"].wrapMode = WrapMode.ClampForever;
+            paredCartonDelante.Play("AbrirDelante");
+        }
 
         // 1. Usamos 'if' separados para que TODAS las condiciones se puedan cumplir a la vez
         if (gameObject.CompareTag("SalaIzquierda") && paredCartonDerecha != null)
@@ -122,13 +127,7 @@ public class Salas : MonoBehaviour
         // 2. Si es una sala normal (o inicial/tienda), revisamos las puertas principales
         if (salaNormal || salaInicial || salaTienda) 
         {
-            if (paredCartonDelante != null)
-            {
-                paredCartonDelante["AbrirDelante"].wrapMode = WrapMode.ClampForever;
-                paredCartonDelante.Play("AbrirDelante");
-            }
-
-            // 3. Comprobamos los raycasts (¡Ojo! Asegurándonos de que el detector exista para evitar errores)
+            // 3. Comprobamos los raycasts
             if (detectorSalaCircundante != null)
             {
                 if (Physics.Raycast(detectorSalaCircundante.transform.position, -detectorSalaCircundante.transform.right, out RaycastHit hit, 100f))
@@ -152,18 +151,21 @@ public class Salas : MonoBehaviour
                 }
             }
         }
-        if (salaEspecial || pasillo)
+
+        // ESCUDO: Comprobamos que el telón exista
+        if (salaEspecial && paredCartonEspecial != null)
         {
             paredCartonEspecial["AbrirTelonEspecial"].speed = 1f;
             paredCartonEspecial["AbrirTelonEspecial"].wrapMode = WrapMode.ClampForever;
             paredCartonEspecial.Play("AbrirTelonEspecial");
-            
         }
     }
+
     void CerrarParedes()
     {
         Debug.Log("¡Cerrando paredes de la sala " + gameObject.name + " para generar enemigos!");
-        paredDelante.SetActive(true);
+        
+        if (paredDelante != null) paredDelante.SetActive(true);
         
         foreach (GameObject obj in ParedTrasera)
         {
@@ -172,15 +174,13 @@ public class Salas : MonoBehaviour
                 obj.SetActive(true);
             }
         }
+        
 
         if (gameObject.CompareTag("SalaIzquierda") && paredCartonDerecha != null)
         {
             paredCartonDerecha["AbrirDerecha"].speed = -1f;
             paredCartonDerecha["AbrirDerecha"].wrapMode = WrapMode.ClampForever;
-            
-            // --- ESTA ES LA LÍNEA QUE TE FALTA Y QUE HACE LA MAGIA ---
             paredCartonDerecha["AbrirDerecha"].time = paredCartonDerecha["AbrirDerecha"].length; 
-            
             paredCartonDerecha.Play("AbrirDerecha");
         }
         
@@ -188,18 +188,21 @@ public class Salas : MonoBehaviour
         {
             paredCartonIzquierda["AbrirIzquierda"].speed = -1f;
             paredCartonIzquierda["AbrirIzquierda"].wrapMode = WrapMode.ClampForever;
-            
-            // --- ESTA ES LA LÍNEA QUE TE FALTA Y QUE HACE LA MAGIA ---
             paredCartonIzquierda["AbrirIzquierda"].time = paredCartonIzquierda["AbrirIzquierda"].length;
-            
             paredCartonIzquierda.Play("AbrirIzquierda");
         }
-        if (salaEspecial )
+
+        // ESCUDO: Comprobamos que el telón exista y añadimos la línea del .time faltante
+        if (salaEspecial && paredCartonEspecial != null)
         {
+            
             paredCartonEspecial["AbrirTelonEspecial"].speed = -1f;
             paredCartonEspecial["AbrirTelonEspecial"].wrapMode = WrapMode.ClampForever;
-            paredCartonEspecial.Play("AbrirTelonEspecial");
             
+            // --- AQUÍ FALTABA ESTA LÍNEA PARA QUE REBOBINE BIEN ---
+            paredCartonEspecial["AbrirTelonEspecial"].time = paredCartonEspecial["AbrirTelonEspecial"].length;
+            
+            paredCartonEspecial.Play("AbrirTelonEspecial");
         }
     }
 
@@ -227,7 +230,8 @@ public class Salas : MonoBehaviour
         if (pasillo)
         {
             sala = 1;
-        }else if (salaEspecial)
+        }
+        else if (salaEspecial)
         {
             sala = 2;
             anguloAñadido = 90f;
@@ -253,8 +257,8 @@ public class Salas : MonoBehaviour
                     if (obj != null)
                     {
 
-                obj.SetActive(false); 
-                }
+                    obj.SetActive(false); 
+                    }
                 }
                 paredDelante.SetActive(false);
             }

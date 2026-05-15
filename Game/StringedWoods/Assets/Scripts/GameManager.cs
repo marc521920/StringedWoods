@@ -61,6 +61,8 @@ public class GameManager : MonoBehaviour
     [Header("Otros")]
     public GameObject jugador; // Referencia al jugador en la escena
 
+    public bool salaEspecial;
+
     GameObject corazones; // Referencia a los corazones en la escena (si los usas para mostrar la vida)
     public GameObject monedaPrefab;
     public GameObject corazonPrefab;
@@ -160,6 +162,7 @@ public class GameManager : MonoBehaviour
     }
 void Start()
     {
+        salaEspecial = false;
         jugador = GameObject.FindWithTag("Player");
         CrearCorazones(); 
         
@@ -458,6 +461,20 @@ public void CambiarCorazones()
             }
         }
     }
+    public void CambioDeSalaEspecial()
+    {
+            if (salaEspecial == false)
+            {
+                salaEspecial = true;
+                Debug.Log("¡Has entrado en la sala especial!");
+            }
+            else
+            {
+                salaEspecial = false;
+                Debug.Log("¡Has salido de la sala especial!");
+            }
+
+    }
     public void CambiarArma(int nuevoTipoArma)
     {
         // Aquí podrías cambiar el sprite del arma que tiene el jugador, o activar/desactivar modelos 3D, etc.
@@ -536,6 +553,7 @@ public void CambiarCorazones()
                 areaActual = attackAreaLanzalv2;
             }
         }
+
 
     }
 }

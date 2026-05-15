@@ -105,7 +105,27 @@ public class MainCharacterMovement : MonoBehaviour
        if (isDashing|| estaEmpujado) return;
         //Debug.Log(velocidadY);
         // Calculamos el movimiento horizontal SIEMPRE (para poder movernos en el aire)
-        Vector3 moveDirection = new Vector3(-Input.GetAxis("Horizontal"), 0, -Input.GetAxis("Vertical"));
+        // 1. Recogemos el input puro
+        float h = Input.GetAxis("Horizontal");
+        float v = Input.GetAxis("Vertical");
+
+        Vector3 moveDirection;
+
+        // 2. ¿Estamos en la sala especial? (Girada 90 grados)
+        if (GameManager.Instance.salaEspecial == true)
+        {
+            Debug.Log("¡Estamos en la sala especial! Cambiando controles para rotación de 90 grados.");
+            // Cambiamos las reglas del mundo:
+            // La 'W' y 'S' (v) ahora te mueven en el eje X (acercarte/alejarte de la cámara)
+            // La 'A' y 'D' (h) ahora te mueven en el eje Z (ir a izquierda/derecha en la pantalla)
+            // El -v y la h positiva alinean el teclado perfectamente con la cámara a 270 grados
+            moveDirection = new Vector3(-v, 0, h);
+        }
+        else
+        {
+            // Tu movimiento original intacto para el resto del juego
+            moveDirection = new Vector3(-h, 0, -v);
+        }
         
         // Calculamos la rotación
         if (moveDirection != Vector3.zero && canMove)
