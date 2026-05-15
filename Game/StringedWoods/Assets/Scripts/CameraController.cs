@@ -18,12 +18,23 @@ public class CameraController : MonoBehaviour
     private Vector3 posicionInicial; 
     public float angleXinicial; 
     public float angleYinicial; 
+    public float rotacionYActual; // Guarda la rotación de la sala en la que estamos
 
-    // NUEVO: Candado para evitar que el LateUpdate pelee con la corrutina
+    public int tipoDeSala;
+
+    // 0 = normal
+    // 1 = pasillo
+    // 2 = especial
+
+    public float suavizadoSeguimiento = 5f; // Velocidad a la que la cámara persigue al jugador
+    public float offsetZ = 7f; // La distancia Z que vimos en tu otra función
+
+    // Candado para evitar que el LateUpdate pelee con la corrutina
     private bool enTransicion = false;
 
     void Start()
     {
+        rotacionYActual = -angleYinicial;
         player = GameObject.FindGameObjectWithTag("Player"); 
         limitXRight = GameObject.FindGameObjectWithTag("limitXRight"); 
         limitXLeft = GameObject.FindGameObjectWithTag("limitXLeft"); 
@@ -46,45 +57,85 @@ public class CameraController : MonoBehaviour
         // ¡CANDADO! Si la cámara está viajando a otra sala, no calculamos nada aquí
         if (enTransicion == true) return; 
 
-        // --- EJE X (Rotación en Y) ---
-        if (player.transform.position.x >= posicionInicial.x)
+        if (tipoDeSala == 0)
         {
-            progresoY = Mathf.InverseLerp(posicionInicial.x, limitXLeft.transform.position.x, player.transform.position.x);
-            angleY = Mathf.Lerp(angleYinicial, 190f, progresoY);
-        }
-        else 
-        {
-            progresoY = Mathf.InverseLerp(posicionInicial.x, limitXRight.transform.position.x, player.transform.position.x);
-            angleY = Mathf.Lerp(angleYinicial, 170f, progresoY);
-        }
+            // --- MODO 0: SALA NORMAL (Rotación en el sitio) ---
+            
+            // EJE X (Rotación en Y)
+            if (player.transform.position.x >= posicionInicial.x)
+            {
+                progresoY = Mathf.InverseLerp(posicionInicial.x, limitXLeft.transform.position.x, player.transform.position.x);
+                angleY = Mathf.Lerp(angleYinicial, 190f, progresoY);
+            }
+            else 
+            {
+                progresoY = Mathf.InverseLerp(posicionInicial.x, limitXRight.transform.position.x, player.transform.position.x);
+                angleY = Mathf.Lerp(angleYinicial, 170f, progresoY);
+            }
 
-        // --- EJE Z (Rotación en X) ---
-        if (player.transform.position.z >= posicionInicial.z)
-        {
-            progresoX = Mathf.InverseLerp(posicionInicial.z, limitZBackward.transform.position.z, player.transform.position.z);
-            angleX = Mathf.Lerp(angleXinicial, 22f, progresoX);
-        }
-        else 
-        {
-            progresoX = Mathf.InverseLerp(posicionInicial.z, limitZForward.transform.position.z, player.transform.position.z);
-            angleX = Mathf.Lerp(angleXinicial, 15f, progresoX);
-        }
+            // EJE Z (Rotación en X)
+            if (player.transform.position.z >= posicionInicial.z)
+            {
+                progresoX = Mathf.InverseLerp(posicionInicial.z, limitZBackward.transform.position.z, player.transform.position.z);
+                angleX = Mathf.Lerp(angleXinicial, 22f, progresoX);
+            }
+            else 
+            {
+                progresoX = Mathf.InverseLerp(posicionInicial.z, limitZForward.transform.position.z, player.transform.position.z);
+                angleX = Mathf.Lerp(angleXinicial, 15f, progresoX);
+            }
 
-        // Aplicamos la rotación
-        transform.rotation = Quaternion.Euler(angleX, -angleY, angleZ); 
+            // Aplicamos la rotación
+            transform.rotation = Quaternion.Euler(angleX, -angleY, angleZ); 
+        }
+        else if (tipoDeSala == 2)
+        {
+            // --- MODO 1: PASILLO VERTICAL (Seguir en Z) ---
+            // Pasa del centro. Solo sigue la Z del jugador.
+            Vector3 posicionDestino = new Vector3(transform.position.x, transform.position.y, player.transform.position.z + offsetZ);
+            
+            transform.position = Vector3.Lerp(transform.position, posicionDestino, suavizadoSeguimiento * Time.deltaTime);
+            transform.rotation = Quaternion.Euler(angleXinicial, rotacionYActual, angleZ);
+        }
+        else if (tipoDeSala == 1)
+        {
+            // --- MODO 2: SCROLL LATERAL (Seguir en X) ---
+            // Pasa del centro. Solo sigue la X del jugador.
+            Vector3 posicionDestino = new Vector3(player.transform.position.x, transform.position.y, transform.position.z);
+            
+            transform.position = Vector3.Lerp(transform.position, posicionDestino, suavizadoSeguimiento * Time.deltaTime);
+            transform.rotation = Quaternion.Euler(angleXinicial, rotacionYActual, angleZ);
+        }
     }
 
-    public void CambioDeReferencia(GameObject referenciaNuevaIzquierda, GameObject referenciaNuevaDerecha, GameObject referenciaNuevaDelante, GameObject referenciaNuevaDetras, Vector3 posicionNuevaSala)
+    // CAMBIO: He añadido ", float gradosExtraY" al final del paréntesis
+    public void CambioDeReferencia(GameObject referenciaNuevaIzquierda, GameObject referenciaNuevaDerecha, GameObject referenciaNuevaDelante, GameObject referenciaNuevaDetras, Vector3 posicionNuevaSala, int sala, float gradosExtraY)
     {
-        // --- LA LÍNEA MÁGICA: Actualizamos el "Punto Cero" al centro de la nueva sala ---
+        tipoDeSala = sala;
         posicionInicial = posicionNuevaSala; 
+        rotacionYActual = -angleYinicial + gradosExtraY;
 
-        Vector3 posicionNuevaCamara = new Vector3(posicionNuevaSala.x, transform.position.y, posicionNuevaSala.z + 7f);
+        Vector3 posicionNuevaCamara;
+
+        // AQUÍ ESTÁ LA CLAVE: Decidimos a dónde viaja la cámara según el modo
+        if (tipoDeSala == 0)
+        {
+            // Sala Normal: Viaja al centro de la sala
+            posicionNuevaCamara = new Vector3(posicionNuevaSala.x, transform.position.y, posicionNuevaSala.z + 7f);
+        }
+        else if (tipoDeSala == 1)
+        {
+            // Pasillo en Z: IGNORA EL CENTRO. Viaja a donde esté el jugador en ese momento
+            posicionNuevaCamara = new Vector3(transform.position.x, transform.position.y, player.transform.position.z + offsetZ);
+        }
+        else 
+        {
+            // Pasillo en X: IGNORA EL CENTRO. Viaja a donde esté el jugador en ese momento
+            posicionNuevaCamara = new Vector3(player.transform.position.x, transform.position.y, transform.position.z);
+        }
         
-        // Iniciamos el viaje de la cámara
         StartCoroutine(TransicionCamara(posicionNuevaCamara));
         
-        // Actualizamos los límites para la nueva sala
         limitXLeft = referenciaNuevaIzquierda;
         limitXRight = referenciaNuevaDerecha;
         limitZBackward = referenciaNuevaDetras;
@@ -97,7 +148,9 @@ public class CameraController : MonoBehaviour
 
         Vector3 posicionInicialCam = transform.position; 
         Quaternion rotacionInicialCam = transform.rotation; // Guardamos cómo estaba girada al salir
-        Quaternion rotacionCentro = Quaternion.Euler(angleXinicial, -angleYinicial, angleZ); // La rotación base (neutra)
+        
+        // CAMBIO: El destino de la rotación ahora usa 'rotacionYActual'
+        Quaternion rotacionCentro = Quaternion.Euler(angleXinicial, rotacionYActual, angleZ); 
 
         float duracion = 0.4f; 
         float tiempo = 0f;
@@ -110,7 +163,7 @@ public class CameraController : MonoBehaviour
             // Movemos la posición progresivamente
             transform.position = Vector3.Lerp(posicionInicialCam, destino, porcentaje);
             
-            // Centramos la rotación suavemente durante el viaje para que no empiece torcida en la nueva sala
+            // Centramos la rotación suavemente durante el viaje hacia los nuevos grados
             transform.rotation = Quaternion.Slerp(rotacionInicialCam, rotacionCentro, porcentaje);
 
             yield return null; 

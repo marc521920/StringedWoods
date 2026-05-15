@@ -10,6 +10,7 @@ public class Salas : MonoBehaviour
     [Header("Tipos de Sala")]
     public bool salaBoss;
     public bool salaEspecial;
+    public bool pasillo;
     public bool salaNormal;
     public bool salaInicial;
     public bool salaTienda;
@@ -26,6 +27,8 @@ public class Salas : MonoBehaviour
     public Animation paredCartonIzquierda;
     public Animation paredCartonDerecha;
     public Animation paredCartonDelante;
+
+    public Animation paredCartonEspecial;
     [Header("Paredes de Habitacion")]
     public GameObject paredDerecha;
     public GameObject paredIzquierda;
@@ -62,7 +65,7 @@ public class Salas : MonoBehaviour
         // Limpiamos las salas pacíficas (Tienda o Inicial) de forma automática
         if (jugadorDentro && !salaLimpia && !enemigosGenerados)
         {
-            if (salaInicial || salaTienda)
+            if (salaInicial || salaTienda || salaEspecial || pasillo)
             {
                 salaLimpia = true; 
                 terminarSala();
@@ -149,6 +152,13 @@ public class Salas : MonoBehaviour
                 }
             }
         }
+        if (salaEspecial || pasillo)
+        {
+            paredCartonEspecial["AbrirTelonEspecial"].speed = 1f;
+            paredCartonEspecial["AbrirTelonEspecial"].wrapMode = WrapMode.ClampForever;
+            paredCartonEspecial.Play("AbrirTelonEspecial");
+            
+        }
     }
     void CerrarParedes()
     {
@@ -184,6 +194,13 @@ public class Salas : MonoBehaviour
             
             paredCartonIzquierda.Play("AbrirIzquierda");
         }
+        if (salaEspecial )
+        {
+            paredCartonEspecial["AbrirTelonEspecial"].speed = -1f;
+            paredCartonEspecial["AbrirTelonEspecial"].wrapMode = WrapMode.ClampForever;
+            paredCartonEspecial.Play("AbrirTelonEspecial");
+            
+        }
     }
 
     void OnTriggerEnter(Collider other)
@@ -205,7 +222,18 @@ public class Salas : MonoBehaviour
                 obj.SetActive(true);
             }
         }
-            ControladorCamara.CambioDeReferencia(paredIzquierda,paredDerecha,paredDelante,paredAtras,transform.position);
+        int sala = 0;
+        float anguloAñadido = 0f;
+        if (pasillo)
+        {
+            sala = 1;
+        }else if (salaEspecial)
+        {
+            sala = 2;
+            anguloAñadido = 90f;
+        }
+
+            ControladorCamara.CambioDeReferencia(paredIzquierda,paredDerecha,paredDelante,paredAtras,transform.position,sala,anguloAñadido);
             jugadorDentro = true;
 
         }
