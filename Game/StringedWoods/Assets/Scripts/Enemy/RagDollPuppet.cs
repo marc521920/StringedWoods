@@ -169,8 +169,11 @@ public class RagDollPuppet : EnemyScript
 
     protected override void RecibirDaño()
     {
+        Debug.Log("¡Un enemigo ha sido tocado por la espada!"); // <--- AÑADE ESTO
+
+        base.RecibirDaño();
         animator.SetBool("isWalking", false); 
-        vida -= PlayerScript.attackDamage;
+
         Golpeado = true;
     }
 

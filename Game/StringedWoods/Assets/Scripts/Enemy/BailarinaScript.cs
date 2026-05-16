@@ -26,6 +26,10 @@ public class BailarinaScript : EnemyScript
     public float distanciaEntreAvisos = 2f; // Cada cuántos metros aparece una marca
     private List<GameObject> marcasDeRuta = new List<GameObject>();
 
+    private float velocityInicial;
+
+    private bool unaves = true;
+
 
     [Header("Ajustes de Patrulla")]
     public float distanciaAntenas = 1.5f; // A qué distancia detecta la pared para rebotar
@@ -40,8 +44,8 @@ public class BailarinaScript : EnemyScript
     [Header ("Ataque")]
 
     public GameObject AtaqueArea;
-    public GameObject EfectoAtaqueAzul;
-    public GameObject EfectoAtaqueRojo;
+    public GameObject EfectoAtaque;
+
 
     
 
@@ -57,8 +61,8 @@ public class BailarinaScript : EnemyScript
             rb.isKinematic = false;
         }
         AtaqueArea.SetActive(false);
-        EfectoAtaqueAzul.SetActive(false);
-        EfectoAtaqueRojo.SetActive(false);
+        EfectoAtaque.SetActive(false);
+
     }
 
     protected override void Moverse()
@@ -114,6 +118,7 @@ public class BailarinaScript : EnemyScript
             Vector3 direccionAlObjetivo = (posicionObjetivo - transform.position).normalized;
             if (color == "red")
             {
+                
                 temporizador += Time.deltaTime;
                 if (direccionAlObjetivo != Vector3.zero)
                 {
@@ -123,19 +128,25 @@ public class BailarinaScript : EnemyScript
                 }
                 if (temporizador >= tiempoEntreAtaques && attackStarted == false)
                 {
+                    if (unaves)
+                    {
+                        velocityInicial = velocity;
+                        unaves = false;
+                    }
+                    
                     attackStarted = true;
-                    velocity = velocity/1.5f;
+                    velocity = velocityInicial * 2f;
                     AtaqueArea.SetActive(true);
-                    EfectoAtaqueRojo.SetActive(true);
+                    EfectoAtaque.SetActive(true);
                     temporizador = 0;
 
                 }
                 if (temporizador >= tiempoDeAtaqueRojo && attackStarted == true)
                 {
                     attackStarted = false;
-                    velocity = velocity*1.5f;
+                    velocity = velocity * 0;
                     AtaqueArea.SetActive(false);
-                    EfectoAtaqueRojo.SetActive(false);
+                    EfectoAtaque.SetActive(false);
                     temporizador = 0;
                     
                 }
@@ -186,12 +197,12 @@ public class BailarinaScript : EnemyScript
             if (color == "Red")
             {
                 
-                EfectoAtaqueRojo.SetActive(false);
+                EfectoAtaque.SetActive(false);
             }
             else if (color == "Blue")
             {
                 AtaqueArea.SetActive(false);
-                EfectoAtaqueAzul.SetActive(false);
+                EfectoAtaque.SetActive(false);
             }
 
             marcasDeRuta.Clear();
@@ -251,6 +262,7 @@ IEnumerator AtaqueAzul()
         // ==========================================
         // FASE 1: TELEGRAFIAR EL ATAQUE (Poco a poco)
         // ==========================================
+        animator.SetBool("isAttacking",true);
         Vector3 origenDelRayo = transform.position + Vector3.up; 
         float distanciaMaxima = 20f; // Por si no hay pared, que no ponga marcas infinitas
 
@@ -296,7 +308,7 @@ IEnumerator AtaqueAzul()
         // FASE 2: LA EMBESTIDA (Y limpiar al pisar)
         // ==========================================
         AtaqueArea.SetActive(true);
-        EfectoAtaqueAzul.SetActive(true);
+        EfectoAtaque.SetActive(true);
         while (true)
         {
             origenDelRayo = transform.position + Vector3.up; 
@@ -334,7 +346,7 @@ IEnumerator AtaqueAzul()
         // ==========================================
         rb.linearVelocity = new Vector3(0, rb.linearVelocity.y, 0);
         AtaqueArea.SetActive(false);
-        EfectoAtaqueAzul.SetActive(false);
+        EfectoAtaque.SetActive(false);
         
         // Por si ha sobrado alguna marca sin pisar, la limpiamos por seguridad
         foreach (GameObject marca in marcasDeRuta)
@@ -342,9 +354,10 @@ IEnumerator AtaqueAzul()
             if (marca != null) Destroy(marca);
         }
         marcasDeRuta.Clear(); // Vaciamos la lista
-        
+         rb.linearVelocity = new Vector3(0,0,0);
         attackStarted = false; 
         temporizador = 0f; // Reiniciamos el temporizador para que vuelva a contar desde 0 en el próximo ataque
+        animator.SetBool("isAttacking",false);
     }
         protected override void RecibirDaño()
     {

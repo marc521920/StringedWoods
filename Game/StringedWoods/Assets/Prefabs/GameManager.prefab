@@ -53,7 +53,7 @@ MonoBehaviour:
   curacionDeVida: 0
   "da\xF1oAlAtacar": 10
   velocidadDeAtaque: 0.5
-  rangoDeAtaque: 2
+  rangoDeAtaque: 1
   "aumentoDeDa\xF1oCritico": 0
   cooldownDeDash: 1
   tiempoDeDash: 0.11
@@ -61,6 +61,7 @@ MonoBehaviour:
   fuerzaDeEmpuje: 2
   suerte: 1
   jugador: {fileID: 0}
+  salaEspecial: 0
   monedaPrefab: {fileID: 2486139045116907302, guid: 32e83f5eb759041639ed9b91f23b3491, type: 3}
   corazonPrefab: {fileID: 3745881032604742700, guid: f8eefea80bb008a48adaae8c8bb00b60, type: 3}
   experienciaPrefab: {fileID: 3745881032604742700, guid: f8eefea80bb008a48adaae8c8bb00b60, type: 3}
@@ -70,5 +71,54 @@ MonoBehaviour:
   corazonLleno: {fileID: 0}
   corazonMitad: {fileID: 0}
   corazonVacio: {fileID: 0}
+  Armas: 0
+  attackAreaEspadalv1: {fileID: 0}
+  attackAreaEspadalv2: {fileID: 0}
+  attackAreaMartillolv1: {fileID: 0}
+  attackAreaMartillolv2: {fileID: 0}
+  "attackAreaGuada\xF1alv1": {fileID: 0}
+  "attackAreaGuada\xF1alv2": {fileID: 0}
+  attackAreaLanzalv1: {fileID: 0}
+  attackAreaLanzalv2: {fileID: 0}
+  areaActual: {fileID: 0}
   ataqueActual: 0
+  probabilidadDeEspecial: 70
+  probabilidadDeEpica: 20
+  probabilidadDeLegendario: 10
+  cartasOfertadas: []
+  ataque1Espada: 0.16
+  ataque2Espada: 0.3
+  ataque3Espada: 0.35
+  ataqueEnElAireEspada: 0.175
+  ataqueCargadoEspada: 0.55
+  ataqueSaltoEspada: 0
+  ataqueDashEspada: 0
+  ataque1Martillo: 1.5
+  ataque2Martillo: 1.8
+  ataque3Martillo: 1.3
+  ataqueEnElAireMartillo: 0.175
+  ataqueCargadoMartillo: 1.4
+  ataqueSaltoMartillo: 0
+  ataqueDashMartillo: 0
+  "ataque1Guada\xF1a": 0.5
+  "ataque2Guada\xF1a": 0.6
+  "ataque3Guada\xF1a": 1.05
+  "ataqueEnElAireGuada\xF1a": 0.4
+  "ataqueCargadoGuada\xF1a": 1.1
+  "ataqueSaltoGuada\xF1a": 0
+  "ataqueDashGuada\xF1a": 0
+  ataque1Lanza: 0.7
+  ataque2Lanza: 0.79
+  ataque3Lanza: 0.9
+  ataqueEnElAireLanza: 0.3
+  ataqueCargadoLanza: 1
+  ataqueSaltoLanza: 0
+  ataqueDashLanza: 0
+  duracionAtaque1: 0
+  duracionAtaque2: 0
+  duracionAtaque3: 0
+  duracionAtaqueEnElAire: 0
+  duracionAtaqueCargado: 0
+  duracionAtaqueSalto: 0
+  duracionAtaqueDash: 0
   juegoPausado: 0

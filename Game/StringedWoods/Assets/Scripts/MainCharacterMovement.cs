@@ -28,12 +28,8 @@ public class MainCharacterMovement : MonoBehaviour
     [Header("Attack Settings")]
     public float attackRange = 2f; // Rango del ataque
     public float attackDamage = 10f; // Daño del ataque
-    public GameObject attackArea; // Golpe 1
-    public GameObject attackAreaCombo2; // Golpe 2
-    public GameObject attackAreaCombo3; // Golpe 3 (Fin del combo)
     public GameObject attackAreaJump; // Un objeto vacío que representa el área de ataque para el salto
-    public GameObject attackAreaCargado; // Un objeto vacío que representa el área de ataque cargado
-    public GameObject attackAreaDash; // Un objeto vacío que representa el área de ataque para el dash
+
     public float maxHeightAttack = 5f;
     private bool isAttacking = false; // Para saber si estamos en medio de un ataque
     public float fuerzaGolpe = 5f; // Fuerza del golpe que se aplicará al enemigo
@@ -76,6 +72,27 @@ public class MainCharacterMovement : MonoBehaviour
     public GameObject lanzaLv2;
     public GameObject armaActual; // Para guardar el arma que tenemos equipada y mostrarla en el UI, por ejemplo
 
+    public float multiplicadorEspada;
+    public float multiplicadorMartillo;
+
+    public float multiplicadorGuadaña;
+
+    public float multiplicadorLanza; 
+    public float multiplicadorEspadaLv2;
+    public float multiplicadorMartilloLv2;
+
+    public float multiplicadorGuadañaLv2;
+    public float multiplicadorLanzaLv2; 
+
+    public GameObject attackAreaEspadalv1;
+    public GameObject attackAreaEspadalv2;
+    public GameObject attackAreaMartillolv1;
+    public GameObject attackAreaMartillolv2;
+    public GameObject attackAreaGuadañalv1;
+    public GameObject attackAreaGuadañalv2;
+    public GameObject attackAreaLanzalv1;
+    public GameObject attackAreaLanzalv2;
+
     [Header("Effects")]
     public GameObject AttackDownEffect; // Efecto visual para el ataque hacia abajo
     public GameObject TransformAttackDownEffect; // Efecto visual para la transformación del ataque hacia abajo
@@ -98,6 +115,8 @@ public class MainCharacterMovement : MonoBehaviour
 
         layerPlayer = LayerMask.NameToLayer("player");
         layerEnemy = LayerMask.NameToLayer("enemy");
+
+        ActualizarEstadisticas();
     }
 
     void Update() 
@@ -193,7 +212,7 @@ public class MainCharacterMovement : MonoBehaviour
             }
         }
         
-        if (Input.GetKeyDown(KeyCode.Q) && !dashInCooldown && !isAttacking) 
+        if (Input.GetKeyDown(KeyCode.LeftShift) && !dashInCooldown && !isAttacking) 
         {
             StartCoroutine(Dash()); // Iniciamos el dash
         }
@@ -351,34 +370,39 @@ IEnumerator RutinaKnockback(float fuerza, Vector3 direccion)
 
 
     // Rutina de dash
-    IEnumerator Dash()
+IEnumerator Dash()
     {
-         
-    //  Empezamos el dash
+        // Empezamos el dash
+        isInvulnerable = true;
         isDashing = true;
-        animator.SetBool("isDashing", true); // Aquí podrías reproducir una animación de dash, por ejemplo:
-        Physics.IgnoreLayerCollision(layerPlayer, layerEnemy, true);
+        animator.SetBool("isDashing", true); 
+        
+        // --- EL TRUCO DEFINITIVO ---
+        // Cambiamos al jugador a la capa fantasma que configuramos en los Settings
+        gameObject.layer = LayerMask.NameToLayer("PlayerDash");
 
-    // la velocidad Y a 0 para que no caiga mientras dashea en el aire
+        // la velocidad Y a 0 para que no caiga
         velocidadY = 0f; 
 
-        float startTime = Time.time; // Guardamos el momento exacto en el que empieza
+        float startTime = Time.time; 
 
-    // Mientras no haya pasado el tiempoDash, nos movemos
+        // Mientras no haya pasado el tiempoDash, nos movemos
         while (Time.time < startTime + GameManager.Instance.tiempoDeDash)
         {
-        // Movemos al personaje hacia donde mira
             controller.Move(transform.forward * velocidadDash * Time.deltaTime);
-        
-        // Esperamos al siguiente frame para continuar el bucle
-        yield return null; 
+            yield return null; 
         }
-        Physics.IgnoreLayerCollision(layerPlayer, layerEnemy, false);
-        // 3. Terminamos el dash y devolvemos el control al jugador
+
+        // --- VOLVEMOS A LA NORMALIDAD ---
+        // Devolvemos al jugador a su capa normal para que vuelva a chocar
+        gameObject.layer = LayerMask.NameToLayer("player");
+        
+        isInvulnerable = false;
         isDashing = false;
-        animator.SetBool("isDashing", false); // Aquí terminarías la animación de dash, por ejemplo:
-        dashInCooldown = true; // Activamos el cooldown para evitar dashes consecutivos
-    StartCoroutine(CooldownDash()); // Iniciamos la rutina de cooldown
+        animator.SetBool("isDashing", false); 
+        
+        dashInCooldown = true; 
+        StartCoroutine(CooldownDash()); 
     }
 
 
@@ -684,23 +708,82 @@ IEnumerator RutinaKnockback(float fuerza, Vector3 direccion)
     {
         isInvulnerable = true; // Activamos el estado de invulnerabilidad
         Debug.Log("¡Ahora soy invulnerable por un momento!");
-        Physics.IgnoreLayerCollision(layerPlayer, layerEnemy, true);
+        gameObject.layer = LayerMask.NameToLayer("PlayerDash");
         // Aquí podrías añadir una animación de parpadeo o algo para indicar que estás invulnerable
-        yield return new WaitForSeconds(0.8f); // Duración de la invulnerabilidad, ajusta según tu animación
-        Physics.IgnoreLayerCollision(layerPlayer, layerEnemy, false);
+        yield return new WaitForSeconds(1f); // Duración de la invulnerabilidad, ajusta según tu animación
+        gameObject.layer = LayerMask.NameToLayer("player");
         isInvulnerable = false; // Desactivamos el estado de invulnerabilidad
 
         // Aquí terminaría la animación de invulnerabilidad
     }
+public void ActualizarEstadisticas()
+    {
+        if (GameManager.Instance != null)
+        {
+            // Sincronizamos las variables de movimiento
+            speed = GameManager.Instance.velocidadDeMovimiento;
+            cooldownDash = GameManager.Instance.cooldownDeDash;
+            tiempoDash = GameManager.Instance.tiempoDeDash;
 
+            // Sincronizamos el daño según el arma equipada
+            if (GameManager.Instance.Armas == 1)
+            {
+                attackDamage = GameManager.Instance.dañoAlAtacar * multiplicadorEspada;
+            }
+            else if (GameManager.Instance.Armas == 2)
+            {
+                attackDamage = GameManager.Instance.dañoAlAtacar * multiplicadorMartillo;
+            }
+            else if (GameManager.Instance.Armas == 3)
+            {
+                attackDamage = GameManager.Instance.dañoAlAtacar * multiplicadorGuadaña;
+            }
+            else if (GameManager.Instance.Armas == 4)
+            {
+                attackDamage = GameManager.Instance.dañoAlAtacar * multiplicadorLanza;
+            }
+            else if (GameManager.Instance.Armas == 5)
+            {
+                attackDamage = GameManager.Instance.dañoAlAtacar * multiplicadorEspadaLv2;
+            }
+            else if (GameManager.Instance.Armas == 6)
+            {
+                attackDamage = GameManager.Instance.dañoAlAtacar * multiplicadorMartilloLv2;
+            }
+            else if (GameManager.Instance.Armas == 7)
+            {
+                attackDamage = GameManager.Instance.dañoAlAtacar * multiplicadorGuadañaLv2;
+            }
+            else if (GameManager.Instance.Armas == 8)
+            {
+                attackDamage = GameManager.Instance.dañoAlAtacar * multiplicadorLanzaLv2;
+            }
+            
+            attackRange = GameManager.Instance.rangoDeAtaque;
+            fuerzaGolpe = GameManager.Instance.fuerzaDeEmpuje;
+            cooldownAttackNumber = GameManager.Instance.velocidadDeAtaque;
+
+            // --- NUEVO: Cambiamos el tamaño físico del área de ataque actual ---
+            if (GameManager.Instance.areaActual != null)
+            {
+                // Modificamos la escala (tamaño) en X, Y y Z según el stat de attackRange
+                armaActual.transform.localScale = new Vector3(attackRange, attackRange, attackRange);
+                
+            }
+
+            Debug.Log("¡Estadísticas del jugador sincronizadas en tiempo real con el GameManager!");
+        }
+    }
     public void CambiarArma()
     {
         // Aquí podrías cambiar el sprite del arma que tiene el jugador, o activar/desactivar modelos 3D, etc.
         if (GameManager.Instance.Armas == 1)
         {
+            
             animator.SetInteger("Weapon", 1);
             animator.Play("IDDLE_sword");
             espada.SetActive(true);
+            armaActual = espada;
             martillo.SetActive(false);
             guadaña.SetActive(false);
             lanza.SetActive(false);
@@ -708,52 +791,63 @@ IEnumerator RutinaKnockback(float fuerza, Vector3 direccion)
             martilloLv2.SetActive(false);
             guadañaLv2.SetActive(false);
             lanzaLv2.SetActive(false);
+            ActualizarEstadisticas();
              // Cambia a la segunda arma (ejemplo)
         }
         else if (GameManager.Instance.Armas == 2)
         {
+            
             animator.SetInteger("Weapon", 2);
             animator.Play("IDDLE_hammer");
             espada.SetActive(false);
             martillo.SetActive(true);
+            armaActual = martillo;
             guadaña.SetActive(false);
             lanza.SetActive(false);
             espadaLv2.SetActive(false);
             martilloLv2.SetActive(false);
             guadañaLv2.SetActive(false);
             lanzaLv2.SetActive(false);
+            ActualizarEstadisticas();
              // Cambia a la tercera arma (ejemplo)
         }
         else if (GameManager.Instance.Armas == 3)
         {
+           
             animator.SetInteger("Weapon", 3);
             animator.Play("IDDLE_scythe");
             espada.SetActive(false);
             martillo.SetActive(false);
             guadaña.SetActive(true);
+            armaActual = guadaña;
             lanza.SetActive(false);
             espadaLv2.SetActive(false);
             martilloLv2.SetActive(false);
             guadañaLv2.SetActive(false);
             lanzaLv2.SetActive(false);
+            ActualizarEstadisticas();
              // Cambia a la cuarta arma (ejemplo)
         }
         else if (GameManager.Instance.Armas == 4)
         {
+           
             animator.SetInteger("Weapon", 4);
             animator.Play("IDDLE_spear");
             espada.SetActive(false);
             martillo.SetActive(false);
             guadaña.SetActive(false);
             lanza.SetActive(true);
+            armaActual = lanza;
             espadaLv2.SetActive(false);
             martilloLv2.SetActive(false);
             guadañaLv2.SetActive(false);
             lanzaLv2.SetActive(false);
+            ActualizarEstadisticas();
              // Cambia a la quinta arma (ejemplo)
         }
         else if (GameManager.Instance.Armas == 5)
         {
+           
             animator.SetInteger("Weapon", 1);
             animator.Play("IDDLE_sword");
             espada.SetActive(false);
@@ -761,13 +855,16 @@ IEnumerator RutinaKnockback(float fuerza, Vector3 direccion)
             guadaña.SetActive(false);
             lanza.SetActive(false);
             espadaLv2.SetActive(true);
+            armaActual = espadaLv2;
             martilloLv2.SetActive(false);
             guadañaLv2.SetActive(false);
             lanzaLv2.SetActive(false);
+            ActualizarEstadisticas();
              // Cambia a la sexta arma (ejemplo)
         }
         else if (GameManager.Instance.Armas == 6)
         {
+            
             animator.SetInteger("Weapon", 2);
             animator.Play("IDDLE_hammer");
             espada.SetActive(false);
@@ -776,12 +873,15 @@ IEnumerator RutinaKnockback(float fuerza, Vector3 direccion)
             lanza.SetActive(false);
             espadaLv2.SetActive(false);
             martilloLv2.SetActive(true);
+            armaActual = martilloLv2;
             guadañaLv2.SetActive(false);
             lanzaLv2.SetActive(false);
+            ActualizarEstadisticas();
              // Cambia a la séptima arma (ejemplo)
         }
         else if (GameManager.Instance.Armas == 7)
         {
+            
             animator.SetInteger("Weapon", 3);
             animator.Play("IDDLE_scythe");
             espada.SetActive(false);
@@ -790,12 +890,15 @@ IEnumerator RutinaKnockback(float fuerza, Vector3 direccion)
             lanza.SetActive(false);
             espadaLv2.SetActive(false);
             martilloLv2.SetActive(false);
+            armaActual = guadañaLv2;
             guadañaLv2.SetActive(true);
             lanzaLv2.SetActive(false);
+            ActualizarEstadisticas();
              // Cambia a la octava arma (ejemplo)
         }
         else if (GameManager.Instance.Armas == 8)
         {
+            
             animator.SetInteger("Weapon", 4);
             animator.Play("IDDLE_spear");
             espada.SetActive(false);
@@ -805,7 +908,9 @@ IEnumerator RutinaKnockback(float fuerza, Vector3 direccion)
             espadaLv2.SetActive(false);
             martilloLv2.SetActive(false);
             guadañaLv2.SetActive(false);
+            armaActual = lanzaLv2;
             lanzaLv2.SetActive(true);
+            ActualizarEstadisticas();
              // Cambia a la novena arma (ejemplo)
         }
         Debug.Log("¡Has cambiado de arma! Arma actual: " + GameManager.Instance.Armas);

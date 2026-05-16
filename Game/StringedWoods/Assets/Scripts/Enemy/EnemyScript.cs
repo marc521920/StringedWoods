@@ -17,7 +17,7 @@ public class EnemyScript : MonoBehaviour
     public MainCharacterMovement PlayerScript; // Referencia al script del jugador para acceder a sus variables
     protected virtual void Start()
     {
-        animator = GetComponent<Animator>();
+        
         player = GameObject.FindWithTag("Player"); // Asegúrate de que el jugador tenga el tag "Player"
         if (player != null)
         {
@@ -128,6 +128,7 @@ public class EnemyScript : MonoBehaviour
     }
     protected virtual void RecibirDaño()
     {
+        vida -= PlayerScript.attackDamage;
         // Aquí puedes implementar la lógica para reducir la salud del enemigo, reproducir animaciones de daño, etc.
     }
   protected virtual void Morir()

@@ -2,12 +2,15 @@ using UnityEngine;
 using System.IO;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine.UI; // <-- ¡Obligatorio para poder editar imágenes de la interfaz!
+using UnityEngine.UI; 
+
+// --- CLASES DE GUARDADO ---
 [System.Serializable]
 public class DatosGuardado {
     public DatosJugador jugador;
     public Estadisticas stats;
 }
+
 [System.Serializable]
 public class DatosJugador {
     public float[] posicion = new float[3]; // [x, y, z]
@@ -16,6 +19,7 @@ public class DatosJugador {
     public int nivel;
     public int monedas;
 }
+
 [System.Serializable]
 public class Estadisticas {
     public float dañoAlAtacar;
@@ -30,11 +34,26 @@ public class Estadisticas {
     public float fuerzaDeEmpuje;
     public float suerte;
 }
+
+// --- CLASES PARA LAS CARTAS DE MEJORA ---
+public enum TipoEstadistica 
+{ 
+    VidaMaxima, DanoAlAtacar, VelocidadAtaque, RangoAtaque, CooldownDash, TiempoDash, VelocidadMovimiento, Suerte, FuerzaEmpuje 
+}
+
+[System.Serializable]
+public class CartaMejora
+{
+    public string calidad;
+    public TipoEstadistica estadistica;
+    public float valorMejora; 
+    public string textoDescripcion;
+}
+
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
  
-    // 1. Aquí declaras tus variables (pueden ser public o privadas, según necesites)
     [Header("Progresión")]
     public float experiencia;
     public float multiplicadorDeExperiencia;
@@ -58,20 +77,20 @@ public class GameManager : MonoBehaviour
     public float velocidadDeMovimiento;
     public float fuerzaDeEmpuje;
     public float suerte;
-    [Header("Otros")]
-    public GameObject jugador; // Referencia al jugador en la escena
 
+    [Header("Otros")]
+    public GameObject jugador; 
     public bool salaEspecial;
 
-    GameObject corazones; // Referencia a los corazones en la escena (si los usas para mostrar la vida)
+    GameObject corazones; 
     public GameObject monedaPrefab;
     public GameObject corazonPrefab;
     public GameObject experienciaPrefab;
 
     [Header("UI y Corazones")]
-    public GameObject corazonUIPrefab; // El prefab del corazón (¡debe ser un objeto de UI!)
-    public Transform contenedorCorazones; // Un panel o Layout Group en tu Canvas
-    public List<GameObject> listaCorazonesUI = new List<GameObject>(); // Aquí los guardaremos
+    public GameObject corazonUIPrefab; 
+    public Transform contenedorCorazones; 
+    public List<GameObject> listaCorazonesUI = new List<GameObject>(); 
 
     [Header("Sprites de Corazones")]
     public Sprite corazonLleno;
@@ -80,10 +99,7 @@ public class GameManager : MonoBehaviour
 
     [Header("Weapons")]
     public int Armas;
-    // espada 1
-    // martillo 2
-    // Guadaña 3
-    // Lanza 4
+    // espada 1, martillo 2, Guadaña 3, Lanza 4
     public GameObject attackAreaEspadalv1;
     public GameObject attackAreaEspadalv2;
     public GameObject attackAreaMartillolv1;
@@ -94,93 +110,91 @@ public class GameManager : MonoBehaviour
     public GameObject attackAreaLanzalv2;
     public GameObject areaActual;
 
-    public int ataqueActual; // Variable para saber qué ataque se está usando, para el hit stop
-    // ataque 0 = normal
-    // ataque 1 = normal combo 2
-    // ataque 2 = normal combo 3
-    // ataque 3 = cargado
-    // ataque 4 = en salto
-    // ataque 5 = en dash
+    public int ataqueActual; 
+
+    [Header ("Mejoras de Subir de Nivel")]
+    public int probabilidadDeEspecial;
+    public int probabilidadDeEpica;
+    public int probabilidadDeLegendario;
+    public List<CartaMejora> cartasOfertadas = new List<CartaMejora>(); // Lista de las 3 cartas actuales
+
     [Header("Timmings armas")]
-     public float ataque1Espada;
-     public float ataque2Espada;
-     public float ataque3Espada;
-     public float ataqueEnElAireEspada;
-     public float ataqueCargadoEspada;
-     public float ataqueSaltoEspada;
-     public float ataqueDashEspada;
-        public float ataque1Martillo;
-        public float ataque2Martillo;
-        public float ataque3Martillo;
-        public float ataqueEnElAireMartillo;
-        public float ataqueCargadoMartillo;
-        public float ataqueSaltoMartillo;
-        public float ataqueDashMartillo;
-        public float ataque1Guadaña;
-        public float ataque2Guadaña;
-        public float ataque3Guadaña;
-        public float ataqueEnElAireGuadaña;
-        public float ataqueCargadoGuadaña;
-        public float ataqueSaltoGuadaña;
-        public float ataqueDashGuadaña;
-        public float ataque1Lanza;
-        public float ataque2Lanza;
-        public float ataque3Lanza;
-        public float ataqueEnElAireLanza;
-        public float ataqueCargadoLanza;
-        public float ataqueSaltoLanza;
-        public float ataqueDashLanza;
-        public float duracionAtaque1;
-        public float duracionAtaque2;
-        public float duracionAtaque3;
-        public float duracionAtaqueEnElAire;
-        public float duracionAtaqueCargado;
-        public float duracionAtaqueSalto;
-        public float duracionAtaqueDash;
+    public float ataque1Espada;
+    public float ataque2Espada;
+    public float ataque3Espada;
+    public float ataqueEnElAireEspada;
+    public float ataqueCargadoEspada;
+    public float ataqueSaltoEspada;
+    public float ataqueDashEspada;
+    public float ataque1Martillo;
+    public float ataque2Martillo;
+    public float ataque3Martillo;
+    public float ataqueEnElAireMartillo;
+    public float ataqueCargadoMartillo;
+    public float ataqueSaltoMartillo;
+    public float ataqueDashMartillo;
+    public float ataque1Guadaña;
+    public float ataque2Guadaña;
+    public float ataque3Guadaña;
+    public float ataqueEnElAireGuadaña;
+    public float ataqueCargadoGuadaña;
+    public float ataqueSaltoGuadaña;
+    public float ataqueDashGuadaña;
+    public float ataque1Lanza;
+    public float ataque2Lanza;
+    public float ataque3Lanza;
+    public float ataqueEnElAireLanza;
+    public float ataqueCargadoLanza;
+    public float ataqueSaltoLanza;
+    public float ataqueDashLanza;
+    public float duracionAtaque1;
+    public float duracionAtaque2;
+    public float duracionAtaque3;
+    public float duracionAtaqueEnElAire;
+    public float duracionAtaqueCargado;
+    public float duracionAtaqueSalto;
+    public float duracionAtaqueDash;
+
     [Header("Estado del Juego")]
     public bool juegoPausado = false;
     
-
-    // 2. Llama a esta función cuando quieras guardar todos los datos de golpe
-    
-
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
-        // 2. Al despertar, el script dice: "¡Yo soy la Instancia!"
         if (Instance == null)
         {
-            Instance = this; // "this" significa "este script exacto"
-            DontDestroyOnLoad(gameObject); // Opcional: Para que no se destruya al cambiar de nivel
+            Instance = this; 
+            DontDestroyOnLoad(gameObject); 
         }
         else
         {
-            // Si ya existía uno (por ejemplo, al recargar el nivel), destruimos la copia
             Destroy(gameObject);
         }
     }
-void Start()
+
+    void Start()
     {
         salaEspecial = false;
-        jugador = GameObject.FindWithTag("Player");
-        CrearCorazones(); 
         
-        // ¡IMPORTANTE! Si vidaMaxima son 3 corazones, tu vidaActual empieza en 6 (mitades)
+        // 1. Encuentra al jugador
+        jugador = GameObject.FindWithTag("Player");
+        
+        // 2. Coge las áreas de ataque desde el script del jugador
+        AsignarAreasDeAtaque();
+
+        CrearCorazones(); 
         vidaActual = vidaMaxima * 2; 
         
         GuardarEstadisticas();
         PlayerPrefs.SetString("Nombre", "");
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (juegoPausado)
             {
-                Time.timeScale = 1f; // Reanuda el juego
+                Time.timeScale = 1f; 
                 juegoPausado = false;
             }
             else
@@ -188,51 +202,30 @@ void Start()
                 PausarJuego();
                 juegoPausado = true;
             }
-
         }
 
         if (vidaActual <= 0) 
         {
             GameOver();
-            
         }
-        if (Input.GetKeyDown(KeyCode.K))
-        {
-            GanarExperiencia(50);
-        }
-        if (Input.GetKeyDown(KeyCode.L))
-        {
-            Curar(1);
-        }
-        if (Input.GetKeyDown(KeyCode.J))
-        {            
-            GanarMonedas(10);
-        }
-        if (Input.GetKeyDown(KeyCode.U))
-        {
-            CambiarArma(1);
-        }
-        if (Input.GetKeyDown(KeyCode.I))
-        {
-            CambiarArma(2);
-        }
-        if (Input.GetKeyDown(KeyCode.O))
-        {
-            CambiarArma(3);
-        }
-        if (Input.GetKeyDown(KeyCode.P))
-        {            CambiarArma(4);
-        }
+
+        // Controles de prueba
+        if (Input.GetKeyDown(KeyCode.K)) GanarExperiencia(50);
+        if (Input.GetKeyDown(KeyCode.L)) Curar(1);
+        if (Input.GetKeyDown(KeyCode.J)) GanarMonedas(10);
+        
+        if (Input.GetKeyDown(KeyCode.U)) CambiarArma(1);
+        if (Input.GetKeyDown(KeyCode.I)) CambiarArma(2);
+        if (Input.GetKeyDown(KeyCode.O)) CambiarArma(3);
+        if (Input.GetKeyDown(KeyCode.P)) CambiarArma(4);
     }
+
+    // --- SISTEMA DE GUARDADO ---
     public void GuardarEstadisticas()
     {
-        // Progresión
-        
-        // 3. ¡Obligatorio! Guardar en disco para que no se pierda al cerrar el juego
-        //PlayerPrefs.Save();
-        
         Debug.Log("¡Todas las estadísticas han sido guardadas correctamente!");
     }
+
     public void GuardarPartida()
     {
         DatosGuardado misDatos = new DatosGuardado();
@@ -255,11 +248,11 @@ void Start()
         misDatos.stats.fuerzaDeEmpuje = fuerzaDeEmpuje;
         misDatos.stats.suerte = suerte;
 
-
         string json = JsonUtility.ToJson(misDatos);
         File.WriteAllText(Application.persistentDataPath + "/guardado.json", json);
         Debug.Log("¡Partida guardada en: " + Application.persistentDataPath + "/guardado.json");
     }
+
     public void CargarPartida()
     {
         string ruta = Application.persistentDataPath + "/guardado.json";
@@ -267,7 +260,7 @@ void Start()
         {
             string json = File.ReadAllText(ruta);
             DatosGuardado misDatos = JsonUtility.FromJson<DatosGuardado>(json);
-            // Aquí puedes asignar los datos cargados a tus variables
+            
             vidaActual = misDatos.jugador.salud;
             vidaMaxima = misDatos.stats.saludMaxima;
             experiencia = misDatos.jugador.experiencia;
@@ -282,7 +275,6 @@ void Start()
             fuerzaDeEmpuje = misDatos.stats.fuerzaDeEmpuje;
             suerte = misDatos.stats.suerte;
 
-            // Y también puedes mover al jugador a la posición guardada
             jugador.transform.position = new Vector3(misDatos.jugador.posicion[0], misDatos.jugador.posicion[1], misDatos.jugador.posicion[2]);
 
             Debug.Log("¡Partida cargada correctamente!");
@@ -292,6 +284,7 @@ void Start()
             Debug.LogWarning("No se encontró ningún archivo de guardado en: " + ruta);
         }
     }
+
     public void BorrarPartida()
     {
         string ruta = Application.persistentDataPath + "/guardado.json";
@@ -305,183 +298,325 @@ void Start()
             Debug.LogWarning("No se encontró ningún archivo de guardado para borrar en: " + ruta);
         }
     }
+
+    // --- SISTEMA DE VIDA ---
     public void crearVida()
     {
         vidaActual = vidaMaxima;
         for (int i = 0; i < vidaMaxima; i++)
         {
-            // Aquí puedes instanciar un corazón o actualizar tu UI de vida
             Debug.Log("Corazón " + (i + 1) + " creado");
-            
         }
     }
 
-    public void ActivarHitStop()
-    {
-        float duracionHitStop = 0.1f; // Duración del hit stop en segundos
-        switch (ataqueActual) // <-- ¡Solo he cambiado la 's' a minúscula!
-        {
-            case 0:
-                duracionHitStop = 0.1f;
-                break;
-            case 1:
-                duracionHitStop = 0.12f;
-                break;
-            case 2:
-                duracionHitStop = 0.15f;
-                break;
-            case 3:
-                duracionHitStop = 0.3f;
-                break;
-            case 4:
-                duracionHitStop = 0.18f;
-                break;
-            case 5:
-                duracionHitStop = 0.25f;
-                break;
-            default:
-                duracionHitStop = 0.1f;
-                break;
-        }
-        
-        // Le pasamos el ingrediente a la corrutina
-        StartCoroutine(HitStop(duracionHitStop));
-    }
-    IEnumerator HitStop(float duracion)
-    {
-        Time.timeScale = 0.5f;
-    
-    // ESTA ES LA LÍNEA QUE FALTA PARA QUE EL ERROR DESAPAREZCA
-        yield return new WaitForSecondsRealtime(duracion); 
-    
-        Time.timeScale = 1f;
-        ResetearAtaques();
-
-        
-    }
-    public void ResetearAtaques()
-    {
-        ataqueActual = 0;
-        // Aquí también podrías resetear cualquier bool o trigger de ataque en tu animator
-    }
-    public void PausarJuego()
-    {
-        Time.timeScale = 0f;
-    }
-    public void ReanudarJuego()
-    {
-        Time.timeScale = 1f;
-    }
-    public void GanarExperiencia(float cantidad)
-    {
-        experiencia += cantidad * multiplicadorDeExperiencia;
-        Debug.Log("¡Has ganado " + (cantidad * multiplicadorDeExperiencia) + " de experiencia! Total: " + experiencia);
-        if (experiencia >= 100 + (nivel * 10))
-        {
-            SubirNivel();
-        }
-        // Aquí podrías agregar lógica para subir de nivel si alcanzas cierta cantidad de experiencia
-    }
-    public void Curar(int cantidad)
-    {
-        vidaActual += cantidad;
-        if (vidaActual > vidaMaxima)
-        {
-            vidaActual = vidaMaxima;
-        }
-        Debug.Log("¡Has sido curado por " + cantidad + "! Vida actual: " + vidaActual);
-        // Aquí podrías actualizar tu UI de vida para reflejar el cambio
-    }
-    public void GanarMonedas(int cantidad)
-    {
-        monedas += cantidad;
-        // Aquí podrías agregar lógica para sumar monedas al jugador
-        Debug.Log("¡Has ganado " + cantidad + " monedas!"); 
-    }
-    public void SubirNivel()
-    {
-        
-    }
-    private void GameOver()
-    {
-        Destroy(jugador);
-
-    }
     public void CrearCorazones()
     {
-        // 1. Limpiamos por si acaso ya había corazones de antes
         foreach (GameObject corazon in listaCorazonesUI)
         {
             if (corazon != null) Destroy(corazon);
         }
         listaCorazonesUI.Clear();
 
-        // 2. Comprobamos que no se nos olvidó poner las referencias
         if (corazonUIPrefab == null || contenedorCorazones == null)
         {
             Debug.LogWarning("Falta asignar el Prefab del Corazón UI o el Contenedor en el GameManager");
             return;
         }
 
-        // 3. Instanciamos tantos corazones como vida máxima tengamos
         for (int i = 0; i < vidaMaxima; i++)
         {
-            // Instanciamos el corazón dentro del contenedor del Canvas
             GameObject nuevoCorazon = Instantiate(corazonUIPrefab, contenedorCorazones);
-            
-            // Lo guardamos en la lista para poder cambiarlo de color o apagarlo luego
             listaCorazonesUI.Add(nuevoCorazon); 
         }
 
         Debug.Log("Se han creado " + vidaMaxima + " corazones en la UI.");
     }
-public void CambiarCorazones()
+
+    public void CambiarCorazones()
     {
         for (int i = 0; i < listaCorazonesUI.Count; i++)
         {
-            // En lugar de buscar la Image, buscamos el Animator de tu prefab
             Animator animCorazon = listaCorazonesUI[i].GetComponent<Animator>();
-            
-            if (animCorazon == null) continue; // Por seguridad, si el prefab no tiene animator, lo salta
+            if (animCorazon == null) continue; 
 
             int valorParaEstarLleno = (i + 1) * 2; 
 
-            // Le pasamos el número exacto al Animator
             if (vidaActual >= valorParaEstarLleno)
             {
-                animCorazon.SetInteger("EstadoVida", 2); // 2 = Lleno
+                animCorazon.SetInteger("EstadoVida", 2); 
             }
             else if (vidaActual == valorParaEstarLleno - 1)
             {
-                animCorazon.SetInteger("EstadoVida", 1); // 1 = Mitad
+                animCorazon.SetInteger("EstadoVida", 1); 
             }
             else
             {
-                animCorazon.SetInteger("EstadoVida", 0); // 0 = Vacío
+                animCorazon.SetInteger("EstadoVida", 0); 
             }
         }
     }
-    public void CambioDeSalaEspecial()
+
+    public void Curar(int cantidad)
     {
-            if (salaEspecial == false)
+        vidaActual += cantidad;
+        if (vidaActual > vidaMaxima * 2) 
+        {
+            vidaActual = vidaMaxima * 2;
+        }
+        Debug.Log("¡Has sido curado por " + cantidad + "! Vida actual: " + vidaActual);
+        CambiarCorazones(); 
+    }
+
+    // --- HIT STOP ---
+    public void ActivarHitStop()
+    {
+        float duracionHitStop = 0.1f; 
+        switch (ataqueActual) 
+        {
+            case 0: duracionHitStop = 0.1f; break;
+            case 1: duracionHitStop = 0.12f; break;
+            case 2: duracionHitStop = 0.15f; break;
+            case 3: duracionHitStop = 0.3f; break;
+            case 4: duracionHitStop = 0.18f; break;
+            case 5: duracionHitStop = 0.25f; break;
+            default: duracionHitStop = 0.1f; break;
+        }
+        
+        StartCoroutine(HitStop(duracionHitStop));
+    }
+
+    IEnumerator HitStop(float duracion)
+    {
+        Time.timeScale = 0.5f;
+        yield return new WaitForSecondsRealtime(duracion); 
+        Time.timeScale = 1f;
+        ResetearAtaques();
+    }
+
+    public void ResetearAtaques()
+    {
+        ataqueActual = 0;
+    }
+
+    public void PausarJuego()
+    {
+        Time.timeScale = 0f;
+    }
+
+    public void ReanudarJuego()
+    {
+        Time.timeScale = 1f;
+    }
+
+    // --- PROGRESIÓN Y RECOMPENSAS ---
+    public void GanarExperiencia(float cantidad)
+    {
+        experiencia += cantidad * multiplicadorDeExperiencia;
+        Debug.Log("¡Has ganado " + (cantidad * multiplicadorDeExperiencia) + " de experiencia! Total: " + experiencia);
+        if (experiencia >= 100 + (nivel * 15))
+        {
+            SubirNivel();
+        }
+    }
+
+    public void GanarMonedas(int cantidad)
+    {
+        monedas += cantidad;
+        Debug.Log("¡Has ganado " + cantidad + " monedas!"); 
+    }
+
+    public void SubirNivel()
+    {
+        nivel++; 
+        cartasOfertadas.Clear(); 
+        
+        int numeroDeMejoras = 3;
+        int sumaCalidades = probabilidadDeEspecial + probabilidadDeEpica + probabilidadDeLegendario;
+        
+        for (int i = 0; i < numeroDeMejoras; i++)
+        {
+            CartaMejora nuevaCarta = new CartaMejora();
+            
+            int numeroCalidadTargeta = Random.Range(0, sumaCalidades);
+            float multiplicador = 1f;
+
+            if (numeroCalidadTargeta < probabilidadDeLegendario)
             {
-                salaEspecial = true;
-                Debug.Log("¡Has entrado en la sala especial!");
+                nuevaCarta.calidad = "Legendaria";
+                multiplicador = 2.3f;
+            }
+            else if (numeroCalidadTargeta < probabilidadDeLegendario + probabilidadDeEpica)
+            {
+                nuevaCarta.calidad = "Epica";
+                multiplicador = 1.5f;
             }
             else
             {
-                salaEspecial = false;
-                Debug.Log("¡Has salido de la sala especial!");
+                nuevaCarta.calidad = "Especial";
+                multiplicador = 1f;
             }
 
+            int statRandom = Random.Range(0, 9);
+            nuevaCarta.estadistica = (TipoEstadistica)statRandom;
+
+            switch (nuevaCarta.estadistica)
+            {
+                case TipoEstadistica.VidaMaxima:
+                    nuevaCarta.valorMejora = Mathf.RoundToInt(2f * multiplicador); 
+                    nuevaCarta.textoDescripcion = "+" + nuevaCarta.valorMejora + " Mitades de Vida";
+                    break;
+                case TipoEstadistica.DanoAlAtacar:
+                    nuevaCarta.valorMejora = 2f * multiplicador; 
+                    nuevaCarta.textoDescripcion = "+" + nuevaCarta.valorMejora.ToString("F1") + " Daño";
+                    break;
+                case TipoEstadistica.VelocidadAtaque:
+                    nuevaCarta.valorMejora = 0.1f * multiplicador; 
+                    nuevaCarta.textoDescripcion = "+" + nuevaCarta.valorMejora.ToString("F2") + " Vel. Ataque";
+                    break;
+                case TipoEstadistica.RangoAtaque:
+                    nuevaCarta.valorMejora = 0.1f * multiplicador;
+                    nuevaCarta.textoDescripcion = "+" + nuevaCarta.valorMejora.ToString("F1") + " Rango";
+                    break;
+                case TipoEstadistica.CooldownDash:
+                    nuevaCarta.valorMejora = -0.2f * multiplicador; 
+                    nuevaCarta.textoDescripcion = nuevaCarta.valorMejora.ToString("F2") + "s Cooldown Dash";
+                    break;
+                case TipoEstadistica.TiempoDash:
+                    nuevaCarta.valorMejora = 0.05f * multiplicador;
+                    nuevaCarta.textoDescripcion = "+" + nuevaCarta.valorMejora.ToString("F2") + "s Duración Dash";
+                    break;
+                case TipoEstadistica.VelocidadMovimiento:
+                    nuevaCarta.valorMejora = 1.5f * multiplicador;
+                    nuevaCarta.textoDescripcion = "+" + nuevaCarta.valorMejora.ToString("F1") + " Vel. Movimiento";
+                    break;
+                case TipoEstadistica.Suerte:
+                    nuevaCarta.valorMejora = 2f * multiplicador;
+                    nuevaCarta.textoDescripcion = "+" + nuevaCarta.valorMejora.ToString("F0") + " Suerte";
+                    break;
+                case TipoEstadistica.FuerzaEmpuje:
+                    nuevaCarta.valorMejora = 2f * multiplicador;
+                    nuevaCarta.textoDescripcion = "+" + nuevaCarta.valorMejora.ToString("F1") + " Fuerza de Empuje";
+                    break;
+            }
+
+            cartasOfertadas.Add(nuevaCarta);
+            Debug.Log($"Carta {i+1} generada: {nuevaCarta.calidad} - {nuevaCarta.textoDescripcion}");
+        }
+        
+        // Avisamos a la UI para que muestre las cartas (Asegúrate de tener el script UiManager listo en Unity)
+        if (UiManager.Instance != null)
+        {
+            UiManager.Instance.MostrarMenuSubirNivel();
+        }
+        PausarJuego();
     }
+
+    public void SeleccionarCarta(int indiceCartaSeleccionada)
+    {
+        CartaMejora cartaElegida = cartasOfertadas[indiceCartaSeleccionada];
+
+        switch (cartaElegida.estadistica)
+        {
+            case TipoEstadistica.VidaMaxima:
+                int subidaDeCorazonesEnteros = (int)cartaElegida.valorMejora / 2; 
+                vidaMaxima += subidaDeCorazonesEnteros;
+                CrearCorazones(); 
+                Curar((int)cartaElegida.valorMejora); 
+                break;
+            case TipoEstadistica.DanoAlAtacar:
+                dañoAlAtacar += cartaElegida.valorMejora;
+                break;
+            case TipoEstadistica.VelocidadAtaque:
+                velocidadDeAtaque += cartaElegida.valorMejora;
+                break;
+            case TipoEstadistica.RangoAtaque:
+                rangoDeAtaque += cartaElegida.valorMejora;
+                break;
+            case TipoEstadistica.CooldownDash:
+                cooldownDeDash += cartaElegida.valorMejora; 
+                if (cooldownDeDash < 0.1f) cooldownDeDash = 0.1f; 
+                break;
+            case TipoEstadistica.TiempoDash:
+                tiempoDeDash += cartaElegida.valorMejora;
+                break;
+            case TipoEstadistica.VelocidadMovimiento:
+                velocidadDeMovimiento += cartaElegida.valorMejora;
+                break;
+            case TipoEstadistica.Suerte:
+                suerte += cartaElegida.valorMejora;
+                break;
+            case TipoEstadistica.FuerzaEmpuje:
+                fuerzaDeEmpuje += cartaElegida.valorMejora;
+                break;
+        }
+
+        Debug.Log("¡Has aplicado la mejora: " + cartaElegida.textoDescripcion + "!");
+        
+        // --- AQUÍ CONECTAMOS Y ACTUALIZAMOS LAS ESTADÍSTICAS DEL JUGADOR ---
+        if (jugador != null)
+        {
+            jugador.GetComponent<MainCharacterMovement>().ActualizarEstadisticas();
+        }
+
+        cartasOfertadas.Clear();
+    }
+
+    private void GameOver()
+    {
+        Destroy(jugador);
+    }
+
+    public void CambioDeSalaEspecial()
+    {
+        if (salaEspecial == false)
+        {
+            salaEspecial = true;
+            Debug.Log("¡Has entrado en la sala especial!");
+        }
+        else
+        {
+            salaEspecial = false;
+            Debug.Log("¡Has salido de la sala especial!");
+        }
+    }
+    public void AsignarAreasDeAtaque()
+    {
+        if (jugador != null)
+        {
+            // Accedemos al script del jugador
+            MainCharacterMovement scriptJugador = jugador.GetComponent<MainCharacterMovement>();
+            
+            if (scriptJugador != null)
+            {
+                // Cogemos las áreas directamente desde las variables de tu script del jugador
+                attackAreaEspadalv1 = scriptJugador.attackAreaEspadalv1;
+                attackAreaEspadalv2 = scriptJugador.attackAreaEspadalv2;
+                
+                attackAreaMartillolv1 = scriptJugador.attackAreaMartillolv1;
+                attackAreaMartillolv2 = scriptJugador.attackAreaMartillolv2;
+                
+                attackAreaGuadañalv1 = scriptJugador.attackAreaGuadañalv1;
+                attackAreaGuadañalv2 = scriptJugador.attackAreaGuadañalv2;
+                
+                attackAreaLanzalv1 = scriptJugador.attackAreaLanzalv1;
+                attackAreaLanzalv2 = scriptJugador.attackAreaLanzalv2;
+
+                Debug.Log("¡Áreas de ataque copiadas desde el script MainCharacterMovement!");
+            }
+        }
+    }
+
     public void CambiarArma(int nuevoTipoArma)
     {
-        // Aquí podrías cambiar el sprite del arma que tiene el jugador, o activar/desactivar modelos 3D, etc.
         Armas = nuevoTipoArma;
         Debug.Log("¡Has cambiado de arma! Arma actual: " + Armas);
-        jugador.GetComponent<MainCharacterMovement>().CambiarArma();
-        if (Armas == 1|| Armas == 5)
+        
+        if (jugador != null)
+        {
+            jugador.GetComponent<MainCharacterMovement>().CambiarArma();
+        }
+
+        if (Armas == 1 || Armas == 5)
         {
             duracionAtaque1 = ataque1Espada;
             duracionAtaque2 = ataque2Espada;
@@ -490,14 +625,8 @@ public void CambiarCorazones()
             duracionAtaqueSalto = ataqueSaltoEspada;
             duracionAtaqueDash = ataqueDashEspada;
             duracionAtaqueEnElAire = ataqueEnElAireEspada;
-            if (Armas == 1)
-            {
-                areaActual = attackAreaEspadalv1;
-            }
-            else
-            {
-                areaActual = attackAreaEspadalv2;
-            }
+            if (Armas == 1) areaActual = attackAreaEspadalv1;
+            else areaActual = attackAreaEspadalv2;
         }
         else if (Armas == 2 || Armas == 6)
         {
@@ -508,14 +637,8 @@ public void CambiarCorazones()
             duracionAtaqueSalto = ataqueSaltoMartillo;
             duracionAtaqueDash = ataqueDashMartillo;
             duracionAtaqueEnElAire = ataqueEnElAireMartillo;
-            if (Armas == 2)
-            {
-                areaActual = attackAreaMartillolv1;
-            }
-            else
-            {
-                areaActual = attackAreaMartillolv2;
-            }
+            if (Armas == 2) areaActual = attackAreaMartillolv1;
+            else areaActual = attackAreaMartillolv2;
         }
         else if (Armas == 3 || Armas == 7)
         {
@@ -526,14 +649,8 @@ public void CambiarCorazones()
             duracionAtaqueSalto = ataqueSaltoGuadaña;
             duracionAtaqueDash = ataqueDashGuadaña;
             duracionAtaqueEnElAire = ataqueEnElAireGuadaña;
-            if (Armas == 3)
-            {
-                areaActual = attackAreaGuadañalv1;
-            }
-            else
-            {
-                areaActual = attackAreaGuadañalv2;
-            }
+            if (Armas == 3) areaActual = attackAreaGuadañalv1;
+            else areaActual = attackAreaGuadañalv2;
         }
         else if (Armas == 4 || Armas == 8)
         {
@@ -544,16 +661,8 @@ public void CambiarCorazones()
             duracionAtaqueSalto = ataqueSaltoLanza;
             duracionAtaqueDash = ataqueDashLanza;
             duracionAtaqueEnElAire = ataqueEnElAireLanza;
-            if (Armas == 4)
-            {
-                areaActual = attackAreaLanzalv1;
-            }
-            else
-            {
-                areaActual = attackAreaLanzalv2;
-            }
+            if (Armas == 4) areaActual = attackAreaLanzalv1;
+            else areaActual = attackAreaLanzalv2;
         }
-
-
     }
 }
