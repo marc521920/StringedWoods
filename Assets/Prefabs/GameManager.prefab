@@ -1,0 +1,74 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &737921252832437194
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7314299080741169787}
+  - component: {fileID: 4479859306009746417}
+  m_Layer: 0
+  m_Name: GameManager
+  m_TagString: GameController
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7314299080741169787
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 737921252832437194}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 2.42972, y: -0, z: -3.46491}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4479859306009746417
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 737921252832437194}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38665eb37889543d5b2cf3b98bb41c5e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameManager
+  experiencia: 0
+  multiplicadorDeExperiencia: 1
+  nivel: 0
+  monedas: 0
+  vidaActual: 0
+  vidaMaxima: 3
+  curacionDeVida: 0
+  "da\xF1oAlAtacar": 10
+  velocidadDeAtaque: 0.5
+  rangoDeAtaque: 2
+  "aumentoDeDa\xF1oCritico": 0
+  cooldownDeDash: 1
+  tiempoDeDash: 0.11
+  velocidadDeMovimiento: 6
+  fuerzaDeEmpuje: 2
+  suerte: 1
+  jugador: {fileID: 0}
+  monedaPrefab: {fileID: 2486139045116907302, guid: 32e83f5eb759041639ed9b91f23b3491, type: 3}
+  corazonPrefab: {fileID: 3745881032604742700, guid: f8eefea80bb008a48adaae8c8bb00b60, type: 3}
+  experienciaPrefab: {fileID: 3745881032604742700, guid: f8eefea80bb008a48adaae8c8bb00b60, type: 3}
+  corazonUIPrefab: {fileID: 2596988427718401853, guid: e226da42b49193142844ab579e0449bc, type: 3}
+  contenedorCorazones: {fileID: 0}
+  listaCorazonesUI: []
+  corazonLleno: {fileID: 0}
+  corazonMitad: {fileID: 0}
+  corazonVacio: {fileID: 0}
+  ataqueActual: 0
+  juegoPausado: 0
