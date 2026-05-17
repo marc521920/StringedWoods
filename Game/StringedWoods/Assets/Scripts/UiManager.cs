@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI; 
 using System.Collections;
-using TMPro; // <-- ¡Añadido para que reconozca los nuevos textos!
+using TMPro; 
 
 public class UiManager : MonoBehaviour
 {
@@ -10,14 +10,15 @@ public class UiManager : MonoBehaviour
     [Header("Referencias del Canvas")]
     public GameObject panelSubirNivel; 
     public RectTransform contenedorCartas; 
+    
+    // --- NUEVO: Referencia a la barra de experiencia ---
+    [Header("UI General")]
+    public Slider barraExperiencia;
 
     [Header("Elementos de las 3 Cartas (Orden: 0, 1, 2)")]
     public Button[] botonesCartas = new Button[3];
-    
-    // --- CAMBIO AQUÍ: Ahora usamos TextMeshPro ---
     public TextMeshProUGUI[] textosDescripcion = new TextMeshProUGUI[3];
     public TextMeshProUGUI[] textosCalidad = new TextMeshProUGUI[3];
-    
     public Image[] fondosCartas = new Image[3];
 
     [Header("Colores de las Calidades")]
@@ -34,6 +35,22 @@ public class UiManager : MonoBehaviour
     void Start()
     {
         panelSubirNivel.SetActive(false);
+    }
+
+    // --- NUEVO: Actualizamos la barra de experiencia en tiempo real ---
+    void Update()
+    {
+        if (GameManager.Instance != null && barraExperiencia != null)
+        {
+            // 1. Calculamos cuál es el máximo de experiencia para este nivel
+            float experienciaMaxima = 100f + (GameManager.Instance.nivel * 15f);
+            
+            // 2. Le decimos al Slider cuál es su límite máximo
+            barraExperiencia.maxValue = experienciaMaxima;
+            
+            // 3. Rellenamos el Slider con la experiencia actual del jugador
+            barraExperiencia.value = GameManager.Instance.experiencia;
+        }
     }
 
     public void MostrarMenuSubirNivel()

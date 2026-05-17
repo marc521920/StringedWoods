@@ -1922,7 +1922,7 @@ MonoBehaviour:
   "colorDa\xF1o": {r: 1, g: 0, b: 0, a: 1}
   player: {fileID: 0}
   vida: 100
-  animator: {fileID: 0}
+  animator: {fileID: 5150651147505205721}
   estaGolpeado: 0
   PlayerScript: {fileID: 0}
   rangoDeVision: 10
