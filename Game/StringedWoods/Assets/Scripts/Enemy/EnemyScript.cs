@@ -6,13 +6,15 @@ public class EnemyScript : MonoBehaviour
     public Color colorDaño = Color.red; 
     
     protected Color colorOriginal;
-    protected Renderer meshRenderer;
+
     protected Rigidbody rb;
     public GameObject player; // Referencia al jugador para aplicar la fuerza en la dirección correcta
     public float vida;
     public Animator animator; // Referencia al Animator para controlar las animaciones
     protected bool recibiendoGolpe = false;
     public bool estaGolpeado = false; // Nueva variable para controlar el estado de golpeado
+
+    public bool estaMuerto = false;
 
     public MainCharacterMovement PlayerScript; // Referencia al script del jugador para acceder a sus variables
     protected virtual void Start()
@@ -23,22 +25,33 @@ public class EnemyScript : MonoBehaviour
         {
             PlayerScript = player.GetComponent<MainCharacterMovement>(); // Obtenemos el script del jugador para acceder a sus variables
         }
-        meshRenderer = GetComponent<Renderer>();
+
         rb = GetComponent<Rigidbody>();
         rb.isKinematic = false; // El enemigo no se moverá por la física hasta que sea golpeado
          // Desactivamos la gravedad para que no caiga mientras patrulla o persigue
         
        
-        colorOriginal = meshRenderer.material.color;
+
     }
     protected virtual void Update()
     {
         Moverse();
         // Aquí podrías agregar lógica para el comportamiento del enemigo, como perseguir al jugador, atacar, etc.
-        if (vida <= 0)
+        if (vida <= 0 && !estaMuerto)
         {
-            Morir();
-             // Destruye el enemigo si su vida llega a 0 o menos
+            rb.isKinematic = true;
+            estaMuerto = true; // Cerramos el candado para que no se repita
+            
+            // Apagamos colliders y scripts para que el jugador no le siga pegando al cadáver
+            Collider[] todosLosColliders = GetComponentsInChildren<Collider>();
+
+            foreach (Collider col in todosLosColliders)
+            {
+                col.enabled = false;
+            }
+            
+            // ¡MUY IMPORTANTE! Ahora se llama con StartCoroutine
+            StartCoroutine(Morir()); 
         }
     }
     
@@ -49,6 +62,7 @@ public class EnemyScript : MonoBehaviour
     {
          if (other.CompareTag("Ataque") && !recibiendoGolpe) 
          {
+                    animator.SetTrigger("GetHit");
                 GameManager.Instance.ActivarHitStop(); // Guardamos las estadísticas del jugador al recibir un golpe
                 recibiendoGolpe = true; 
                 
@@ -79,7 +93,7 @@ public class EnemyScript : MonoBehaviour
                     direccionEmpuje = direccionEmpuje.normalized;
                 }
                 
-                meshRenderer.material.color = colorDaño;
+                
 
                 // 4. Arrancamos el empujón manual
                 StartCoroutine(RutinaKnockbackEnemigo(direccionEmpuje));
@@ -114,7 +128,7 @@ public class EnemyScript : MonoBehaviour
     void RestaurarColor()
     {
         estaGolpeado = false; // Desactivamos el estado de golpeado para que el enemigo pueda actuar de nuevo
-        meshRenderer.material.color = colorOriginal;
+        
         
         // Devolvemos el control físico para la gravedad
         rb.isKinematic = false; 
@@ -128,14 +142,17 @@ public class EnemyScript : MonoBehaviour
     }
     protected virtual void RecibirDaño()
     {
+
         vida -= PlayerScript.attackDamage;
         // Aquí puedes implementar la lógica para reducir la salud del enemigo, reproducir animaciones de daño, etc.
     }
-  protected virtual void Morir()
+  protected virtual IEnumerator Morir()
     {
         // --- 1. MONEDAS (Entre 0 y 4) ---
         // En Random.Range para números enteros (int), el último número es EXCLUSIVO. 
         // Por eso ponemos (0, 5) para que el resultado sea 0, 1, 2, 3 o 4.
+        animator.SetTrigger("isDead");
+        yield return new WaitForSeconds(2f);
         int cantidadMonedas = Random.Range(0, 5); 
         for (int i = 0; i < cantidadMonedas; i++)
         {

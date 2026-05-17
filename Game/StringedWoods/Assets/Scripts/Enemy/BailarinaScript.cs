@@ -38,7 +38,7 @@ public class BailarinaScript : EnemyScript
     public GameObject posicionRebote; // Prefab del efecto visual al golpear al jugador
 
     private bool jugadorDetectado = false;
-    private bool Golpeado = false; 
+
     public string color;
         // red or blue
     [Header ("Ataque")]
@@ -103,10 +103,10 @@ public class BailarinaScript : EnemyScript
                 Debug.Log("Te perdí...");
                 
             }
-            else if (Golpeado)
+            else if (estaGolpeado)
             {
                 jugadorDetectado = true; 
-                Golpeado = false; 
+                estaGolpeado = false; 
             }
         }
 
@@ -133,7 +133,7 @@ public class BailarinaScript : EnemyScript
                         velocityInicial = velocity;
                         unaves = false;
                     }
-                    
+                    animator.SetBool("isAttacking",true);
                     attackStarted = true;
                     velocity = velocityInicial * 2f;
                     AtaqueArea.SetActive(true);
@@ -143,6 +143,7 @@ public class BailarinaScript : EnemyScript
                 }
                 if (temporizador >= tiempoDeAtaqueRojo && attackStarted == true)
                 {
+                    animator.SetBool("isAttacking",false);
                     attackStarted = false;
                     velocity = velocity * 0;
                     AtaqueArea.SetActive(false);
@@ -361,9 +362,23 @@ IEnumerator AtaqueAzul()
     }
         protected override void RecibirDaño()
     {
+        base.RecibirDaño();
+        estaGolpeado = true;
+    }
+    protected override IEnumerator Morir()
+    {
+        // 1. Apagamos el daño AL INSTANTE para que no lastime al jugador
+        if (EfectoAtaque != null) EfectoAtaque.SetActive(false);
+        if (AtaqueArea != null) AtaqueArea.SetActive(false);
+
+        // 2. Puedes añadir aquí la animación de muerte si tienes una
+        // animator.SetTrigger("Die");
         
-        vida -= PlayerScript.attackDamage;
-        Golpeado = true;
+        // 3. Esperamos un frame (o los segundos que dure la animación de caer)
+        yield return null; 
+        
+        // 4. ¡LA CLAVE! Ejecutamos la muerte del padre y esperamos a que termine
+        yield return StartCoroutine(base.Morir());
     }
         protected override void OnTriggerEnter(Collider other)
     {

@@ -1038,6 +1038,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UiManager
   panelSubirNivel: {fileID: 8275889240833842907}
   contenedorCartas: {fileID: 8295616116421146045}
+  barraExperiencia: {fileID: 0}
   botonesCartas:
   - {fileID: 8634474421155581849}
   - {fileID: 2194169355908604499}
@@ -1501,9 +1502,9 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8267191879035512588}
+  - {fileID: 2566762404083082559}
   - {fileID: 5221567985093713287}
   - {fileID: 4580732630849596423}
-  - {fileID: 2566762404083082559}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}

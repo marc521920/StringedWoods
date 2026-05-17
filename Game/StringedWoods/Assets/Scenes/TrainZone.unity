@@ -1094,6 +1094,7 @@ MonoBehaviour:
   vida: 100
   animator: {fileID: 1371975662}
   estaGolpeado: 0
+  estaMuerto: 0
   PlayerScript: {fileID: 0}
   rangoDeVision: 40
   anguloDeVision: 65
@@ -3214,6 +3215,7 @@ MonoBehaviour:
   vida: 100
   animator: {fileID: 2105219153}
   estaGolpeado: 0
+  estaMuerto: 0
   PlayerScript: {fileID: 0}
   rangoDeVision: 10
   anguloDeVision: 65
@@ -4033,6 +4035,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: rag puppet Enemy
       objectReference: {fileID: 0}
+    - target: {fileID: 3020924356711404599, guid: 8eecb649ba2794cd3b8fba15cd9fa1a5, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5150651147505205721, guid: 8eecb649ba2794cd3b8fba15cd9fa1a5, type: 3}
+      propertyPath: m_Avatar
+      value: 
+      objectReference: {fileID: 9000000, guid: a56aff062a7c346289062724a603026a, type: 3}
+    - target: {fileID: 5150651147505205721, guid: 8eecb649ba2794cd3b8fba15cd9fa1a5, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 56cbf73b263ce492aa470b9e5d9623c9, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -9447,18 +9461,22 @@ MonoBehaviour:
   vida: 100
   animator: {fileID: 1206108992}
   estaGolpeado: 0
+  estaMuerto: 0
   PlayerScript: {fileID: 0}
   rangoDeVision: 10
   anguloDeVision: 90
   capaObstaculos:
     serializedVersion: 2
     m_Bits: 64
-  velocity: 3
-  velocityCaminando: 1
-  tiempoDeGiro: 1
-  velocidadDeGiro: 45
   distanciaDeAtaque: 1.5
   fuerzaDeMiGolpe: 7
+  estaAtacando: 0
+  despertarse: 1
+  velocidadDeGiro: 0
+  tiempoAtaqueRagPuppet: 0
+  areaAtaqueRagPuppet: {fileID: 0}
+  EffectoDeAtaque: {fileID: 0}
+  tranformDeEfecto: {fileID: 0}
 --- !u!23 &1206108997
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -9754,6 +9772,7 @@ MonoBehaviour:
   vida: 100
   animator: {fileID: 0}
   estaGolpeado: 0
+  estaMuerto: 0
   PlayerScript: {fileID: 0}
   rangoDeVision: 10
   anguloDeVision: 65
@@ -15949,6 +15968,63 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 88919b8cbb7fbaf47ac4447994ea8945, type: 3}
+--- !u!1001 &1836742095
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2497151568481848973, guid: 8eecb649ba2794cd3b8fba15cd9fa1a5, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -4.36
+      objectReference: {fileID: 0}
+    - target: {fileID: 2497151568481848973, guid: 8eecb649ba2794cd3b8fba15cd9fa1a5, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.31
+      objectReference: {fileID: 0}
+    - target: {fileID: 2497151568481848973, guid: 8eecb649ba2794cd3b8fba15cd9fa1a5, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.33
+      objectReference: {fileID: 0}
+    - target: {fileID: 2497151568481848973, guid: 8eecb649ba2794cd3b8fba15cd9fa1a5, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2497151568481848973, guid: 8eecb649ba2794cd3b8fba15cd9fa1a5, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2497151568481848973, guid: 8eecb649ba2794cd3b8fba15cd9fa1a5, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2497151568481848973, guid: 8eecb649ba2794cd3b8fba15cd9fa1a5, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2497151568481848973, guid: 8eecb649ba2794cd3b8fba15cd9fa1a5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2497151568481848973, guid: 8eecb649ba2794cd3b8fba15cd9fa1a5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2497151568481848973, guid: 8eecb649ba2794cd3b8fba15cd9fa1a5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3020924356711404599, guid: 8eecb649ba2794cd3b8fba15cd9fa1a5, type: 3}
+      propertyPath: m_Name
+      value: rag puppet
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 8eecb649ba2794cd3b8fba15cd9fa1a5, type: 3}
 --- !u!1 &1888040215 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3900837401681720175, guid: d123bf6a48d8d5d4c8103aa7f9a653a9, type: 3}
@@ -16668,6 +16744,7 @@ MonoBehaviour:
   vida: 100000000
   animator: {fileID: 0}
   estaGolpeado: 0
+  estaMuerto: 0
   PlayerScript: {fileID: 0}
 --- !u!136 &2062019686
 CapsuleCollider:
@@ -17446,3 +17523,4 @@ SceneRoots:
   - {fileID: 1157730471}
   - {fileID: 9221217411801797783}
   - {fileID: 887773699}
+  - {fileID: 1836742095}
