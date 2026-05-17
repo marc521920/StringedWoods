@@ -13,6 +13,8 @@ public class RagDollPuppet : EnemyScript
     
     [Header("Ajustes de Daño al Jugador")]
     public float fuerzaDeMiGolpe = 7f;
+    public float cooldownDeAtaque = 3f; // NUEVO: Tiempo entre ataques
+    private float tiempoUltimoAtaque = -10f; // NUEVO: Reloj interno
 
     private bool estaGirando = false;
     public bool estaAtacando = false;
@@ -26,9 +28,8 @@ public class RagDollPuppet : EnemyScript
 
     public GameObject areaAtaqueRagPuppet;
 
- [Header("Effects")]
+    [Header("Effects")]
     public GameObject EffectoDeAtaque;
-
     public GameObject tranformDeEfecto;
 
     protected override void Start()
@@ -37,21 +38,18 @@ public class RagDollPuppet : EnemyScript
         vida = 100;
         animator.SetTrigger("WakeUp"); 
         StartCoroutine(Despertandose());
-
     }
 
     protected override void Moverse()
     {
-        // Físicas encendidas siempre para la gravedad y recibir los knockbacks
         rb.isKinematic = false; 
 
         if (player == null || despertarse || estaAtacando) return;
-        if (estaGolpeado) return; // Si está volando por un golpe, bloqueamos la lógica
+        if (estaGolpeado || estaMuerto) return; 
         
         float distanciaAlJugador = Vector3.Distance(transform.position, player.transform.position);
         Vector3 direccionAlJugador = (player.transform.position - transform.position).normalized;
 
-        // --- 1. DETECCIÓN ---
         bool enRango = distanciaAlJugador <= rangoDeVision;
         float anguloAlJugador = Vector3.Angle(transform.forward, direccionAlJugador);
         bool enAngulo = anguloAlJugador <= anguloDeVision;
@@ -65,7 +63,6 @@ public class RagDollPuppet : EnemyScript
             }
         }
 
-        // --- 2. CAMBIOS DE ESTADO ---
         if (tieneLineaDeVision)
         {
             if (!jugadorDetectado)
@@ -83,37 +80,37 @@ public class RagDollPuppet : EnemyScript
             }
         }
 
-        // --- 3. MOVIMIENTO (SÓLO ANIMACIONES) ---
         if (jugadorDetectado)
         {
-            // MODO PERSECUCIÓN
             Vector3 posicionObjetivo = new Vector3(player.transform.position.x, transform.position.y, player.transform.position.z);
             Vector3 direccionAlObjetivo = (posicionObjetivo - transform.position).normalized;
 
-            // NOTA: Dejo el 'Slerp' activo SOLO aquí. Las animaciones de caminar recto no giran 
-            // solas hacia objetivos móviles, así que necesitamos ayudarle a apuntar hacia ti.
             if (direccionAlObjetivo != Vector3.zero)
             {
                 Quaternion rotacionDeseada = Quaternion.LookRotation(direccionAlObjetivo);
                 transform.rotation = Quaternion.Slerp(transform.rotation, rotacionDeseada, 10f * Time.deltaTime);
             }
 
-            // FRENOS: Si está lejos, camina. Si está cerca, se detiene.
+            // --- LÓGICA DE FRENOS Y COOLDOWN ACTUALIZADA ---
             if (distanciaAlJugador > distanciaDeAtaque)
             {
                 animator.SetInteger("Walking", 2);
             }
-            else if(!estaAtacando)
+            else 
             {
+               
                 
-                animator.SetInteger("Walking", 0);
-                StartCoroutine(AttackRigPuppet());
-                estaAtacando = true;
+                if(!estaAtacando && Time.time >= tiempoUltimoAtaque + cooldownDeAtaque)
+                {
+                    animator.SetInteger("Walking", 0); // Siempre se frena al estar cerca
+                    StartCoroutine(AttackRigPuppet());
+                    estaAtacando = true;
+                    tiempoUltimoAtaque = Time.time; // Reiniciamos el cronómetro
+                }
             }
         }
         else
         {
-            // MODO PATRULLA
             if (!estaGirando)
             {
                 animator.SetInteger("Walking", 2); 
@@ -134,8 +131,10 @@ public class RagDollPuppet : EnemyScript
             }
         }
     }
+
     IEnumerator AttackRigPuppet()
     {
+        Debug.Log("rarete");
         bool estaEfecto = false;
         animator.SetBool("isAttacking",true);
         areaAtaqueRagPuppet.SetActive(true);
@@ -150,9 +149,8 @@ public class RagDollPuppet : EnemyScript
         animator.SetBool("isAttacking",false);
         estaAtacando = false;
         animator.SetInteger("Walking", 2); 
-        
-
     }
+
     IEnumerator Despertandose()
     {
         yield return new WaitForSeconds(1.5f); 
@@ -162,29 +160,17 @@ public class RagDollPuppet : EnemyScript
     IEnumerator GirarHastaDespejar()
     {
         estaGirando = true;
-        
-        // Elegimos dirección de giro aleatoria
         float direccionGiro = Random.Range(0, 2) == 0 ? 1f : -1f;
 
-        // Le ponemos la animación de mover las piernas hacia los lados
-        if (direccionGiro == 1f)
-        {
-             animator.SetInteger("Walking", 3); 
-        }
-        else if (direccionGiro == -1f)
-        {
-            animator.SetInteger("Walking", 1); 
-        }
+        if (direccionGiro == 1f) animator.SetInteger("Walking", 3); 
+        else if (direccionGiro == -1f) animator.SetInteger("Walking", 1); 
 
-        // FASE 1: Giramos POR CÓDIGO hasta dejar de mirar a la pared
-        // El Root Motion moverá los pies, pero nosotros controlamos el giro exacto
         while (Physics.Raycast(transform.position, transform.forward, 3f, capaObstaculos))
         {
             transform.Rotate(0, direccionGiro * velocidadDeGiro * Time.deltaTime, 0);
             yield return null; 
         }
 
-        // FASE 2: Margen de seguridad extra (giramos un poquito más para no rozar)
         float tiempoExtra = 0.5f; 
         while (tiempoExtra > 0)
         {
@@ -193,7 +179,6 @@ public class RagDollPuppet : EnemyScript
             yield return null;
         }
 
-        // Volvemos a la animación de caminar recto
         animator.SetInteger("Walking", 2); 
         estaGirando = false;
     }
@@ -205,9 +190,9 @@ public class RagDollPuppet : EnemyScript
         base.RecibirDaño();
         animator.SetInteger("Walking", 0); 
 
-        animator.SetBool("isAttacking", false); // Apagamos la animación de ataque
-        if (areaAtaqueRagPuppet != null) areaAtaqueRagPuppet.SetActive(false); // Apagamos el área de daño
-        estaAtacando = false; // ¡ABRIMOS EL CANDADO A LA FUERZA!
+        animator.SetBool("isAttacking", false); 
+        if (areaAtaqueRagPuppet != null) areaAtaqueRagPuppet.SetActive(false); 
+        estaAtacando = false; 
         despertarse = false;
 
         estaGolpeado = true;

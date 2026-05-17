@@ -370,6 +370,11 @@ IEnumerator AtaqueAzul()
         // 1. Apagamos el daño AL INSTANTE para que no lastime al jugador
         if (EfectoAtaque != null) EfectoAtaque.SetActive(false);
         if (AtaqueArea != null) AtaqueArea.SetActive(false);
+        foreach (GameObject marca in marcasDeRuta)
+        {
+            if (marca != null) Destroy(marca);
+        }
+        marcasDeRuta.Clear(); // Vaciamos la lista
 
         // 2. Puedes añadir aquí la animación de muerte si tienes una
         // animator.SetTrigger("Die");

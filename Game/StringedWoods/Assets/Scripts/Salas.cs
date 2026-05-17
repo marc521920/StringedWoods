@@ -36,6 +36,8 @@ public class Salas : MonoBehaviour
     public GameObject paredAtras;
     public GameObject paredDelante;
 
+    public GameObject collidersHabitacion;
+
     public List<GameObject> ParedTrasera = new List<GameObject>();
 
     // --- NUEVO: Listas de activación dinámica ---
@@ -106,7 +108,7 @@ public class Salas : MonoBehaviour
     void terminarSala()
     {
         Debug.Log("¡La sala " + gameObject.name + " se ha limpiado! Abriendo puertas...");
-
+        collidersHabitacion.SetActive(false);
         // ESCUDO: Comprobamos que no esté vacío antes de tocarlo
         if (paredCartonDelante != null)
         {
@@ -168,6 +170,7 @@ public class Salas : MonoBehaviour
 
     void CerrarParedes()
     {
+        collidersHabitacion.SetActive(true);
         Debug.Log("¡Cerrando paredes de la sala " + gameObject.name + " para generar enemigos!");
         
         if (paredDelante != null) paredDelante.SetActive(true);

@@ -49,6 +49,7 @@ public class EnemyScript : MonoBehaviour
             {
                 col.enabled = false;
             }
+            StopAllCoroutines();
             
             // ¡MUY IMPORTANTE! Ahora se llama con StartCoroutine
             StartCoroutine(Morir()); 

@@ -47,7 +47,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &5117484523974583452
 Transform:
   m_ObjectHideFlags: 0
@@ -78,7 +78,7 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -1471,10 +1471,11 @@ MonoBehaviour:
     m_Bits: 64
   distanciaDeAtaque: 3
   fuerzaDeMiGolpe: 7
+  cooldownDeAtaque: 6
   estaAtacando: 0
   despertarse: 1
   velocidadDeGiro: 50
-  tiempoAtaqueRagPuppet: 1
+  tiempoAtaqueRagPuppet: 0.9
   areaAtaqueRagPuppet: {fileID: 7958491561023477413}
   EffectoDeAtaque: {fileID: 2846370911600461768, guid: d85b6a861eee544f3a60ac8faf38e9f9, type: 3}
   tranformDeEfecto: {fileID: 5936316303128044141}
