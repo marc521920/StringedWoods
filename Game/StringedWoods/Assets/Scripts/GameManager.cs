@@ -421,7 +421,9 @@ public class GameManager : MonoBehaviour
         experiencia += cantidad * multiplicadorDeExperiencia;
         Debug.Log("¡Has ganado " + (cantidad * multiplicadorDeExperiencia) + " de experiencia! Total: " + experiencia);
         if (experiencia >= 100 + (nivel * 15))
+        
         {
+            experiencia = 0;
             SubirNivel();
         }
     }

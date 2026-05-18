@@ -11,7 +11,6 @@ public class UiManager : MonoBehaviour
     public GameObject panelSubirNivel; 
     public RectTransform contenedorCartas; 
     
-    // --- NUEVO: Referencia a la barra de experiencia ---
     [Header("UI General")]
     public Slider barraExperiencia;
 
@@ -21,7 +20,16 @@ public class UiManager : MonoBehaviour
     public TextMeshProUGUI[] textosCalidad = new TextMeshProUGUI[3];
     public Image[] fondosCartas = new Image[3];
 
-    [Header("Colores de las Calidades")]
+    // --- CAMBIO: Sustituimos Colores por Sprites ---
+    [Header("Sprites de las Calidades")]
+    // Asigna aquí tus imágenes de fondo en el Inspector
+    public Sprite spriteFondoEspecial; 
+    public Sprite spriteFondoEpica;    
+    public Sprite spriteFondoLegendaria; 
+
+    // Mantenemos estas por si acaso quieres añadir un borde o texto coloreado,
+    // pero para el fondo completo usaremos los Sprites de arriba.
+    [Header("Colores de las Calidades (Opcionales)")]
     public Color colorEspecial = new Color(0.2f, 0.8f, 0.2f); // Verde
     public Color colorEpica = new Color(0.8f, 0.2f, 0.8f);    // Morado
     public Color colorLegendaria = new Color(1f, 0.8f, 0f);   // Dorado/Amarillo
@@ -37,18 +45,12 @@ public class UiManager : MonoBehaviour
         panelSubirNivel.SetActive(false);
     }
 
-    // --- NUEVO: Actualizamos la barra de experiencia en tiempo real ---
     void Update()
     {
         if (GameManager.Instance != null && barraExperiencia != null)
         {
-            // 1. Calculamos cuál es el máximo de experiencia para este nivel
             float experienciaMaxima = 100f + (GameManager.Instance.nivel * 15f);
-            
-            // 2. Le decimos al Slider cuál es su límite máximo
             barraExperiencia.maxValue = experienciaMaxima;
-            
-            // 3. Rellenamos el Slider con la experiencia actual del jugador
             barraExperiencia.value = GameManager.Instance.experiencia;
         }
     }
@@ -64,9 +66,29 @@ public class UiManager : MonoBehaviour
             textosDescripcion[i].text = carta.textoDescripcion;
             textosCalidad[i].text = carta.calidad;
 
-            if (carta.calidad == "Legendaria") fondosCartas[i].color = colorLegendaria;
-            else if (carta.calidad == "Epica") fondosCartas[i].color = colorEpica;
-            else fondosCartas[i].color = colorEspecial;
+            // --- LÓGICA ACTUALIZADA: Sustituir Sprite y Resetear Color ---
+            
+            // Primero, nos aseguramos de que el color de la Image sea blanco puro.
+            // Si no hacemos esto, tu nueva textura se teñirá horriblemente.
+            fondosCartas[i].color = Color.white; 
+
+            // Segundo, asignamos el sprite que toca según la calidad.
+            if (carta.calidad == "Legendaria") 
+            {
+                fondosCartas[i].sprite = spriteFondoLegendaria;
+                // Si quieres colorear el texto de calidad también, usarías esto:
+                // textosCalidad[i].color = colorLegendaria; 
+            }
+            else if (carta.calidad == "Epica") 
+            {
+                fondosCartas[i].sprite = spriteFondoEpica;
+                // textosCalidad[i].color = colorEpica;
+            }
+            else // Por defecto, Especial (Verde)
+            {
+                fondosCartas[i].sprite = spriteFondoEspecial;
+                // textosCalidad[i].color = colorEspecial;
+            }
 
             int indiceCarta = i; 
             botonesCartas[i].onClick.RemoveAllListeners(); 
