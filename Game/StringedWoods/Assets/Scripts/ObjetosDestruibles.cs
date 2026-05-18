@@ -22,8 +22,9 @@ public class ObjetoDestruible : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if ((other.CompareTag("attack") || other.CompareTag("Ataque")) && !yaDestruido)
+        if ((other.CompareTag("Ataque")) && !yaDestruido)
         {
+            Debug.Log("HOLI");
             Romper();
         }
     }
