@@ -311,6 +311,10 @@ public void RecibirDaño(float fuerza, Vector3 direccionHaciaAtras)
 
 IEnumerator RutinaKnockback(float fuerza, Vector3 direccion)
 {
+    if (fuerza > 0)
+    {
+        
+    
     estaEmpujado = true; // Bloqueamos el control del jugador del Update
     
     // Le damos un pequeño "saltito" inicial para despegarlo del suelo y que la caída tenga sentido
@@ -365,6 +369,7 @@ IEnumerator RutinaKnockback(float fuerza, Vector3 direccion)
     yield return new WaitForSeconds(0.15f); 
     
     estaEmpujado = false; // ¡Le devolvemos el control al jugador!
+    }
 }
 
 

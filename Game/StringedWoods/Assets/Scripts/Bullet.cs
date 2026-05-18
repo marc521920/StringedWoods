@@ -51,9 +51,19 @@ public class Bullet : MonoBehaviour
     private void OnTriggerEnter(Collider other) 
     {
         if (other.CompareTag("Enemy")) return; // Evitamos que la bala se destruya al chocar con el enemigo que la disparó
-         if (!other.CompareTag("Player") && !other.CompareTag("Enemy"))
+
+        
+        // ¡Aquí está la clave! Hay que añadir .gameObject
+        else if (other.gameObject.CompareTag("Player") && estaQuieta == false) 
         {
-            Collision.enabled = false; // Desactivamos el collider para evitar múltiples colisiones
+            GameManager.Instance.PlayerScript.RecibirDaño(0, new Vector3 (0,0,0));
+            Destroy(gameObject);
+        }
+       
+    }
+    private void OnCollisionEnter(Collision other) 
+    {
+        Collision.enabled = false; // Desactivamos el collider para evitar múltiples colisiones
             estaQuieta = true; // Detenemos la bala
             velocidadBala = 0;
             rb.isKinematic = true;
@@ -62,15 +72,6 @@ public class Bullet : MonoBehaviour
                 estaDesapareciendo = true;
                 StartCoroutine(DestruirBala());
             }
-
-        }
-        
-        // ¡Aquí está la clave! Hay que añadir .gameObject
-        else if (other.gameObject.CompareTag("Player") && estaQuieta == false) 
-        {
-            Destroy(gameObject);
-        }
-       
     }
     IEnumerator DestruirBala()
     {

@@ -20,9 +20,9 @@ public class ObjetoDestruible : MonoBehaviour
         if (modeloRoto != null) modeloRoto.SetActive(false);
     }
 
-    private void OnTriggerEnter(Collider other)
+    void OnTriggerEnter(Collider other)
     {
-        if ((other.CompareTag("Ataque")) && !yaDestruido)
+        if ((other.CompareTag("Ataque") || other.CompareTag("Enemy") ) && !yaDestruido) 
         {
             Debug.Log("HOLI");
             Romper();

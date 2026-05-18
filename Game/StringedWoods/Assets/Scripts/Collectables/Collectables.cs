@@ -21,7 +21,7 @@ public class Collectables : MonoBehaviour
         if (esExperiencia && esVida)
         {
             collider.isTrigger = true; // Si es ambos, lo hacemos un trigger para que el jugador pueda recogerlo sin colisionar
-            rb.AddForce(Vector3.up * 1f, ForceMode.Impulse); 
+            rb.AddForce(Vector3.up * 0.5f, ForceMode.Impulse); 
         }
         else if (esMoneda)
         {
@@ -47,7 +47,7 @@ public class Collectables : MonoBehaviour
             // Hacemos que el objeto flote suavemente hacia arriba y hacia abajo para darle un efecto visual agradable
             float flotacion = Mathf.Sin(Time.time * 7f) * 2f; // Oscilación suave
             transform.position += new Vector3(0, flotacion * Time.deltaTime, 0);
-            if (distanciaAlJugador < 3f && esExperiencia) // Si el jugador está cerca, hacemos que el objeto se mueva suavemente hacia él para facilitar la recogida
+            if (distanciaAlJugador < 20f && esExperiencia) // Si el jugador está cerca, hacemos que el objeto se mueva suavemente hacia él para facilitar la recogida
             {
                 Vector3 direccionAlJugador = (jugador.transform.position - transform.position).normalized;
                 rb.AddForce(direccionAlJugador * Time.deltaTime * 10f, ForceMode.VelocityChange); // Velocidad de movimiento hacia el jugador

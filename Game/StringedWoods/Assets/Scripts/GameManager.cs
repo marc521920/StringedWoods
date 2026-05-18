@@ -82,6 +82,8 @@ public class GameManager : MonoBehaviour
     public GameObject jugador; 
     public bool salaEspecial;
 
+    public MainCharacterMovement PlayerScript;
+
     GameObject corazones; 
     public GameObject monedaPrefab;
     public GameObject corazonPrefab;
@@ -180,10 +182,12 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+         
         salaEspecial = false;
         
         // 1. Encuentra al jugador
         jugador = GameObject.FindWithTag("Player");
+        PlayerScript = jugador.GetComponent<MainCharacterMovement>();
         
         // 2. Coge las áreas de ataque desde el script del jugador
         AsignarAreasDeAtaque();

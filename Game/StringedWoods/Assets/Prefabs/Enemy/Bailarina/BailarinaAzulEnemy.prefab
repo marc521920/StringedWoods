@@ -89,6 +89,7 @@ MonoBehaviour:
   animator: {fileID: 4676460944945168188}
   estaGolpeado: 0
   estaMuerto: 0
+  tieneHyperArmor: 0
   PlayerScript: {fileID: 0}
   rangoDeVision: 40
   anguloDeVision: 65
@@ -103,7 +104,7 @@ MonoBehaviour:
   attackStarted: 0
   tiempoEntreAtaques: 2.5
   tiempoDeAtaqueRojo: 3
-  prefabAvisoRuta: {fileID: 8397400053026806836, guid: f7b55e701e273054a9a12edec3bedb2b, type: 3}
+  prefabAvisoRuta: {fileID: 1986197178212963650, guid: 9e133709c88af8f42abc434a80434151, type: 3}
   distanciaEntreAvisos: 2
   distanciaAntenas: 1.5
   prefabEfectoRebote: {fileID: 4053593639388421901, guid: 46832cb0dc27f4e38b01996cd0b52ab6, type: 3}

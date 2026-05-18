@@ -150,15 +150,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: a56aff062a7c346289062724a603026a, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -4.36
+      value: -1.18
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: a56aff062a7c346289062724a603026a, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.31
+      value: 0.41
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: a56aff062a7c346289062724a603026a, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.33
+      value: 0.02
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: a56aff062a7c346289062724a603026a, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1463,12 +1463,14 @@ MonoBehaviour:
   animator: {fileID: 8378813835914925303}
   estaGolpeado: 0
   estaMuerto: 0
+  tieneHyperArmor: 0
   PlayerScript: {fileID: 0}
   rangoDeVision: 10
   anguloDeVision: 90
   capaObstaculos:
     serializedVersion: 2
     m_Bits: 64
+  alturaMaxima: 4
   distanciaDeAtaque: 3
   fuerzaDeMiGolpe: 7
   cooldownDeAtaque: 6

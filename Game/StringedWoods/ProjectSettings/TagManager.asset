@@ -15,6 +15,7 @@ TagManager:
   - SalaIzquierda
   - AtaqueEnemigo
   - ContenedorCorazones
+  - Elevaciones
   layers:
   - Default
   - TransparentFX

@@ -5,8 +5,9 @@ public class RagDollPuppet : EnemyScript
 {
     [Header("Ajustes de Visión")]
     public float rangoDeVision = 10f;
-    public float anguloDeVision = 65f;
+    public float anguloDeVision = 90f;
     public LayerMask capaObstaculos;
+    public float alturaMaxima;
     
     [Header("Ajustes de Movimiento")]
     public float distanciaDeAtaque = 1.5f; 
@@ -54,8 +55,16 @@ public class RagDollPuppet : EnemyScript
         float anguloAlJugador = Vector3.Angle(transform.forward, direccionAlJugador);
         bool enAngulo = anguloAlJugador <= anguloDeVision;
 
+        // --- NUEVO: Límite de altura ---
+        // Calculamos la diferencia en el eje Y. 
+        // Si el jugador está 2 metros (o más) por encima del enemigo, será true.
+        float diferenciaAltura = player.transform.position.y - transform.position.y;
+        bool demasiadoAlto = diferenciaAltura > alturaMaxima; // Puedes cambiar este 2f por el valor que quieras
+
         bool tieneLineaDeVision = false;
-        if (enRango && enAngulo)
+        
+        // Añadimos "!demasiadoAlto" a las condiciones para que solo lo vea si NO está muy arriba
+        if (enRango && enAngulo && !demasiadoAlto)
         {
             if (!Physics.Raycast(transform.position, direccionAlJugador, distanciaAlJugador, capaObstaculos))
             {
@@ -137,7 +146,7 @@ public class RagDollPuppet : EnemyScript
         Debug.Log("rarete");
         bool estaEfecto = false;
         animator.SetBool("isAttacking",true);
-        areaAtaqueRagPuppet.SetActive(true);
+        
         yield return new WaitForSeconds(tiempoAtaqueRagPuppet * 1.55f); 
         if (estaEfecto == false)
         {
@@ -154,6 +163,7 @@ public class RagDollPuppet : EnemyScript
     {
         yield return new WaitForSeconds(1.5f); 
         despertarse = false;
+        areaAtaqueRagPuppet.SetActive(true);
     }
 
     IEnumerator GirarHastaDespejar()

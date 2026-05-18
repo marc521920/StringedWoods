@@ -235,13 +235,27 @@ public class Salas : MonoBehaviour
                 // 2. Activamos la lista de objetos que deben encenderse al entrar
                 foreach (GameObject obj in objetosActivarAlEntrar)
                 {
-                    if (obj != null) obj.SetActive(true);
+                    if (obj != null)
+                    {
+                        MeshRenderer mesh = obj.GetComponent<MeshRenderer>();
+                        if (mesh != null)
+                        {
+                            mesh.enabled = true;
+                        }
+                    }
                 }
 
-                // 3. Desactivamos la lista de objetos que deben apagarse al entrar
+                // 3. Desactivamos el MeshRenderer de los objetos al entrar
                 foreach (GameObject obj in objetosDesactivarAlEntrar)
                 {
-                    if (obj != null) obj.SetActive(false);
+                    if (obj != null)
+                    {
+                        MeshRenderer mesh = obj.GetComponent<MeshRenderer>();
+                        if (mesh != null)
+                        {
+                            mesh.enabled = false;
+                        }
+                    }
                 }
                 // -------------------------------------------
 
@@ -277,9 +291,16 @@ public class Salas : MonoBehaviour
             
             // 1. Reactivamos instantáneamente los objetos que desactivamos al entrar
             foreach (GameObject obj in objetosDesactivarAlEntrar)
-            {
-                if (obj != null) obj.SetActive(true);
-            }
+                {
+                    if (obj != null)
+                    {
+                        MeshRenderer mesh = obj.GetComponent<MeshRenderer>();
+                        if (mesh != null)
+                        {
+                            mesh.enabled = true;
+                        }
+                    }
+                }
 
             // 2. Iniciamos el temporizador de 1.5 segundos para apagar los objetos de la sala
             rutinaDesactivacion = StartCoroutine(DesactivarObjetosConRetraso());
@@ -292,13 +313,20 @@ public class Salas : MonoBehaviour
     // --- NUEVA CORRUTINA: Retraso para apagar los objetos ---
     private IEnumerator DesactivarObjetosConRetraso()
     {
-        yield return new WaitForSeconds(1.5f); // Esperamos 1.5 segundos
+        yield return new WaitForSeconds(1f); // Esperamos 1.5 segundos
 
         // Apagamos los objetos de la lista
-        foreach (GameObject obj in objetosActivarAlEntrar)
-        {
-            if (obj != null) obj.SetActive(false);
-        }
+                foreach (GameObject obj in objetosActivarAlEntrar)
+                {
+                    if (obj != null)
+                    {
+                        MeshRenderer mesh = obj.GetComponent<MeshRenderer>();
+                        if (mesh != null)
+                        {
+                            mesh.enabled = false;
+                        }
+                    }
+                }
         
         // Limpiamos la variable de la corrutina
         rutinaDesactivacion = null; 
