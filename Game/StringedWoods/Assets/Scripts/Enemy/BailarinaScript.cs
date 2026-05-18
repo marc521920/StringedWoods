@@ -260,6 +260,7 @@ public class BailarinaScript : EnemyScript
     
 IEnumerator AtaqueAzul()
     {
+        tieneHyperArmor = true;
         // ==========================================
         // FASE 1: TELEGRAFIAR EL ATAQUE (Poco a poco)
         // ==========================================
@@ -359,6 +360,7 @@ IEnumerator AtaqueAzul()
         attackStarted = false; 
         temporizador = 0f; // Reiniciamos el temporizador para que vuelva a contar desde 0 en el próximo ataque
         animator.SetBool("isAttacking",false);
+        tieneHyperArmor = false;
     }
         protected override void RecibirDaño()
     {

@@ -22,6 +22,8 @@ public class CameraController : MonoBehaviour
 
     private float posicionYInicial;
 
+    private float posicionZPasillos = 0f;
+
     public int tipoDeSala;
 
     // 0 = normal
@@ -149,6 +151,7 @@ public class CameraController : MonoBehaviour
 
         Vector3 posicionNuevaCamara;
         
+        
 
         if (tipoDeSala == 0)
         {
@@ -157,8 +160,20 @@ public class CameraController : MonoBehaviour
         }
         else if (tipoDeSala == 1)
         {
-            GameManager.Instance.salaEspecial = false;
-            posicionNuevaCamara = new Vector3(player.transform.position.x, posicionYInicial, transform.position.z);
+            if (posicionZPasillos == 0f)
+            {
+                GameManager.Instance.salaEspecial = false;
+                posicionNuevaCamara = new Vector3(player.transform.position.x, posicionYInicial, transform.position.z);
+                posicionZPasillos = transform.position.z;
+                
+            }
+            else
+            {
+                GameManager.Instance.salaEspecial = false;
+                posicionNuevaCamara = new Vector3(player.transform.position.x, posicionYInicial, posicionZPasillos);
+                
+            }
+            
         }
         else 
         {

@@ -62,9 +62,14 @@ MonoBehaviour:
   suerte: 1
   jugador: {fileID: 0}
   salaEspecial: 0
-  monedaPrefab: {fileID: 2486139045116907302, guid: 32e83f5eb759041639ed9b91f23b3491, type: 3}
+  monedaPrefab: {fileID: 8101150470487746098, guid: 1e4b8176606d21c47944ebec7aac5c59, type: 3}
   corazonPrefab: {fileID: 3745881032604742700, guid: f8eefea80bb008a48adaae8c8bb00b60, type: 3}
-  experienciaPrefab: {fileID: 3745881032604742700, guid: f8eefea80bb008a48adaae8c8bb00b60, type: 3}
+  exp1Prefab: {fileID: 664418900695453110, guid: 86a9a6e1b58c288488f0a8f0e7b1fd56, type: 3}
+  exp5Prefab: {fileID: 4297173381798892193, guid: 83b1e90b23d52364287583df9302df0d, type: 3}
+  exp10Prefab: {fileID: 8605047684176915744, guid: 549d17215f26fb14584f74fba7e0762d, type: 3}
+  exp20Prefab: {fileID: 3423086155070795317, guid: 1c52ecdc3f7c5be4ea0c80d8c7b94604, type: 3}
+  exp50Prefab: {fileID: 8611076225565012274, guid: fc6794753dc8c904a80a687e6ca46c7b, type: 3}
+  exp100Prefab: {fileID: 8590928995183197766, guid: 6e36ec02b2e45514c8c583486fbd8da4, type: 3}
   corazonUIPrefab: {fileID: 2596988427718401853, guid: e226da42b49193142844ab579e0449bc, type: 3}
   contenedorCorazones: {fileID: 0}
   listaCorazonesUI: []

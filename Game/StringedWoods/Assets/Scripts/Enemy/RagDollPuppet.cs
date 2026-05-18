@@ -145,7 +145,6 @@ public class RagDollPuppet : EnemyScript
             estaEfecto = true;
         }    
         yield return new WaitForSeconds(tiempoAtaqueRagPuppet/1.2f); 
-        areaAtaqueRagPuppet.SetActive(false);
         animator.SetBool("isAttacking",false);
         estaAtacando = false;
         animator.SetInteger("Walking", 2); 

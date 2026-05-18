@@ -85,7 +85,14 @@ public class GameManager : MonoBehaviour
     GameObject corazones; 
     public GameObject monedaPrefab;
     public GameObject corazonPrefab;
-    public GameObject experienciaPrefab;
+
+    [Header("Prefabs de Experiencia")]
+    public GameObject exp1Prefab;
+    public GameObject exp5Prefab;
+    public GameObject exp10Prefab;
+    public GameObject exp20Prefab;
+    public GameObject exp50Prefab;
+    public GameObject exp100Prefab;
 
     [Header("UI y Corazones")]
     public GameObject corazonUIPrefab; 

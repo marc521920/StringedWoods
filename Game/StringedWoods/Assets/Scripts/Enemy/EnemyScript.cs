@@ -16,6 +16,8 @@ public class EnemyScript : MonoBehaviour
 
     public bool estaMuerto = false;
 
+    public bool tieneHyperArmor = false; // Si es true, los golpes no le frenan
+
     public MainCharacterMovement PlayerScript; // Referencia al script del jugador para acceder a sus variables
     protected virtual void Start()
     {
@@ -59,68 +61,54 @@ public class EnemyScript : MonoBehaviour
     // Seguro anti-multigolpe
   
 
-    protected virtual void OnTriggerEnter(Collider other)
+protected virtual void OnTriggerEnter(Collider other)
     {
          if (other.CompareTag("Ataque") && !recibiendoGolpe) 
          {
-                    animator.SetTrigger("GetHit");
-                GameManager.Instance.ActivarHitStop(); // Guardamos las estadísticas del jugador al recibir un golpe
+                GameManager.Instance.ActivarHitStop(); 
+                RecibirDaño(); // Restamos vida SIEMPRE
+
+                // --- SISTEMA DE HYPER ARMOR ---
+                // Si está en medio de un ataque imparable, nos salimos aquí y no la aturdimos
+                if (tieneHyperArmor)
+                {
+                    return; 
+                }
+
+                // --- SI NO TIENE ARMADURA, APLICAMOS KNOCKBACK Y STUN ---
+                animator.SetTrigger("GetHit");
                 recibiendoGolpe = true; 
-                
-                // 1. Matamos cualquier corrutina de patrulla/giro que el enemigo estuviera haciendo
                 StopAllCoroutines(); 
-                RecibirDaño();
-               
-                
-                
-                // 2. Apagamos la física para evitar el teletransporte por superposición de colliders
-                
                 rb.linearVelocity = Vector3.zero; 
 
-                Debug.Log("¡Enemigo golpeado! Calculando desde el arma...");
-                
-
-                // 3. Calculamos la dirección estrictamente desde el centro del arma
                 Vector3 direccionEmpuje = transform.position - other.transform.position;
-                direccionEmpuje.y = 0; // Para que no se hunda en el suelo
+                direccionEmpuje.y = 0; 
                 
-                // Si justo el centro del arma y el del enemigo son el mismo punto (raro pero posible)
-                if (direccionEmpuje == Vector3.zero) 
-                {
-                    direccionEmpuje = -transform.forward;
-                }
-                else 
-                {
-                    direccionEmpuje = direccionEmpuje.normalized;
-                }
+                if (direccionEmpuje == Vector3.zero) direccionEmpuje = -transform.forward;
+                else direccionEmpuje = direccionEmpuje.normalized;
                 
-                
-
-                // 4. Arrancamos el empujón manual
                 StartCoroutine(RutinaKnockbackEnemigo(direccionEmpuje));
          }
     }
 
     // --- RUTINA MANUAL EXTREMA ---
+    // --- RUTINA MANUAL CON COLISIONES ---
     IEnumerator RutinaKnockbackEnemigo(Vector3 direccion)
     {
         float duracionEmpuje = 0.2f; 
         float tiempoPasado = 0f;
         float velocidadEmpuje = PlayerScript.fuerzaGolpe * 2f; 
-        estaGolpeado = true; // Activamos el estado de golpeado para que el enemigo sepa que no puede actuar
-
-         // Activamos el modo kinematic para controlar manualmente la posición sin interferencias físicas
-        
+        estaGolpeado = true; 
 
         while (tiempoPasado < duracionEmpuje)
         {
-            tiempoPasado += Time.deltaTime;
+            tiempoPasado += Time.fixedDeltaTime; // Usamos el tiempo de las físicas
             
-            // Usamos transform.position directamente. Esto anula CUALQUIER bug físico.
-            // El enemigo resbalará exactamente en la dirección que le decimos sin pestañear.
-            transform.position += direccion * velocidadEmpuje * Time.deltaTime;
+            // MovePosition empuja al enemigo PERO respetando las paredes
+            Vector3 nuevaPosicion = transform.position + direccion * velocidadEmpuje * Time.fixedDeltaTime;
+            rb.MovePosition(nuevaPosicion);
             
-            yield return null;
+            yield return new WaitForFixedUpdate(); // Nos sincronizamos con el motor físico
         }
 
         RestaurarColor();
@@ -165,7 +153,39 @@ public class EnemyScript : MonoBehaviour
         int cantidadExperiencia = Random.Range(5, 8);
         for (int i = 0; i < cantidadExperiencia; i++)
         {
-            InstanciarBotin(GameManager.Instance.experienciaPrefab);
+            // Tiramos un dado de 100 caras (con decimales)
+            float ruleta = Random.Range(0f, 100f);
+
+            // 1. Premio legendario (100 XP) -> 0.5% de probabilidad (Cae del 0 al 0.5)
+            if (ruleta <= 0.5f) 
+            {
+                InstanciarBotin(GameManager.Instance.exp100Prefab);
+            }
+            // 2. Premio Épico (50 XP) -> 1% de probabilidad (Cae del 0.5 al 1.5)
+            else if (ruleta <= 1.5f) 
+            {
+                InstanciarBotin(GameManager.Instance.exp50Prefab);
+            }
+            // 3. Premio Raro (20 XP) -> 5% de probabilidad (Cae del 1.5 al 6.5)
+            else if (ruleta <= 6.5f) 
+            {
+                InstanciarBotin(GameManager.Instance.exp20Prefab);
+            }
+            // 4. Premio Poco Común (10 XP) -> 15% de probabilidad (Cae del 6.5 al 21.5)
+            else if (ruleta <= 21.5f) 
+            {
+                InstanciarBotin(GameManager.Instance.exp10Prefab);
+            }
+            // 5. Premio Normal Alto (5 XP) -> 30% de probabilidad (Cae del 21.5 al 51.5)
+            else if (ruleta <= 51.5f) 
+            {
+                InstanciarBotin(GameManager.Instance.exp5Prefab);
+            }
+            // 6. Premio Común (1 XP) -> 48.5% restante (El resto de la ruleta)
+            else 
+            {
+                InstanciarBotin(GameManager.Instance.exp1Prefab);
+            }
         }
 
         // --- 3. CORAZONES (Basado en la Suerte) ---
