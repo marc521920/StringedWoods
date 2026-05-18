@@ -200,7 +200,6 @@ public class RagDollPuppet : EnemyScript
         animator.SetInteger("Walking", 0); 
 
         animator.SetBool("isAttacking", false); 
-        if (areaAtaqueRagPuppet != null) areaAtaqueRagPuppet.SetActive(false); 
         estaAtacando = false; 
         despertarse = false;
 

@@ -1465,12 +1465,13 @@ MonoBehaviour:
   estaMuerto: 0
   tieneHyperArmor: 0
   PlayerScript: {fileID: 0}
+  EffectoDeGolpeo: {fileID: 3372038541050652865, guid: b2e457b9dd0a083409ac8aeabe0f7d78, type: 3}
   rangoDeVision: 10
   anguloDeVision: 90
   capaObstaculos:
     serializedVersion: 2
     m_Bits: 64
-  alturaMaxima: 4
+  alturaMaxima: 2
   distanciaDeAtaque: 3
   fuerzaDeMiGolpe: 7
   cooldownDeAtaque: 6

@@ -17,32 +17,34 @@ public class LevelManager : MonoBehaviour
     public Vector3 posicionSala;
     public Vector3 posicionTienda;
 
-    //GameObjects Mapas
+    [Header("GameObjects Mapas")]
+    // --- NUEVO: Prefab de la Sala Inicial ---
+    public GameObject salaInicialPrefab; 
     public GameObject[] listaDeMapas;
     public List<GameObject> listaDeMapasEspecialesOriginales;
     public List<GameObject> listaDeMapasEspecialesDisponibles;
     public GameObject[] listaDeTiendas;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+
     void Start()
     {
         listaDeMapasEspecialesDisponibles = new List<GameObject>(listaDeMapasEspecialesOriginales);
-        numeroDeSalasNormales = Random.Range(numeroDeSalasNormalesmMin,numeroDeSalasNormalesmMax);
+        numeroDeSalasNormales = Random.Range(numeroDeSalasNormalesmMin, numeroDeSalasNormalesmMax);
         posicionSala = transform.position;
         GenerarMapa();
-        
     }
 
-    // Update is called once per frame
     void Update()
     {
         
     }
+
     void GenerarMapa()
     {
         int valorPosicionTienda = Random.Range(1, listaDeMapas.Length + 1);
         int valorLineaTienda = Random.Range(1, 3);
         posicionTienda = transform.position;
         posicionTienda.z = posicionTienda.z + (valorPosicionTienda * espacioEntreSalasZ);
+        
         if (valorLineaTienda == 1)
         {
             posicionTienda.x = posicionTienda.x - espacioEntreSalasX;
@@ -51,15 +53,33 @@ public class LevelManager : MonoBehaviour
         {
             posicionTienda.x = posicionTienda.x + espacioEntreSalasX;
         }
+
+        // ========================================================
+        // FILA CENTRAL: Aquí forzamos la primera sala (i == 0)
+        // ========================================================
         for (int i = 0; i < numeroDeSalasNormales; i++)
         {
-            int indiceAleatorio = Random.Range(0, listaDeMapas.Length);
-            // 1. Instanciamos y guardamos la copia en la variable "nuevoEnemigo"
-            GameObject nuevoMapa = Instantiate(listaDeMapas[indiceAleatorio], posicionSala , Quaternion.identity);
+            GameObject nuevoMapa;
 
-            nuevoMapa.name = "Level, " + i;
+            // Si es la primera sala de todas, usamos el prefab de la sala inicial
+            if (i == 0 && salaInicialPrefab != null)
+            {
+                nuevoMapa = Instantiate(salaInicialPrefab, posicionSala, Quaternion.identity);
+                nuevoMapa.name = "Sala Inicial";
+            }
+            else // Para el resto de salas de la fila central, elige una aleatoria normal
+            {
+                int indiceAleatorio = Random.Range(0, listaDeMapas.Length);
+                nuevoMapa = Instantiate(listaDeMapas[indiceAleatorio], posicionSala , Quaternion.identity);
+                nuevoMapa.name = "Level, " + i;
+            }
+
             posicionSala.z = posicionSala.z + espacioEntreSalasZ;
         }
+
+        // ========================================================
+        // FILA DERECHA
+        // ========================================================
         posicionSala = transform.position;
         posicionSala.x = posicionSala.x + espacioEntreSalasX;
 
@@ -73,7 +93,6 @@ public class LevelManager : MonoBehaviour
             }
             else
             {
-
                 int valorAleatorio = Random.Range(0, 100);
                 if (valorAleatorio < probabilidadSalasEspeciales  && listaDeMapasEspecialesDisponibles.Count > 0)
                 {
@@ -84,21 +103,16 @@ public class LevelManager : MonoBehaviour
                         nuevoMapaEspecial.name = "Level, " + (i + numeroDeSalasNormales) + " Especial";
                         listaDeMapasEspecialesDisponibles.RemoveAt(indiceAleatorioEspecial);
                         salaEspecialgenerada = true;
-
                     }
                     else                    
                     {
                         salaEspecialgenerada = false;
                     }
-                    
                 }
-                
                 else if ((probabilidadSalasNormales + probabilidadSalasEspeciales) > valorAleatorio )
                 {
                     Debug.Log(valorAleatorio);
-                    
                     int indiceAleatorio = Random.Range(0, listaDeMapas.Length);
-                    // 1. Instanciamos y guardamos la copia en la variable "nuevoEnemigo"
                     GameObject nuevoMapa = Instantiate(listaDeMapas[indiceAleatorio], posicionSala , Quaternion.identity);
                     nuevoMapa.name = "Level," + (i + numeroDeSalasNormales);
                     nuevoMapa.tag = "SalaDerecha";
@@ -106,15 +120,17 @@ public class LevelManager : MonoBehaviour
                 }
             }
 
-            
             posicionSala.z = posicionSala.z + espacioEntreSalasZ;
         }
+
+        // ========================================================
+        // FILA IZQUIERDA
+        // ========================================================
         posicionSala = transform.position;
         posicionSala.x = posicionSala.x - espacioEntreSalasX;
 
         for (int i = 0; i < numeroDeSalasNormales; i++)
         {
-
             if (posicionSala == posicionTienda)
             {
                 int indiceAleatorioTiendas = Random.Range(0, listaDeTiendas.Length);
@@ -123,11 +139,9 @@ public class LevelManager : MonoBehaviour
             }
             else
             {
-
                 float valorAleatorio = Random.Range(0f, 100f);
                 if (valorAleatorio < probabilidadSalasEspeciales && listaDeMapasEspecialesDisponibles.Count > 0 )
                 {
-                    
                     if (salaEspecialgenerada == false)
                     {
                         int indiceAleatorioEspecial = Random.Range(0, listaDeMapasEspecialesDisponibles.Count);
@@ -139,27 +153,19 @@ public class LevelManager : MonoBehaviour
                     else
                     {
                         salaEspecialgenerada = false;
-
                     }
-                    
                 }
-
-                
                 else if ((probabilidadSalasNormales + probabilidadSalasEspeciales) > valorAleatorio )
                 {
                     int indiceAleatorio = Random.Range(0, listaDeMapas.Length);
-                    // 1. Instanciamos y guardamos la copia en la variable "nuevoEnemigo"
                     GameObject nuevoMapa = Instantiate(listaDeMapas[indiceAleatorio], posicionSala , Quaternion.identity);
                     nuevoMapa.name = "Level," + (i + (numeroDeSalasNormales * 2));
                     nuevoMapa.tag = "SalaIzquierda";
                     salaEspecialgenerada = false;
                 }
-
             }
 
-            
             posicionSala.z = posicionSala.z + espacioEntreSalasZ;
         }
-
     }
 }

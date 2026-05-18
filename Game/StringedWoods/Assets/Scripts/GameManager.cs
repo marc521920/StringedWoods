@@ -197,6 +197,7 @@ public class GameManager : MonoBehaviour
         
         GuardarEstadisticas();
         PlayerPrefs.SetString("Nombre", "");
+        CambiarArma(1);
     }
 
     void Update()
@@ -475,7 +476,7 @@ public class GameManager : MonoBehaviour
             switch (nuevaCarta.estadistica)
             {
                 case TipoEstadistica.VidaMaxima:
-                    nuevaCarta.valorMejora = Mathf.RoundToInt(2f * multiplicador); 
+                    nuevaCarta.valorMejora = Mathf.RoundToInt(2f * Mathf.RoundToInt(multiplicador + 0.3f)); 
                     nuevaCarta.textoDescripcion = "+" + nuevaCarta.valorMejora + " Mitades de Vida";
                     break;
                 case TipoEstadistica.DanoAlAtacar:
@@ -531,10 +532,22 @@ public class GameManager : MonoBehaviour
         switch (cartaElegida.estadistica)
         {
             case TipoEstadistica.VidaMaxima:
-                int subidaDeCorazonesEnteros = (int)cartaElegida.valorMejora / 2; 
+            int subidaDeCorazonesEnteros = (int)cartaElegida.valorMejora / 2; 
+                
+                // 1. PRIMERO aumentamos el límite máximo
                 vidaMaxima += subidaDeCorazonesEnteros;
+                
+                // 2. SEGUNDO creamos los nuevos contenedores visuales en la UI
                 CrearCorazones(); 
+                
+                // 3. TERCERO curamos al jugador (ahora el límite ya es mayor y no se perderá vida)
                 Curar((int)cartaElegida.valorMejora); 
+                
+                // 4. CUARTO: Forzamos la actualización de las animaciones para que se llenen
+                CambiarCorazones(); 
+                break;
+                CrearCorazones(); 
+
                 break;
             case TipoEstadistica.DanoAlAtacar:
                 dañoAlAtacar += cartaElegida.valorMejora;

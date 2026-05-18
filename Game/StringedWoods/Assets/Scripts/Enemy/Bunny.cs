@@ -36,7 +36,7 @@ public class Bunny : EnemyScript
     }
         IEnumerator Despertandose()
     {
-        yield return new WaitForSeconds(1.5f); 
+        yield return new WaitForSeconds(1f); 
         despertarse = false;
     }
     protected virtual void Update()
@@ -48,11 +48,16 @@ public class Bunny : EnemyScript
         {
             salidaBala.transform.LookAt(player.transform);
         }
-        
+
         // Raycast hacia el suelo para saber si está pisando una Elevación / Caja
-        if (Physics.Raycast(transform.position + Vector3.up * 0.1f, Vector3.down, out RaycastHit hit, 0.5f) && hit.collider.CompareTag("Elevaciones"))
+        Debug.DrawRay(transform.position + Vector3.up * 0.1f, Vector3.down * 2.5f);
+        if (Physics.Raycast(transform.position + Vector3.up * 0.1f, Vector3.down, out RaycastHit hit, 2.5f) && hit.collider.CompareTag("Elevaciones"))
         {
             Debug.Log("¡Estoy encima de una caja!");
+            conejoAreo = true;
+        }
+        else
+        {
             conejoAreo = false;
         }
     }
@@ -205,6 +210,7 @@ public class Bunny : EnemyScript
     {
         Debug.Log("¡Un enemigo ha sido tocado por la espada!");
         base.RecibirDaño();
-        temporizadorDisparo = 0f; 
+        temporizadorDisparo = 0f;
+        animator.SetBool("isAttacking", false);
     }
 }

@@ -80,6 +80,7 @@ MonoBehaviour:
   estaMuerto: 0
   tieneHyperArmor: 0
   PlayerScript: {fileID: 0}
+  EffectoDeGolpeo: {fileID: 3372038541050652865, guid: b2e457b9dd0a083409ac8aeabe0f7d78, type: 3}
   rangoDeVision: 45
   anguloDeVision: 65
   capaObstaculos:
@@ -102,7 +103,7 @@ Rigidbody:
   serializedVersion: 5
   m_Mass: 1
   m_LinearDamping: 0
-  m_AngularDamping: 0.05
+  m_AngularDamping: 6
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}

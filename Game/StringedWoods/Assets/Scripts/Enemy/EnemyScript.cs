@@ -19,6 +19,8 @@ public class EnemyScript : MonoBehaviour
     public bool tieneHyperArmor = false; // Si es true, los golpes no le frenan
 
     public MainCharacterMovement PlayerScript; // Referencia al script del jugador para acceder a sus variables
+
+    public GameObject EffectoDeGolpeo;
     protected virtual void Start()
     {
         
@@ -67,6 +69,13 @@ protected virtual void OnTriggerEnter(Collider other)
          {
                 GameManager.Instance.ActivarHitStop(); 
                 RecibirDaño(); // Restamos vida SIEMPRE
+                Vector3 puntoDeImpacto = other.ClosestPoint(transform.position);
+                GameObject Efecto = Instantiate(EffectoDeGolpeo, puntoDeImpacto, transform.rotation);
+                float tamañoAleatorio = Random.Range(0.3f, 1f);
+
+                // Le aplicamos ese mismo número a la X, la Y y la Z para que no se deforme
+                Efecto.transform.localScale = new Vector3(tamañoAleatorio, tamañoAleatorio, tamañoAleatorio);
+                
 
                 // --- SISTEMA DE HYPER ARMOR ---
                 // Si está en medio de un ataque imparable, nos salimos aquí y no la aturdimos

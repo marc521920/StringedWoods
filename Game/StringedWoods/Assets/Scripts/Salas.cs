@@ -68,6 +68,7 @@ public class Salas : MonoBehaviour
             paredCartonIzquierda["AbrirIzquierda"].wrapMode = WrapMode.ClampForever;
             paredCartonIzquierda.Play("AbrirIzquierda");
         }
+        ControladorCamara = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraController>();
     }
     
     void Update()
