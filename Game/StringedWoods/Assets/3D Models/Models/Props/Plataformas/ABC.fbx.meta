@@ -1,39 +1,9 @@
 fileFormatVersion: 2
-guid: 57ebe8529cacb9040b19b003fbd3b529
+guid: f845f8424df48094f9ef732f013c56ce
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects:
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: PlataformaAlta
-    second: {fileID: 2100000, guid: 56a196da387962f4b92ffa0d6aec122a, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: PlataformaAltaEle
-    second: {fileID: 2100000, guid: 8dbc981c98a9c0f43b15aa0739c8d294, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: PlataformaAltaLarga
-    second: {fileID: 2100000, guid: e477910834b1756489eb944a4951e2b2, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: PlataformaBaja
-    second: {fileID: 2100000, guid: ec57bade822fbbd45a90870c526455e6, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: PlataformaMediana
-    second: {fileID: 2100000, guid: a1fc3eaaf04e72040ab9b62274d8179e, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: PlataformaMedianaEle
-    second: {fileID: 2100000, guid: 8a19f4f32949a3a41b67f8e71d5c6e9b, type: 2}
+  externalObjects: {}
   materials:
     materialImportMode: 2
     materialName: 0

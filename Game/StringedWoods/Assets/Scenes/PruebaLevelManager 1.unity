@@ -550,7 +550,11 @@ PrefabInstance:
       objectReference: {fileID: 2968790954309739886, guid: f05289a26be4eb74e9e874595dd8babc, type: 3}
     - target: {fileID: 8917529262025534861, guid: 145f1265b0ce4904287a4de45b7b6678, type: 3}
       propertyPath: espacioEntreSalasX
-      value: 32.5
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 8917529262025534861, guid: 145f1265b0ce4904287a4de45b7b6678, type: 3}
+      propertyPath: espacioEntreSalasZ
+      value: 16
       objectReference: {fileID: 0}
     - target: {fileID: 8917529262025534861, guid: 145f1265b0ce4904287a4de45b7b6678, type: 3}
       propertyPath: listaDeMapas.Array.size

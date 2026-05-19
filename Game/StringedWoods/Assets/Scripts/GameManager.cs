@@ -186,11 +186,10 @@ public class GameManager : MonoBehaviour
         salaEspecial = false;
         
         // 1. Encuentra al jugador
-        jugador = GameObject.FindWithTag("Player");
-        PlayerScript = jugador.GetComponent<MainCharacterMovement>();
+
         
         // 2. Coge las áreas de ataque desde el script del jugador
-        AsignarAreasDeAtaque();
+        
 
         CrearCorazones(); 
         vidaActual = vidaMaxima * 2; 
@@ -202,6 +201,14 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
+        if (jugador == null)
+        {
+                    jugador = GameObject.FindWithTag("Player");
+        PlayerScript = jugador.GetComponent<MainCharacterMovement>();
+        AsignarAreasDeAtaque();
+            
+        }
+
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (juegoPausado)
