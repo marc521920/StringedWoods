@@ -85,14 +85,14 @@ public class UIHovering : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     {
         // Escala gradual
         float targetScale = isHovered ? ScaleRate : 1f;
-        currentScale = Mathf.Lerp(currentScale, targetScale, Time.deltaTime * scaleSpeed);
+        currentScale = Mathf.Lerp(currentScale, targetScale, Time.unscaledDeltaTime * scaleSpeed);
         transform.localScale = originalScale * currentScale;
 
         // Color del texto gradual
         if (btnText != null)
         {
             Color targetTextColor = isHovered ? hoverTextColor : normalTextColor;
-            currentTextColor = Color.Lerp(currentTextColor, targetTextColor, Time.deltaTime * textColorSpeed);
+            currentTextColor = Color.Lerp(currentTextColor, targetTextColor, Time.unscaledDeltaTime * textColorSpeed);
             btnText.color = currentTextColor;
         }
 
