@@ -18,7 +18,6 @@ public class LevelManager : MonoBehaviour
     public Vector3 posicionTienda;
 
     [Header("GameObjects Mapas")]
-    // --- NUEVO: Prefab de la Sala Inicial ---
     public GameObject salaInicialPrefab; 
     public GameObject[] listaDeMapas;
     public List<GameObject> listaDeMapasEspecialesOriginales;
@@ -55,14 +54,14 @@ public class LevelManager : MonoBehaviour
         }
 
         // ========================================================
-        // FILA CENTRAL: Aquí forzamos la primera sala (i == 0)
+        // FILA CENTRAL: Aquí forzamos la sala inicial al FINAL
         // ========================================================
         for (int i = 0; i < numeroDeSalasNormales; i++)
         {
             GameObject nuevoMapa;
 
-            // Si es la primera sala de todas, usamos el prefab de la sala inicial
-            if (i == 0 && salaInicialPrefab != null)
+            // --- CAMBIO: Si es la ÚLTIMA sala (numeroDeSalasNormales - 1), ponemos la inicial ---
+            if (i == numeroDeSalasNormales - 1 && salaInicialPrefab != null)
             {
                 nuevoMapa = Instantiate(salaInicialPrefab, posicionSala, Quaternion.identity);
                 nuevoMapa.name = "Sala Inicial";
@@ -111,7 +110,6 @@ public class LevelManager : MonoBehaviour
                 }
                 else if ((probabilidadSalasNormales + probabilidadSalasEspeciales) > valorAleatorio )
                 {
-                    Debug.Log(valorAleatorio);
                     int indiceAleatorio = Random.Range(0, listaDeMapas.Length);
                     GameObject nuevoMapa = Instantiate(listaDeMapas[indiceAleatorio], posicionSala , Quaternion.identity);
                     nuevoMapa.name = "Level," + (i + numeroDeSalasNormales);

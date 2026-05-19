@@ -49,12 +49,15 @@ MonoBehaviour:
   probabilidadSalasEspeciales: 15
   probabilidadSalasNormales: 30
   espacioEntreSalasZ: 15
-  espacioEntreSalasX: 30
+  espacioEntreSalasX: 32.5
   posicionSala: {x: 0, y: 0, z: 0}
   posicionTienda: {x: 0, y: 0, z: 0}
-  salaInicialPrefab: {fileID: 0}
+  salaInicialPrefab: {fileID: 2968790954309739886, guid: f05289a26be4eb74e9e874595dd8babc, type: 3}
   listaDeMapas:
-  - {fileID: 8771749402582411558, guid: 9181fe77472d2d54daa4c166f304e8ec, type: 3}
+  - {fileID: 8044397937139279728, guid: c0efa8ee5aeae644a9f829b2d4f33a17, type: 3}
+  - {fileID: 4086165230780858041, guid: a3770461653e1cc40abd367d77a7c9fe, type: 3}
+  - {fileID: 8675114741529202811, guid: 5cf7880cf4a68074ca937d2d2e63dc99, type: 3}
+  - {fileID: 2943934268451724988, guid: 0f080965b56e24c48bd35076e961a398, type: 3}
   listaDeMapasEspecialesOriginales:
   - {fileID: 1359130843012555866, guid: 94e815f1b3c0c4156b5104a432afff0c, type: 3}
   listaDeMapasEspecialesDisponibles: []

@@ -5006,7 +5006,6 @@ GameObject:
   - component: {fileID: 1203104971898170296}
   - component: {fileID: 2106908208899537598}
   - component: {fileID: 7436499711614583971}
-  - component: {fileID: 1707487639179912436}
   m_Layer: 6
   m_Name: backward wall.001
   m_TagString: limitZBackward
@@ -5108,27 +5107,6 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 1821332732465784480, guid: ae404916e5756cd499dbdfbe7ee9d5af, type: 3}
---- !u!65 &1707487639179912436
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7901777938036023526}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 0.31999996, y: 0.002600984, z: 0.17637208}
-  m_Center: {x: 0, y: 0.001300492, z: 0.08818604}
 --- !u!1 &8009610440832552032
 GameObject:
   m_ObjectHideFlags: 0
@@ -5500,7 +5478,7 @@ MonoBehaviour:
   salaInicial: 0
   salaTienda: 0
   salaLimpia: 0
-  jugadorDentro: 1
+  jugadorDentro: 0
   detectorSalaCircundante: {fileID: 5990102275250470210}
   detectorPlayerDentro: {fileID: 0}
   paredCartonIzquierda: {fileID: 6437464958156089758}
