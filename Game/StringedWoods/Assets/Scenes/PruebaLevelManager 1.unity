@@ -132,6 +132,10 @@ PrefabInstance:
       value: GameManager
       objectReference: {fileID: 0}
     - target: {fileID: 4479859306009746417, guid: 6f5668ddd12884c8081d93ca5c5a4239, type: 3}
+      propertyPath: "da\xF1oAlAtacar"
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 4479859306009746417, guid: 6f5668ddd12884c8081d93ca5c5a4239, type: 3}
       propertyPath: contenedorCorazones
       value: 
       objectReference: {fileID: 2025076294}

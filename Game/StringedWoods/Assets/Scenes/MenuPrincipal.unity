@@ -355,6 +355,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a8445bc556e2743ec982d1d3558bebb7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIHovering
+  BGImage: {fileID: 0}
+  vertexColor: {r: 1, g: 1, b: 1, a: 1}
+  hoverColor: {r: 0.9333334, g: 0.509804, b: 0.9333334, a: 1}
+  btnText: {fileID: 1370854101}
+  normalTextColor: {r: 1, g: 1, b: 1, a: 1}
+  hoverTextColor: {r: 0.9333334, g: 0.509804, b: 0.9333334, a: 1}
+  textColorSpeed: 5
+  textShadow: {fileID: 0}
+  textGlowColor: {r: 0.9333334, g: 0.509804, b: 0.9333334, a: 1}
+  textGlowSpeed: 5
+  outline: {fileID: 0}
+  glowColor: {r: 0.9333334, g: 0.509804, b: 0.9333334, a: 1}
+  pulseSpeed: 2
+  ScaleRate: 1.5
+  scaleSpeed: 5
 --- !u!114 &194675365
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -644,6 +659,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a8445bc556e2743ec982d1d3558bebb7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIHovering
+  BGImage: {fileID: 0}
+  vertexColor: {r: 1, g: 1, b: 1, a: 1}
+  hoverColor: {r: 0.9333334, g: 0.509804, b: 0.9333334, a: 1}
+  btnText: {fileID: 0}
+  normalTextColor: {r: 1, g: 1, b: 1, a: 1}
+  hoverTextColor: {r: 0.9333334, g: 0.509804, b: 0.9333334, a: 1}
+  textColorSpeed: 5
+  textShadow: {fileID: 0}
+  textGlowColor: {r: 0.9333334, g: 0.509804, b: 0.9333334, a: 1}
+  textGlowSpeed: 5
+  outline: {fileID: 0}
+  glowColor: {r: 0.9333334, g: 0.509804, b: 0.9333334, a: 1}
+  pulseSpeed: 2
+  ScaleRate: 1.5
+  scaleSpeed: 5
 --- !u!114 &384449071
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1165,6 +1195,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a8445bc556e2743ec982d1d3558bebb7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIHovering
+  BGImage: {fileID: 0}
+  vertexColor: {r: 1, g: 1, b: 1, a: 1}
+  hoverColor: {r: 0.9333334, g: 0.509804, b: 0.9333334, a: 1}
+  btnText: {fileID: 0}
+  normalTextColor: {r: 1, g: 1, b: 1, a: 1}
+  hoverTextColor: {r: 0.9333334, g: 0.509804, b: 0.9333334, a: 1}
+  textColorSpeed: 5
+  textShadow: {fileID: 0}
+  textGlowColor: {r: 0.9333334, g: 0.509804, b: 0.9333334, a: 1}
+  textGlowSpeed: 5
+  outline: {fileID: 0}
+  glowColor: {r: 0.9333334, g: 0.509804, b: 0.9333334, a: 1}
+  pulseSpeed: 2
+  ScaleRate: 1.5
+  scaleSpeed: 5
 --- !u!114 &878971242
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1530,6 +1575,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a8445bc556e2743ec982d1d3558bebb7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIHovering
+  BGImage: {fileID: 0}
+  vertexColor: {r: 1, g: 1, b: 1, a: 1}
+  hoverColor: {r: 0.9333334, g: 0.509804, b: 0.9333334, a: 1}
+  btnText: {fileID: 0}
+  normalTextColor: {r: 1, g: 1, b: 1, a: 1}
+  hoverTextColor: {r: 0.9333334, g: 0.509804, b: 0.9333334, a: 1}
+  textColorSpeed: 5
+  textShadow: {fileID: 0}
+  textGlowColor: {r: 0.9333334, g: 0.509804, b: 0.9333334, a: 1}
+  textGlowSpeed: 5
+  outline: {fileID: 0}
+  glowColor: {r: 0.9333334, g: 0.509804, b: 0.9333334, a: 1}
+  pulseSpeed: 2
+  ScaleRate: 1.5
+  scaleSpeed: 5
 --- !u!1 &1164417685
 GameObject:
   m_ObjectHideFlags: 0
@@ -1580,6 +1640,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a8445bc556e2743ec982d1d3558bebb7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIHovering
+  BGImage: {fileID: 0}
+  vertexColor: {r: 1, g: 1, b: 1, a: 1}
+  hoverColor: {r: 0.9333334, g: 0.509804, b: 0.9333334, a: 1}
+  btnText: {fileID: 1164417688}
+  normalTextColor: {r: 1, g: 1, b: 1, a: 1}
+  hoverTextColor: {r: 0.9333334, g: 0.509804, b: 0.9333334, a: 1}
+  textColorSpeed: 5
+  textShadow: {fileID: 0}
+  textGlowColor: {r: 0.9333334, g: 0.509804, b: 0.9333334, a: 1}
+  textGlowSpeed: 5
+  outline: {fileID: 0}
+  glowColor: {r: 0.9333334, g: 0.509804, b: 0.9333334, a: 1}
+  pulseSpeed: 2
+  ScaleRate: 1.5
+  scaleSpeed: 5
 --- !u!114 &1164417688
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1730,6 +1805,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a8445bc556e2743ec982d1d3558bebb7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIHovering
+  BGImage: {fileID: 0}
+  vertexColor: {r: 1, g: 1, b: 1, a: 1}
+  hoverColor: {r: 0.9333334, g: 0.509804, b: 0.9333334, a: 1}
+  btnText: {fileID: 1228549694}
+  normalTextColor: {r: 1, g: 1, b: 1, a: 1}
+  hoverTextColor: {r: 0.9333334, g: 0.509804, b: 0.9333334, a: 1}
+  textColorSpeed: 5
+  textShadow: {fileID: 0}
+  textGlowColor: {r: 0.9333334, g: 0.509804, b: 0.9333334, a: 1}
+  textGlowSpeed: 5
+  outline: {fileID: 0}
+  glowColor: {r: 0.9333334, g: 0.509804, b: 0.9333334, a: 1}
+  pulseSpeed: 2
+  ScaleRate: 1.5
+  scaleSpeed: 5
 --- !u!114 &1228549694
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2017,6 +2107,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a8445bc556e2743ec982d1d3558bebb7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIHovering
+  BGImage: {fileID: 0}
+  vertexColor: {r: 1, g: 1, b: 1, a: 1}
+  hoverColor: {r: 0.9333334, g: 0.509804, b: 0.9333334, a: 1}
+  btnText: {fileID: 0}
+  normalTextColor: {r: 1, g: 1, b: 1, a: 1}
+  hoverTextColor: {r: 0.9333334, g: 0.509804, b: 0.9333334, a: 1}
+  textColorSpeed: 5
+  textShadow: {fileID: 0}
+  textGlowColor: {r: 0.9333334, g: 0.509804, b: 0.9333334, a: 1}
+  textGlowSpeed: 5
+  outline: {fileID: 0}
+  glowColor: {r: 0.9333334, g: 0.509804, b: 0.9333334, a: 1}
+  pulseSpeed: 2
+  ScaleRate: 1.5
+  scaleSpeed: 5
 --- !u!114 &1370854101
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3010,6 +3115,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a8445bc556e2743ec982d1d3558bebb7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIHovering
+  BGImage: {fileID: 0}
+  vertexColor: {r: 1, g: 1, b: 1, a: 1}
+  hoverColor: {r: 0.9333334, g: 0.509804, b: 0.9333334, a: 1}
+  btnText: {fileID: 2093822302}
+  normalTextColor: {r: 1, g: 1, b: 1, a: 1}
+  hoverTextColor: {r: 0.9333334, g: 0.509804, b: 0.9333334, a: 1}
+  textColorSpeed: 5
+  textShadow: {fileID: 0}
+  textGlowColor: {r: 0.9333334, g: 0.509804, b: 0.9333334, a: 1}
+  textGlowSpeed: 5
+  outline: {fileID: 0}
+  glowColor: {r: 0.9333334, g: 0.509804, b: 0.9333334, a: 1}
+  pulseSpeed: 2
+  ScaleRate: 1.5
+  scaleSpeed: 5
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
