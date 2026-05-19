@@ -5,9 +5,15 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/TrainZone.unity
     guid: 99c9720ab356a0642a771bea13969a05
+  - enabled: 1
+    path: Assets/Scenes/MenuPrincipal.unity
+    guid: b3501c8abbb5b4a7e926a6027b6c942a
+  - enabled: 1
+    path: Assets/Scenes/PruebaLevelManager 1.unity
+    guid: 58ca86e7534899649ac48dd77c9b951f
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

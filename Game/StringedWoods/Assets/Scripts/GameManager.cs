@@ -3,6 +3,7 @@ using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI; 
+using UnityEngine.SceneManagement; 
 
 // --- CLASES DE GUARDADO ---
 [System.Serializable]
@@ -166,6 +167,8 @@ public class GameManager : MonoBehaviour
 
     [Header("Estado del Juego")]
     public bool juegoPausado = false;
+
+  
     
     void Awake()
     {
@@ -213,12 +216,11 @@ public class GameManager : MonoBehaviour
         {
             if (juegoPausado)
             {
-                Time.timeScale = 1f; 
+
                 juegoPausado = false;
             }
             else
             {
-                PausarJuego();
                 juegoPausado = true;
             }
         }
@@ -416,11 +418,19 @@ public class GameManager : MonoBehaviour
     {
         ataqueActual = 0;
     }
+    public void ContinuarJuego()
+    {
+                Time.timeScale = 1f;
+
+    }
 
     public void PausarJuego()
     {
         Time.timeScale = 0f;
+
     }
+
+
 
     public void ReanudarJuego()
     {

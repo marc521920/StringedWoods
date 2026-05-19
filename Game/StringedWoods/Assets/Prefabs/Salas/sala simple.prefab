@@ -563,6 +563,7 @@ MonoBehaviour:
   - {fileID: 0}
   salaBoss: 0
   salaEspecial: 0
+  pasillo: 0
   salaNormal: 1
   salaInicial: 0
   salaTienda: 0
@@ -573,11 +574,15 @@ MonoBehaviour:
   paredCartonIzquierda: {fileID: 3721115143631772720}
   paredCartonDerecha: {fileID: 1718673090781531206}
   paredCartonDelante: {fileID: 3180625599268163412}
+  paredCartonEspecial: {fileID: 0}
   paredDerecha: {fileID: 6325862296922809684}
   paredIzquierda: {fileID: 1937399626982564148}
   paredAtras: {fileID: 1670511526967803399}
   paredDelante: {fileID: 7831272579110104080}
-  paredQueTapaTodo: {fileID: 0}
+  collidersHabitacion: {fileID: 0}
+  ParedTrasera: []
+  objetosActivarAlEntrar: []
+  objetosDesactivarAlEntrar: []
   ControladorCamara: {fileID: 0}
 --- !u!111 &3180625599268163412
 Animation:

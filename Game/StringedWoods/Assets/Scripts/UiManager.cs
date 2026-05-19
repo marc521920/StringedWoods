@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI; 
 using System.Collections;
 using TMPro; 
-
+using UnityEngine.SceneManagement; 
 public class UiManager : MonoBehaviour
 {
     public static UiManager Instance { get; private set; }
@@ -13,6 +13,10 @@ public class UiManager : MonoBehaviour
     
     [Header("UI General")]
     public Slider barraExperiencia;
+
+      public GameObject MenuPausa;
+
+      private bool juegoPausadoUI = false;
 
     [Header("Elementos de las 3 Cartas (Orden: 0, 1, 2)")]
     public Button[] botonesCartas = new Button[3];
@@ -52,6 +56,21 @@ public class UiManager : MonoBehaviour
             float experienciaMaxima = 100f + (GameManager.Instance.nivel * 15f);
             barraExperiencia.maxValue = experienciaMaxima;
             barraExperiencia.value = GameManager.Instance.experiencia;
+        }
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (juegoPausadoUI)
+            {
+                ContinuarJuego();
+                juegoPausadoUI = false;
+
+            }
+            else
+            {
+                PausarJuego();
+                juegoPausadoUI = true;
+
+            }
         }
     }
 
@@ -127,5 +146,29 @@ public class UiManager : MonoBehaviour
         }
 
         contenedorCartas.anchoredPosition = posicionFinal;
+    }
+    public void ContinuarJuego()
+    {
+                Time.timeScale = 1f;
+        MenuPausa.SetActive(false);
+    }
+
+    public void PausarJuego()
+    {
+        Time.timeScale = 0f;
+        MenuPausa.SetActive(true);
+    }
+    public void Salir()
+    {
+        // Application.Quit() cierra el juego en la versión final (.exe o móvil)
+        Application.Quit();
+        
+
+    }
+        public void volverMenu()
+    {
+        // Esto cargará la escena que esté en la posición 1 de tus Build Settings
+        // También puedes usar el nombre exacto: SceneManager.LoadScene("Nivel1");
+        SceneManager.LoadScene(0); 
     }
 }

@@ -59,15 +59,22 @@ public class Salas : MonoBehaviour
         if (paredCartonDelante != null) paredCartonDelante.Stop();
         if (gameObject.CompareTag("SalaIzquierda") && paredCartonDerecha != null)
         {
-            paredCartonDerecha["AbrirDerecha"].wrapMode = WrapMode.ClampForever;
-            paredCartonDerecha.Play("AbrirDerecha");
+
+                        paredCartonIzquierda["AbrirIzquierda"].time = 0f;
+            paredCartonIzquierda["AbrirIzquierda"].speed = 1f;
+            paredCartonIzquierda["AbrirIzquierda"].wrapMode = WrapMode.ClampForever;
+            paredCartonIzquierda.Play("AbrirIzquierda");
         }
         
         if (gameObject.CompareTag("SalaDerecha") && paredCartonIzquierda != null)
         {
-            paredCartonIzquierda["AbrirIzquierda"].wrapMode = WrapMode.ClampForever;
-            paredCartonIzquierda.Play("AbrirIzquierda");
+                        paredCartonDerecha["AbrirDerecha"].time = 0f;
+            paredCartonDerecha["AbrirDerecha"].speed = 1f;
+            paredCartonDerecha["AbrirDerecha"].wrapMode = WrapMode.ClampForever;
+            paredCartonDerecha.Play("AbrirDerecha");
+
         }
+        
         collidersHabitacion.SetActive(false);
         ControladorCamara = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraController>();
     }
@@ -76,6 +83,7 @@ public class Salas : MonoBehaviour
     {
         Debug.DrawRay(detectorSalaCircundante.transform.position, detectorSalaCircundante.transform.right * 100f, Color.red);
         // Limpiamos las salas pacíficas (Tienda o Inicial) de forma automática
+       
         if (jugadorDentro && !salaLimpia && !enemigosGenerados)
         {
             if (salaInicial || salaTienda || salaEspecial || pasillo)
